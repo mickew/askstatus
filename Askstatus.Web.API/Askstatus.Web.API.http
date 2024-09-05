@@ -1,0 +1,6 @@
+@Askstatus.Web.API_HostAddress = http://localhost:5136
+
+GET {{Askstatus.Web.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
