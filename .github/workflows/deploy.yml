@@ -20,19 +20,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout and Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Run Deploy
-      run: |
-        cd AskStatus.Web.API
-        dotnet publish -c Release -o ../dotnet-app --runtime linux-arm --self-contained true
+    - name: Run Publish Backend
+      run: dotnet publish ./Askstatus.Web.API/Askstatus.Web.API.csproj -c Release -o ./dotnet-app/backend --runtime linux-arm --self-contained true
+    - name: Run Publish Frontend
+      run: dotnet publish ./Askstatus.Web.App/Askstatus.Web.App.csproj -c Release -o ./dotnet-app/frontend --runtime browser-wasm --self-contained true
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: application-artifacts
         path: dotnet-app/
@@ -43,16 +43,16 @@ jobs:
     needs: build-project
     steps:
     - name: Download content
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: application-artifacts
     - name: Archive site content
-      uses: thedoctor0/zip-release@0.7.5
+      uses: thedoctor0/zip-release@0.7.6
       with:
         type: 'zip'
         filename: release.zip
     - name: Upload Release
-      uses: ncipollo/release-action@v1.12.0
+      uses: ncipollo/release-action@v1.14.0
       with:
         artifacts: "release.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
