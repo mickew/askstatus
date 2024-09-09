@@ -27,10 +27,10 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Run Deploy
-      run: |
-        cd AskStatus.Web.API
-        dotnet publish -c Release -o ../dotnet-app --runtime linux-arm --self-contained true
+    - name: Run Publish Backend
+      run: dotnet publish ./Askstaus.Web.API/Askstaus.Web.API.csproj -c Release -o ./dotnet-app/backend --runtime linux-arm --self-contained true
+    - name: Run Publish Frontend
+      run: dotnet publish ./Askstaus.Web.App/Askstaus.Web.App.csproj -c Release -o ./dotnet-app/frontend --runtime browser-wasm --self-contained true
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
