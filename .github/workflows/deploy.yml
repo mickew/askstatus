@@ -28,9 +28,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Run Publish Backend
-      run: dotnet publish ./Askstaus.Web.API/Askstaus.Web.API.csproj -c Release -o ./dotnet-app/backend --runtime linux-arm --self-contained true
+      run: dotnet publish ./Askstatus.Web.API/Askstatus.Web.API.csproj -c Release -o ./dotnet-app/backend --runtime linux-arm --self-contained true
     - name: Run Publish Frontend
-      run: dotnet publish ./Askstaus.Web.App/Askstaus.Web.App.csproj -c Release -o ./dotnet-app/frontend --runtime browser-wasm --self-contained true
+      run: dotnet publish ./Askstatus.Web.App/Askstatus.Web.App.csproj -c Release -o ./dotnet-app/frontend --runtime browser-wasm --self-contained true
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
