@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout and Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
@@ -32,7 +32,7 @@ jobs:
     - name: Run Publish Frontend
       run: dotnet publish ./Askstatus.Web.App/Askstatus.Web.App.csproj -c Release -o ./dotnet-app/frontend --runtime browser-wasm --self-contained true
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: application-artifacts
         path: dotnet-app/
@@ -43,7 +43,7 @@ jobs:
     needs: build-project
     steps:
     - name: Download content
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: application-artifacts
     - name: Archive site content
