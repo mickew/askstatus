@@ -1,7 +1,7 @@
 #!/bin/bash
 
-latesturl="https://github.com/mickew/aheat/releases/latest"
-rooturl="https://github.com/mickew/aheat/releases/download"
+latesturl="https://github.com/mickew/askstatus/releases/latest"
+rooturl="https://github.com/mickew/askstatus/releases/download"
 filename="release.zip"
 out="latest"
 
