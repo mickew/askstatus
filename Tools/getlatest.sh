@@ -17,23 +17,22 @@ else
 
   rm -f $filename
   rm -f -r $out
-
+  
   location=$(curl -s -I $latesturl | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
+  # printf "Redirect-url: %s\n\n" "$location"
 
   version="${location##*/}"
-  size=${#version}
-
-  ver=${version:0:size-1} 
-
-  url="$rooturl"/"$ver"/"$filename"
-
-  # printf "Redirect-url: %s\n\n" "$location"
   # printf "Version: %s\n\n" "$version"
+
+  ver=$(echo "$version" | sed 's/.\{1\}$//')
+  # printf "Ver: %s\n\n" "$ver"
+
+  url="${rooturl}/${ver}/${filename}"
   # printf "Url: %s\n\n" "$url"
 
   curl -L -O $url
 
-  #unzip -a -q -d $out/ $filename
+  unzip -a -q -d $out/ $filename
 
   # mkdir -p /var/www/powercontrol
   # sudo chmod 666 /var/www/powercontrol
