@@ -10,8 +10,8 @@ if [ ! $? = 0 ]; then
    exit 1
 else
 
-    # systemctl stop askstatusbackend.service
-   ./getlatest.sh
+   # systemctl stop askstatusbackend.service
+   sh ./getlatest.sh
 
    chmod +x /var/www/backend/Askstatus.Web.API
 

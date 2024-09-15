@@ -10,7 +10,7 @@ if [ ! $? = 0 ]; then
    exit 1
 else
 
-   ./getlatest.sh
+   sh ./getlatest.sh
 
    chmod +x /var/www/backend/Askstatus.Web.API
 

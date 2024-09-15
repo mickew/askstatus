@@ -32,14 +32,25 @@ else
 
   curl -L -O $url
 
+  echo "unzipping downloaded files..."
   unzip -a -q -d $out/ $filename
+  # unzip -a -d $out/ $filename
 
-  # mkdir -p /var/www/powercontrol
-  # sudo chmod 666 /var/www/powercontrol
+  rm -f ./$out/backend/appsettings.Development.json
+  rm -f ./$out/frontend/appsettings.Development.json
 
-  # cp -a ./$out/* /var/www/powercontrol 
+  mkdir -p /var/www/backend
+  mkdir -p /var/www/frontend
 
-  # rm -f $filename
-  # rm -f -r $out
+  sudo chmod 666 /var/www/backend
+  sudo chmod 666 /var/www/frontend
+
+  echo "Copying files..."
+  cp -a ./$out/backend/. /var/www/backend 
+  cp -a ./$out/frontend/. /var/www/frontend 
+
+  echo "Cleaning up"
+  rm -f $filename
+  rm -f -r $out
 
 fi
