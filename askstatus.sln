@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		build-suffix.props = build-suffix.props
 		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 		README.md = README.md
 		version.props = version.props
 	EndProjectSection
@@ -24,9 +25,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{738E9C37-4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{05F28BD0-06EC-48B2-B3C0-C2004174C4B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Askstatus.Application.Tests", "Askstatus.Application.Tests\Askstatus.Application.Tests.csproj", "{DA83A82E-4F20-494F-8E90-C90708C84020}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Askstatus.Application.Tests", "Askstatus.Application.Tests\Askstatus.Application.Tests.csproj", "{DA83A82E-4F20-494F-8E90-C90708C84020}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Askstatus.Architecture.Tests", "Askstatus.Architecture.Tests\Askstatus.Architecture.Tests.csproj", "{508A2D55-17EC-4123-AD19-56DF0BC781F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Askstatus.Architecture.Tests", "Askstatus.Architecture.Tests\Askstatus.Architecture.Tests.csproj", "{508A2D55-17EC-4123-AD19-56DF0BC781F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
