@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="FluentAssertions" />
-    <PackageReference Include="FluentAssertions.Analyzers" >
+    <PackageReference Include="FluentAssertions.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Askstatus.Application\Askstatus.Application.csproj" />
+    <ProjectReference Include="..\Askstatus.Domain\Askstatus.Domain.csproj" />
     <ProjectReference Include="..\Askstatus.Web.API\Askstatus.Web.API.csproj" />
     <ProjectReference Include="..\Askstatus.Web.App\Askstatus.Web.App.csproj" />
   </ItemGroup>
