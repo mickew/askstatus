@@ -12,10 +12,7 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="FluentAssertions" />
-    <PackageReference Include="FluentAssertions.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="FluentAssertions.Analyzers" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NetArchTest.Rules" />
     <PackageReference Include="xunit" />
