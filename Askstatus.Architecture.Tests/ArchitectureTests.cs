@@ -5,8 +5,9 @@ namespace Askstatus.Architecture.Tests
 {
     public class ArchitectureTests
     {
-        private const string ApplicationNamespace = "Askstatus.Application";
         private const string DomainNamespace = "Askstatus.Domain";
+        private const string ApplicationNamespace = "Askstatus.Application";
+        private const string InfrastructureNamespace = "Askstatus..Infrastructure";
         private const string WebAPINamespace = "Askstatus.Web.API";
         private const string WebUiNamespace = "Askstatus.Web.App";
 
@@ -23,6 +24,7 @@ namespace Askstatus.Architecture.Tests
             var otherProjects = new[]
             {
                 ApplicationNamespace,
+                InfrastructureNamespace,
                 WebUiNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
@@ -40,6 +42,27 @@ namespace Askstatus.Architecture.Tests
 
             var otherProjects = new[]
             {
+                InfrastructureNamespace,
+                WebAPINamespace,
+                WebUiNamespace,
+                ArchitectureTestsNamespace,
+                ApplicationTestsNamespace,
+            };
+
+            var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjects).GetResult();
+
+            result.IsSuccessful.Should().BeTrue();
+
+        }
+
+        [Fact]
+        public void Infrastructure_Shuld_Not_HaveDependencyOnOtherProjects()
+        {
+            var assembly = typeof(Askstatus.Infrastructure.AssemblyReference).Assembly;
+
+            var otherProjects = new[]
+            {
+                InfrastructureNamespace,
                 WebAPINamespace,
                 WebUiNamespace,
                 ArchitectureTestsNamespace,
