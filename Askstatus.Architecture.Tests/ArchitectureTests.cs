@@ -13,6 +13,7 @@ namespace Askstatus.Architecture.Tests
 
         private const string ApplicationTestsNamespace = "Askstatus.Application.Tests";
         private const string ArchitectureTestsNamespace = "Askstatus.Architecture.Tests";
+        private const string InfrastructureTestsNamespace = "Askstatus.Infrastructure.Tests";
         //private const string PersistenceTestsNamespace = "Askstatus.Persistence.Tests";
         //private const string WebAPITestsNamespace = "Askstatus.Web.API.Tests";
 
@@ -28,6 +29,7 @@ namespace Askstatus.Architecture.Tests
                 WebUiNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                InfrastructureTestsNamespace,
             };
 
             var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjects).GetResult();
@@ -47,6 +49,7 @@ namespace Askstatus.Architecture.Tests
                 WebUiNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                InfrastructureTestsNamespace,
             };
 
             var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjects).GetResult();
@@ -67,6 +70,7 @@ namespace Askstatus.Architecture.Tests
                 WebUiNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                InfrastructureTestsNamespace,
             };
 
             var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjects).GetResult();
@@ -85,6 +89,7 @@ namespace Askstatus.Architecture.Tests
                 WebUiNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                InfrastructureTestsNamespace,
             };
 
             var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjects).GetResult();
@@ -99,9 +104,10 @@ namespace Askstatus.Architecture.Tests
 
             var otherProjects = new[]
             {
+                WebAPINamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
-                WebAPINamespace,
+                InfrastructureTestsNamespace,
             };
 
             var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjects).GetResult();

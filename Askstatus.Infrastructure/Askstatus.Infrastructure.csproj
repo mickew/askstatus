@@ -5,4 +5,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Askstatus.Application\Askstatus.Application.csproj" />
+    <ProjectReference Include="..\Askstatus.Domain\Askstatus.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
