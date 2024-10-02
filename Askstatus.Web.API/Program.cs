@@ -6,7 +6,7 @@ namespace Askstatus.Web.API;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -65,5 +65,6 @@ public class Program
         app.MapControllers();
 
         await app.RunAsync();
+        return 0;
     }
 }
