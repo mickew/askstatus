@@ -1,6 +1,6 @@
 ﻿using Askstatus.Application.Identity;
 using Askstatus.Application.Interfaces;
-using Askstatus.Application.Models.Identity;
+using Askstatus.Common.Identity;
 using FluentAssertions;
 using FluentResults;
 using Moq;
@@ -14,7 +14,7 @@ namespace Askstatus.Application.Tests
         {
             // Arrange
             Mock<IIdentityService> mock = new Mock<IIdentityService>();
-            mock.Setup(x => x.Login(It.IsAny<LoginDto>())).ReturnsAsync(Result.Ok());
+            mock.Setup(x => x.Login(It.IsAny<LoginRequest>())).ReturnsAsync(Result.Ok());
             LoginUserCommandHandler loginUserCommandHandler = new LoginUserCommandHandler(mock.Object);
             LoginUserCommand loginUserCommand = new LoginUserCommand
             {
@@ -34,7 +34,7 @@ namespace Askstatus.Application.Tests
         {
             // Arrange
             Mock<IIdentityService> mock = new Mock<IIdentityService>();
-            mock.Setup(x => x.Login(It.IsAny<LoginDto>())).ReturnsAsync(Result.Fail("Login failed"));
+            mock.Setup(x => x.Login(It.IsAny<LoginRequest>())).ReturnsAsync(Result.Fail("Login failed"));
             LoginUserCommandHandler loginUserCommandHandler = new LoginUserCommandHandler(mock.Object);
             LoginUserCommand loginUserCommand = new LoginUserCommand
             {
@@ -92,9 +92,9 @@ namespace Askstatus.Application.Tests
         {
             // Arrange
             Mock<IIdentityService> mock = new Mock<IIdentityService>();
-            mock.Setup(x => x.GetUserInfo()).ReturnsAsync(Result.Ok(new UserInfoDto("Id", "UseName", "Email")));
-            GetUserInfoCommandHandler getUserInfoCommandHandler = new GetUserInfoCommandHandler(mock.Object);
-            GetUserInfoCommand getUserInfoCommand = new();
+            mock.Setup(x => x.GetUserInfo()).ReturnsAsync(Result.Ok(new UserInfoVM("Id", "UseName", "Email")));
+            GetUserInfoQueryHandler getUserInfoCommandHandler = new GetUserInfoQueryHandler(mock.Object);
+            GetUserInfoQuery getUserInfoCommand = new();
 
             // Act
             var result = await getUserInfoCommandHandler.Handle(getUserInfoCommand, CancellationToken.None);
@@ -113,8 +113,8 @@ namespace Askstatus.Application.Tests
             // Arrange
             Mock<IIdentityService> mock = new Mock<IIdentityService>();
             mock.Setup(x => x.GetUserInfo()).ReturnsAsync(Result.Fail("User info not found"));
-            GetUserInfoCommandHandler getUserInfoCommandHandler = new GetUserInfoCommandHandler(mock.Object);
-            GetUserInfoCommand getUserInfoCommand = new();
+            GetUserInfoQueryHandler getUserInfoCommandHandler = new GetUserInfoQueryHandler(mock.Object);
+            GetUserInfoQuery getUserInfoCommand = new();
 
             // Act
             var result = await getUserInfoCommandHandler.Handle(getUserInfoCommand, CancellationToken.None);
@@ -130,15 +130,15 @@ namespace Askstatus.Application.Tests
         public async Task GetApplicationClaims_Should_Return_Success()
         {
             // Arrange
-            var expected = new List<ApplicationClaimDto>
+            var expected = new List<ApplicationClaimVM>
             {
-                new ApplicationClaimDto("Issuer", "OriginalIssuer", "Type", "Value", "TypeValue"),
-                new ApplicationClaimDto("Issuer", "OriginalIssuer", "Type", "Value", "TypeValue"),
+                new ApplicationClaimVM("Issuer", "OriginalIssuer", "Type", "Value", "TypeValue"),
+                new ApplicationClaimVM("Issuer", "OriginalIssuer", "Type", "Value", "TypeValue"),
             };
             Mock<IIdentityService> mock = new Mock<IIdentityService>();
             mock.Setup(x => x.GetApplicationClaims()).ReturnsAsync(Result.Ok(expected.AsEnumerable()));
-            GetApplicationClaimsCommandHandler getApplicationClaimsCommandHandler = new GetApplicationClaimsCommandHandler(mock.Object);
-            GetApplicationClaimsCommand getApplicationClaimsCommand = new();
+            GetApplicationClaimsQueryHandler getApplicationClaimsCommandHandler = new GetApplicationClaimsQueryHandler(mock.Object);
+            GetApplicationClaimsQuery getApplicationClaimsCommand = new();
 
             // Act
             var result = await getApplicationClaimsCommandHandler.Handle(getApplicationClaimsCommand, CancellationToken.None);
@@ -156,8 +156,8 @@ namespace Askstatus.Application.Tests
             // Arrange
             Mock<IIdentityService> mock = new Mock<IIdentityService>();
             mock.Setup(x => x.GetApplicationClaims()).ReturnsAsync(Result.Fail("Not authorized"));
-            GetApplicationClaimsCommandHandler getApplicationClaimsCommandHandler = new GetApplicationClaimsCommandHandler(mock.Object);
-            GetApplicationClaimsCommand getApplicationClaimsCommand = new();
+            GetApplicationClaimsQueryHandler getApplicationClaimsCommandHandler = new GetApplicationClaimsQueryHandler(mock.Object);
+            GetApplicationClaimsQuery getApplicationClaimsCommand = new();
 
             // Act
             var result = await getApplicationClaimsCommandHandler.Handle(getApplicationClaimsCommand, CancellationToken.None);

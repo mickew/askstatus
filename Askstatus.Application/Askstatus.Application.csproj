@@ -9,10 +9,12 @@
   <ItemGroup>
     <PackageReference Include="FluentResults" />
     <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Askstatus.Web.API\Askstatus.Web.API.csproj" />
+    <ProjectReference Include="..\Askstatus.Common\Askstatus.Common.csproj" />
+    <ProjectReference Include="..\Askstatus.Domain\Askstatus.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

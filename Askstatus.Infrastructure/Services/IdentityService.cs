@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Askstatus.Application.Interfaces;
-using Askstatus.Application.Models.Identity;
+using Askstatus.Common.Identity;
 using Askstatus.Domain.Constants;
 using Askstatus.Infrastructure.Identity;
 using FluentResults;
@@ -19,7 +19,7 @@ public sealed class IdentityService : IIdentityService
         _logger = logger;
     }
 
-    public Task<Result<IEnumerable<ApplicationClaimDto>>> GetApplicationClaims()
+    public Task<Result<IEnumerable<ApplicationClaimVM>>> GetApplicationClaims()
     {
         var claimsPrincipal = _signInManager.Context.User;
         if (claimsPrincipal.Identity is not null && claimsPrincipal.Identity.IsAuthenticated)
@@ -28,26 +28,26 @@ public sealed class IdentityService : IIdentityService
 
             var claims = identity.Claims.Where(c => c.Type == ClaimTypes.Role || c.Type == CustomClaimTypes.Permissions)
                 .Select(c =>
-                    new ApplicationClaimDto(c.Issuer, c.OriginalIssuer, c.Type, c.Value, c.ValueType));
+                    new ApplicationClaimVM(c.Issuer, c.OriginalIssuer, c.Type, c.Value, c.ValueType));
             return Task.FromResult(Result.Ok(claims));
         }
         _logger.LogWarning("Not authorized");
-        return Task.FromResult(Result.Fail<IEnumerable<ApplicationClaimDto>>("Not authorized"));
+        return Task.FromResult(Result.Fail<IEnumerable<ApplicationClaimVM>>("Not authorized"));
     }
 
-    public async Task<Result<UserInfoDto>> GetUserInfo()
+    public async Task<Result<UserInfoVM>> GetUserInfo()
     {
         var claimsPrincipal = _signInManager.Context.User;
         var user = await _signInManager.UserManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is not null && user is ApplicationUser)
         {
-            return Result.Ok(new UserInfoDto(user.Id, user.UserName!, user.Email!));
+            return Result.Ok(new UserInfoVM(user.Id, user.UserName!, user.Email!));
         }
         _logger.LogWarning("User not found");
-        return Result.Fail<UserInfoDto>("User not found");
+        return Result.Fail<UserInfoVM>("User not found");
     }
 
-    public async Task<Result> Login(LoginDto loginRequest)
+    public async Task<Result> Login(LoginRequest loginRequest)
     {
         _signInManager.AuthenticationScheme = IdentityConstants.ApplicationScheme;
         var result = await _signInManager.PasswordSignInAsync(loginRequest.UserName, loginRequest.Password, true, lockoutOnFailure: true).ConfigureAwait(false);

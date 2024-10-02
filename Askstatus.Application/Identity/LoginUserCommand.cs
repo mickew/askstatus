@@ -1,5 +1,5 @@
 ﻿using Askstatus.Application.Interfaces;
-using Askstatus.Application.Models.Identity;
+using Askstatus.Common.Identity;
 using FluentResults;
 using MediatR;
 
@@ -21,7 +21,7 @@ public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, 
 
     public async Task<Result> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var loginDto = new LoginDto(request.UserName!, request.Password!);
+        var loginDto = new LoginRequest(request.UserName!, request.Password!);
         var result = await _identityService.Login(loginDto);
         return result;
     }

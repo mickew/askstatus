@@ -1,13 +1,18 @@
-
+using Askstatus.Application;
+using Askstatus.Infrastructure;
 using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Askstatus.Web.API;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddInfrastructureServices();
+        builder.Services.AddApplicationServices();
+        //builder.Services.AddProblemDetails();
 
         // Add services to the container.
         // Add a CORS policy for the client
@@ -28,12 +33,18 @@ public class Program
 
         var app = builder.Build();
 
+        //app.UseStatusCodePages();
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        // Seed the database
+        await using var scope = app.Services.CreateAsyncScope();
+        await SeedData.InitializeAsync(scope.ServiceProvider);
+
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -43,11 +54,16 @@ public class Program
         // Activate the CORS policy
         app.UseCors("wasm");
 
+        // Enable authentication and authorization after CORS Middleware
+        // processing (UseCors) in case the Authorization Middleware tries
+        // to initiate a challenge before the CORS Middleware has a chance
+        // to set the appropriate headers.
+        app.UseAuthentication();
         app.UseAuthorization();
 
 
         app.MapControllers();
 
-        app.Run();
+        await app.RunAsync();
     }
 }

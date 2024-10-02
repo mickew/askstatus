@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Askstatus.Application.Interfaces;
-using Askstatus.Application.Models.Identity;
+using Askstatus.Common.Identity;
 using Askstatus.Domain.Constants;
 using Askstatus.Infrastructure.Identity;
 using Askstatus.Infrastructure.Services;
@@ -15,6 +15,12 @@ using Moq;
 namespace Askstatus.Infrastructure.Tests;
 public class IdentityTests
 {
+    //https://code-maze.com/aspnetcore-identity-testing-usermanager-rolemanager/
+    //https://stackoverflow.com/questions/76284791/how-can-i-mock-identityuser-in-order-that-signinmanager-issignedinuser-returns
+    //https://stackoverflow.com/questions/48189741/mocking-a-signinmanager
+    //https://gist.github.com/evan-boissonnot/119804bfd8be257dfcd980873dfd8a42
+
+
     [Fact]
     public async Task Login_Should_Return_Success()
     {
@@ -22,7 +28,7 @@ public class IdentityTests
         IIdentityService identityService = new IdentityService(new FakeSignInManager(), new Mock<ILogger<IdentityService>>().Object);
 
         //Act
-        var result = await identityService.Login(new LoginDto("admin", "admin"));
+        var result = await identityService.Login(new LoginRequest("admin", "admin"));
 
         //Assert
         result.IsSuccess.Should().BeTrue();
@@ -35,7 +41,7 @@ public class IdentityTests
         IIdentityService identityService = new IdentityService(new FakeSignInManager(false), new Mock<ILogger<IdentityService>>().Object);
 
         //Act
-        var result = await identityService.Login(new LoginDto("admin", "admin"));
+        var result = await identityService.Login(new LoginRequest("admin", "admin"));
 
         //Assert
         result.Errors.Should().NotBeEmpty();
@@ -102,10 +108,10 @@ public class IdentityTests
     public async Task GetApplicationClaims_Should_Return_Success()
     {
         // Arrange
-        var expected = new List<ApplicationClaimDto>
+        var expected = new List<ApplicationClaimVM>
             {
-                new ApplicationClaimDto("LOCAL AUTHORITY", "LOCAL AUTHORITY", "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Admin", "http://www.w3.org/2001/XMLSchema#string"),
-                new ApplicationClaimDto("LOCAL AUTHORITY", "LOCAL AUTHORITY", "permissions", "-1", "http://www.w3.org/2001/XMLSchema#string"),
+                new ApplicationClaimVM("LOCAL AUTHORITY", "LOCAL AUTHORITY", "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Admin", "http://www.w3.org/2001/XMLSchema#string"),
+                new ApplicationClaimVM("LOCAL AUTHORITY", "LOCAL AUTHORITY", "permissions", "-1", "http://www.w3.org/2001/XMLSchema#string"),
             };
         IIdentityService identityService = new IdentityService(new FakeSignInManager(), new Mock<ILogger<IdentityService>>().Object);
 
