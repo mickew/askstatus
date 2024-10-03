@@ -34,7 +34,6 @@ public class Program
 
         try
         {
-            Log.ForContext<Program>().Information("Starting web host");
             var applyDbMigrationWithDataSeedFromProgramArguments = args.Any(x => x == SeedArgs);
             if (applyDbMigrationWithDataSeedFromProgramArguments)
             {
@@ -51,6 +50,9 @@ public class Program
                 }
                 return 0;
             }
+
+            Log.ForContext<Program>().Information("Starting web host");
+
             WebApplicationBuilder builder = CreateBuilder(args);
             WebApplication app = CreateWebApp(builder);
 
@@ -150,9 +152,13 @@ public class Program
             sqliteBuilder.DataSource = Path.Combine(Directory.GetCurrentDirectory(), sqliteBuilder.DataSource);
         }
         var directory = Path.GetDirectoryName(sqliteBuilder.DataSource);
+        Log.ForContext<Program>().Information("Databese path {path}", directory);
+
         if (!Directory.Exists(directory))
         {
+            Log.ForContext<Program>().Information("Databese path {path} does not exist", directory);
             Directory.CreateDirectory(directory!);
+            Log.ForContext<Program>().Information("Databese path {path} created", directory);
         }
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationBaseDbContext>();

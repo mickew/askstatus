@@ -29,6 +29,10 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    "Run EF Migrations": {
+      "commandName": "Project",
+      "commandLineArgs": "--seed"
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
