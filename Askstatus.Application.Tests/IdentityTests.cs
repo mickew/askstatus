@@ -92,7 +92,7 @@ namespace Askstatus.Application.Tests
         {
             // Arrange
             Mock<IIdentityService> mock = new Mock<IIdentityService>();
-            mock.Setup(x => x.GetUserInfo()).ReturnsAsync(Result.Ok(new UserInfoVM("Id", "UseName", "Email")));
+            mock.Setup(x => x.GetUserInfo()).ReturnsAsync(Result.Ok(new UserInfoVM("Id", "UseName", "FirstName", "LastNeme", "Email")));
             GetUserInfoQueryHandler getUserInfoCommandHandler = new GetUserInfoQueryHandler(mock.Object);
             GetUserInfoQuery getUserInfoCommand = new();
 
@@ -103,6 +103,8 @@ namespace Askstatus.Application.Tests
             result.Value.Should().NotBeNull();
             result.Value.Id.Should().Be("Id");
             result.Value.UserName.Should().Be("UseName");
+            result.Value.FirstName.Should().Be("FirstName");
+            result.Value.LastName.Should().Be("LastNeme");
             result.Value.Email.Should().Be("Email");
             result.IsSuccess.Should().BeTrue();
         }

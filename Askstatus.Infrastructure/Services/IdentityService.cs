@@ -42,7 +42,7 @@ public sealed class IdentityService : IIdentityService
         var user = await _signInManager.UserManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is not null && user is ApplicationUser)
         {
-            var userInfo = new UserInfoVM(user.Id, user.UserName!, user.Email!);
+            var userInfo = new UserInfoVM(user.Id, user.UserName!, user.FirstName!, user.LastName!, user.Email!);
             _logger.LogInformation("User with info {UserInfo} found", userInfo);
             return Result.Ok(userInfo);
         }
