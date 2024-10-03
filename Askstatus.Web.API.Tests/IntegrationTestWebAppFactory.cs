@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Askstatus.Web.API.Tests;
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
@@ -15,19 +16,16 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public const string DefaultPassword = "Password123!";
 
-    private ApplicationDbContext? _context;
+    //private ApplicationDbContext? _context;
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
-        _context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase("TestDb")
-            .Options);
-        await SeedDataAsync();
+        return Task.CompletedTask;
     }
 
     public new Task DisposeAsync()
     {
-        return _context!.DisposeAsync().AsTask();
+        return Task.CompletedTask;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -39,7 +37,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             // Remove the existing service registration for the DbContext
             var descriptor = services.SingleOrDefault(
                 d => d.ServiceType ==
-                    typeof(DbContextOptions<ApplicationDbContext>));
+                    typeof(DbContextOptions<ApplicationBaseDbContext>));
 
             if (descriptor != null)
             {
@@ -47,21 +45,23 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             }
 
             // Add a database context using an in-memory database for testing.
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<ApplicationBaseDbContext>(options =>
             {
                 options.UseInMemoryDatabase("TestDb");
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
-                //For debugging only: options.EnableDetailedErrors(true);
-                //For debugging only: options.EnableSensitiveDataLogging(true);
             });
+            using (var scope = services.BuildServiceProvider().CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationBaseDbContext>();
+                SeedData(db);
+            };
         });
     }
 
-    private async Task SeedDataAsync()
+    private void SeedData(ApplicationBaseDbContext context)
     {
-        await _context!.Database.EnsureCreatedAsync();
-        if (_context.Users.Any())
+        if (context.Users.Any())
         {
             return;
         }
@@ -72,9 +72,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             Permissions = Permissions.All
         };
 
-        if (!await _context.Roles.AnyAsync())
+        if (!context.Roles.Any())
         {
-            await _context.Roles.AddAsync(adminRole);
+            context.Roles.Add(adminRole);
         }
 
         // Create default admin user
@@ -85,15 +85,17 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             Email = "admin@localhost.local",
             NormalizedUserName = adminUserName.ToUpper(),
             NormalizedEmail = "admin@localhost.local".ToUpper(),
+            FirstName = "Admin",
+            LastName = "User"
         };
         PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
         var pw = passwordHasher.HashPassword(adminUser, DefaultPassword);
         adminUser.PasswordHash = pw;
-        if (!await _context.Users.AnyAsync())
+        if (!context.Users.Any())
         {
-            await _context.Users.AddAsync(adminUser);
-            await _context.AddAsync(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
+            context.Users.Add(adminUser);
+            context.Add(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
         }
-        await _context.SaveChangesAsync();
+        context.SaveChanges();
     }
 }

@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Askstatus.Domain.Authorization;
-using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Askstatus.Infrastructure;
-public class SeedData
+namespace Askstatus.Infrastructure.Data;
+
+public sealed class DbInitializer
 {
+    private readonly ApplicationBaseDbContext _context;
+
     private const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
 
     private const string DefaultPassword = "Password123!";
 
-    public static async Task InitializeAsync(IServiceProvider serviceProvider)
+    public DbInitializer(ApplicationBaseDbContext context)
     {
-        using var context = new ApplicationBaseDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationBaseDbContext>>());
+        _context = context;
+    }
 
-        if (context.Users.Any())
-        {
-            return;
-        }
+    public async Task SeedAsync()
+    {
+        _context.Database.Migrate();
 
         ApplicationRole adminRole = new()
         {
@@ -34,11 +30,10 @@ public class SeedData
             Permissions = Permissions.All
         };
 
-        if (!await context.Roles.AnyAsync())
+        if (!await _context.Roles.AnyAsync())
         {
-            await context.Roles.AddAsync(adminRole);
+            await _context.Roles.AddAsync(adminRole);
         }
-
         // Create default admin user
         var adminUserName = DefaultAdminUserName;
         var adminUser = new ApplicationUser()
@@ -53,11 +48,11 @@ public class SeedData
         PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
         var pw = passwordHasher.HashPassword(adminUser, DefaultPassword);
         adminUser.PasswordHash = pw;
-        if (!await context.Users.AnyAsync())
+        if (!await _context.Users.AnyAsync())
         {
-            await context.Users.AddAsync(adminUser);
-            await context.AddAsync(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
+            await _context.Users.AddAsync(adminUser);
+            await _context.AddAsync(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
         }
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }

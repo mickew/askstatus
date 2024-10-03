@@ -10,12 +10,14 @@ public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
 {
     private readonly IIdentityApi _identityApi;
     private readonly HttpClient _client;
+    private readonly IntegrationTestWebAppFactory _factory;
 
     public IdentityTests(IntegrationTestWebAppFactory factory)
     {
         _client = factory.CreateClient();
         var askstatusApiService = new AskstatusApiService(_client);
         _identityApi = askstatusApiService.IdentityApi;
+        _factory = factory;
     }
 
     [Fact]
