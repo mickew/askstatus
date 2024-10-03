@@ -4,12 +4,15 @@ using Askstatus.Infrastructure.Data;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Askstatus.Web.API;
 
 public class Program
 {
     private const string SeedArgs = "--seed";
+    private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] {Message}{NewLine}{Exception}";
+    //private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] CLient IP: {ClientIp} {Message}{NewLine}{Exception}";
 
     public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
       .SetBasePath(Directory.GetCurrentDirectory())
@@ -22,24 +25,28 @@ public class Program
     public static async Task<int> Main(string[] args)
     {
         int res = 0;
-        // create logger
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(Configuration)
+            .Enrich.FromLogContext()
+            //.Enrich.WithClientIp()
+            .WriteTo.Console(outputTemplate: SerilogOutputTemplate)
+            .CreateBootstrapLogger();
 
         try
         {
-            //Log.Information("Starting web host");
+            Log.ForContext<Program>().Information("Starting web host");
             var applyDbMigrationWithDataSeedFromProgramArguments = args.Any(x => x == SeedArgs);
             if (applyDbMigrationWithDataSeedFromProgramArguments)
             {
                 try
                 {
-                    //Log.Information("Migrating and Seeding data");
+                    Log.ForContext<Program>().Information("Migrating and Seeding data");
                     await SeedData();
-                    //Log.Information("Migrating and Seeding data done");
+                    Log.ForContext<Program>().Information("Migrating and Seeding data done");
                 }
-                catch (Exception)
-                //catch (Exception ex)
+                catch (Exception ex)
                 {
-                    //Log.Error(ex, "An error occurred while migrating or initializing the database.");
+                    Log.ForContext<Program>().Error(ex, "An error occurred while migrating or initializing the database.");
                     return 1;
                 }
                 return 0;
@@ -47,17 +54,22 @@ public class Program
             WebApplicationBuilder builder = CreateBuilder(args);
             WebApplication app = CreateWebApp(builder);
 
+            //using var scope = app.Services.CreateScope();
+
+            //var services = scope.ServiceProvider;
+            //var addressService = services.GetRequiredService<IApplicationHostAddressService>();
+            //var ipAddress = addressService.IpAddress;
+            //Log.Information("Application host address: {ipAddress}", ipAddress);
             await app.RunAsync();
         }
-        catch (Exception)
-        //catch (Exception ex)
+        catch (Exception ex)
         {
-            //Log.Fatal(ex, "Host terminated unexpectedly");
+            Log.Fatal(ex, "Host terminated unexpectedly");
             res = 1;
         }
         finally
         {
-            //Log.CloseAndFlush();
+            Log.CloseAndFlush();
         }
 
         return res;
@@ -66,6 +78,16 @@ public class Program
     private static WebApplicationBuilder CreateBuilder(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddSerilog((services, configuration) =>
+        {
+            configuration
+                .ReadFrom.Configuration(builder.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext()
+                //.Enrich.WithClientIp()
+                .WriteTo.Console(outputTemplate: SerilogOutputTemplate)
+;
+        });
 
         builder.Services.AddInfrastructureServices(builder.Environment, builder.Configuration.GetConnectionString("DefaultConnection")!);
         builder.Services.AddApplicationServices();
