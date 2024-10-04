@@ -32,6 +32,7 @@
     "Run EF Migrations": {
       "commandName": "Project",
       "commandLineArgs": "--seed"
+      //"commandLineArgs": "SeedPassword=\"Password123\" --seed"
     },
     "IIS Express": {
       "commandName": "IISExpress",

@@ -17,13 +17,28 @@ public class Program
     private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] {Message}{NewLine}{Exception}";
     //private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] CLient IP: {ClientIp} {Message}{NewLine}{Exception}";
 
-    public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-      .SetBasePath(Directory.GetCurrentDirectory())
-      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-      .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-      .AddEnvironmentVariables()
-      .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
-      .Build();
+    //public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+    //  .SetBasePath(Directory.GetCurrentDirectory())
+    //  .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    //  .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+    //  .AddEnvironmentVariables()
+    //  .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
+    //  .AddCommandLine(args)
+    //  .Build();
+
+    private static IConfiguration GetConfiguration(string[] args)
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+            .AddEnvironmentVariables()
+            .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
+            .AddCommandLine(args)
+            .Build();
+        return configuration;
+    }
+
 
     public static async Task<int> Main(string[] args)
     {
@@ -31,7 +46,7 @@ public class Program
         if (!IsIntegrationTestRun)
         {
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
+                .ReadFrom.Configuration(GetConfiguration(args))
                 .Enrich.FromLogContext()
                 //.Enrich.WithClientIp()
                 .WriteTo.Console(outputTemplate: SerilogOutputTemplate)
@@ -45,7 +60,7 @@ public class Program
                 try
                 {
                     Log.ForContext<Program>().Information("Migrating and Seeding data");
-                    await SeedData();
+                    await SeedData(args);
                     Log.ForContext<Program>().Information("Migrating and Seeding data done");
                 }
                 catch (Exception ex)
@@ -149,9 +164,11 @@ public class Program
         return app;
     }
 
-    private static async Task SeedData()
+    private static async Task SeedData(string[] args)
     {
-        var sqliteBuilder = new SqliteConnectionStringBuilder(Configuration.GetConnectionString("DefaultConnection"));
+        var configuration = GetConfiguration(args);
+        var password = configuration["SeedPassword"];
+        var sqliteBuilder = new SqliteConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"));
         if (!IsFullPath(sqliteBuilder.DataSource))
         {
             sqliteBuilder.DataSource = Path.Combine(Directory.GetCurrentDirectory(), sqliteBuilder.DataSource);
@@ -167,12 +184,11 @@ public class Program
         }
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationBaseDbContext>();
-        var s = Configuration.GetConnectionString("DefaultConnection");
-        optionsBuilder.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+        optionsBuilder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
 
         await using var dbContext = new ApplicationBaseDbContext(optionsBuilder.Options);
         var initializer = new DbInitializer(dbContext);
-        await initializer.SeedAsync();
+        await initializer.SeedAsync(password!);
     }
 
     private static bool IsFullPath(string path)
