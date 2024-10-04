@@ -1,4 +1,5 @@
 using Askstatus.Application;
+using Askstatus.Application.Interfaces;
 using Askstatus.Infrastructure;
 using Askstatus.Infrastructure.Data;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -10,6 +11,8 @@ namespace Askstatus.Web.API;
 
 public class Program
 {
+    public static bool IsIntegrationTestRun = false;
+
     private const string SeedArgs = "--seed";
     private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] {Message}{NewLine}{Exception}";
     //private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] CLient IP: {ClientIp} {Message}{NewLine}{Exception}";
@@ -25,13 +28,15 @@ public class Program
     public static async Task<int> Main(string[] args)
     {
         int res = 0;
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(Configuration)
-            .Enrich.FromLogContext()
-            //.Enrich.WithClientIp()
-            .WriteTo.Console(outputTemplate: SerilogOutputTemplate)
-            .CreateBootstrapLogger();
-
+        if (!IsIntegrationTestRun)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .Enrich.FromLogContext()
+                //.Enrich.WithClientIp()
+                .WriteTo.Console(outputTemplate: SerilogOutputTemplate)
+                .CreateBootstrapLogger();
+        }
         try
         {
             var applyDbMigrationWithDataSeedFromProgramArguments = args.Any(x => x == SeedArgs);
@@ -56,12 +61,12 @@ public class Program
             WebApplicationBuilder builder = CreateBuilder(args);
             WebApplication app = CreateWebApp(builder);
 
-            //using var scope = app.Services.CreateScope();
+            using var scope = app.Services.CreateScope();
 
-            //var services = scope.ServiceProvider;
-            //var addressService = services.GetRequiredService<IApplicationHostAddressService>();
-            //var ipAddress = addressService.IpAddress;
-            //Log.Information("Application host address: {ipAddress}", ipAddress);
+            var services = scope.ServiceProvider;
+            var addressService = services.GetRequiredService<IApplicationHostAddressService>();
+            var ipAddress = addressService.IpAddress;
+            Log.ForContext<Program>().Information("Application host address: {ipAddress}", ipAddress);
             await app.RunAsync();
         }
         catch (Exception ex)
@@ -71,7 +76,7 @@ public class Program
         }
         finally
         {
-            Log.CloseAndFlush();
+            //Log.CloseAndFlush();
         }
 
         return res;

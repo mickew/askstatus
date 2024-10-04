@@ -20,6 +20,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public Task InitializeAsync()
     {
+        Program.IsIntegrationTestRun = true;
         return Task.CompletedTask;
     }
 

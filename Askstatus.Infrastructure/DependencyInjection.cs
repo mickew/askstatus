@@ -39,6 +39,10 @@ public static class DependencyInjection
             .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
             .AddApiEndpoints();
         services.AddScoped<IIdentityService, IdentityService>();
+
+        ///////////////////////////////////////////////
+        services.AddSingleton<IApplicationHostAddressService, ApplicationHostAddressService>();
+
         return services;
     }
 }
