@@ -7,6 +7,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Enrichers.ClientInfo" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="System.Text.Encodings.Web" />
   </ItemGroup>

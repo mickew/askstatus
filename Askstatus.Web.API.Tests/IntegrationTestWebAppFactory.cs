@@ -14,12 +14,13 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     private const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
 
-    public const string DefaultPassword = "Password123!";
+    public const string DefaultPassword = "admin";
 
     //private ApplicationDbContext? _context;
 
     public Task InitializeAsync()
     {
+        Program.IsIntegrationTestRun = true;
         return Task.CompletedTask;
     }
 

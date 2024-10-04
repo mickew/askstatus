@@ -19,7 +19,7 @@ public sealed class DbInitializer
         _context = context;
     }
 
-    public async Task SeedAsync()
+    public async Task SeedAsync(string seedPassword)
     {
         _context.Database.Migrate();
 
@@ -52,6 +52,17 @@ public sealed class DbInitializer
         {
             await _context.Users.AddAsync(adminUser);
             await _context.AddAsync(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
+        }
+
+        if (!string.IsNullOrEmpty(seedPassword))
+        {
+            adminUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == adminUserName);
+            if (adminUser is not null) 
+            {
+                pw = passwordHasher.HashPassword(adminUser, seedPassword);
+                adminUser.PasswordHash = pw;
+                _context.Users.Update(adminUser);
+            }
         }
         await _context.SaveChangesAsync();
     }

@@ -29,6 +29,7 @@ public sealed class IdentityService : IIdentityService
             var claims = identity.Claims.Where(c => c.Type == ClaimTypes.Role || c.Type == CustomClaimTypes.Permissions)
                 .Select(c =>
                     new ApplicationClaimVM(c.Issuer, c.OriginalIssuer, c.Type, c.Value, c.ValueType));
+            _logger.LogInformation("Claims {Claims} found", claims);
             return Task.FromResult(Result.Ok(claims));
         }
         _logger.LogWarning("Not authorized");
@@ -41,7 +42,9 @@ public sealed class IdentityService : IIdentityService
         var user = await _signInManager.UserManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is not null && user is ApplicationUser)
         {
-            return Result.Ok(new UserInfoVM(user.Id, user.UserName!, user.Email!));
+            var userInfo = new UserInfoVM(user.Id, user.UserName!, user.FirstName!, user.LastName!, user.Email!);
+            _logger.LogInformation("User with info {UserInfo} found", userInfo);
+            return Result.Ok(userInfo);
         }
         _logger.LogWarning("User not found");
         return Result.Fail<UserInfoVM>("User not found");
@@ -53,15 +56,17 @@ public sealed class IdentityService : IIdentityService
         var result = await _signInManager.PasswordSignInAsync(loginRequest.UserName, loginRequest.Password, true, lockoutOnFailure: true).ConfigureAwait(false);
         if (result.Succeeded)
         {
+            _logger.LogInformation("User {User} logged in", loginRequest.UserName);
             return Result.Ok();
         }
-        _logger.LogWarning($"Login failed for user {loginRequest.UserName}");
+        _logger.LogWarning("Login failed for user {User}", loginRequest.UserName);
         return Result.Fail("Login failed");
     }
 
     public async Task<Result> Logout()
     {
         await _signInManager.SignOutAsync().ConfigureAwait(false);
+        _logger.LogInformation("User logged out");
         return Result.Ok();
     }
 }

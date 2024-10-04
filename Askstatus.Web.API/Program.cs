@@ -1,58 +1,92 @@
 using Askstatus.Application;
+using Askstatus.Application.Interfaces;
 using Askstatus.Infrastructure;
 using Askstatus.Infrastructure.Data;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Askstatus.Web.API;
 
 public class Program
 {
-    private const string SeedArgs = "--seed";
+    public static bool IsIntegrationTestRun = false;
 
-    public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-      .SetBasePath(Directory.GetCurrentDirectory())
-      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-      .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-      .AddEnvironmentVariables()
-      .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
-      .Build();
+    private const string SeedArgs = "--seed";
+    private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] {Message}{NewLine}{Exception}";
+    //private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] CLient IP: {ClientIp} {Message}{NewLine}{Exception}";
+
+    //public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+    //  .SetBasePath(Directory.GetCurrentDirectory())
+    //  .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    //  .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+    //  .AddEnvironmentVariables()
+    //  .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
+    //  .AddCommandLine(args)
+    //  .Build();
+
+    private static IConfiguration GetConfiguration(string[] args)
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+            .AddEnvironmentVariables()
+            .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
+            .AddCommandLine(args)
+            .Build();
+        return configuration;
+    }
+
 
     public static async Task<int> Main(string[] args)
     {
         int res = 0;
-        // create logger
-
+        if (!IsIntegrationTestRun)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(GetConfiguration(args))
+                .Enrich.FromLogContext()
+                //.Enrich.WithClientIp()
+                .WriteTo.Console(outputTemplate: SerilogOutputTemplate)
+                .CreateBootstrapLogger();
+        }
         try
         {
-            //Log.Information("Starting web host");
             var applyDbMigrationWithDataSeedFromProgramArguments = args.Any(x => x == SeedArgs);
             if (applyDbMigrationWithDataSeedFromProgramArguments)
             {
                 try
                 {
-                    //Log.Information("Migrating and Seeding data");
-                    await SeedData();
-                    //Log.Information("Migrating and Seeding data done");
+                    Log.ForContext<Program>().Information("Migrating and Seeding data");
+                    await SeedData(args);
+                    Log.ForContext<Program>().Information("Migrating and Seeding data done");
                 }
-                catch (Exception)
-                //catch (Exception ex)
+                catch (Exception ex)
                 {
-                    //Log.Error(ex, "An error occurred while migrating or initializing the database.");
+                    Log.ForContext<Program>().Error(ex, "An error occurred while migrating or initializing the database.");
                     return 1;
                 }
                 return 0;
             }
+
+            Log.ForContext<Program>().Information("Starting web host");
+
             WebApplicationBuilder builder = CreateBuilder(args);
             WebApplication app = CreateWebApp(builder);
 
+            using var scope = app.Services.CreateScope();
+
+            var services = scope.ServiceProvider;
+            var addressService = services.GetRequiredService<IApplicationHostAddressService>();
+            var ipAddress = addressService.IpAddress;
+            Log.ForContext<Program>().Information("Application host address: {ipAddress}", ipAddress);
             await app.RunAsync();
         }
-        catch (Exception)
-        //catch (Exception ex)
+        catch (Exception ex)
         {
-            //Log.Fatal(ex, "Host terminated unexpectedly");
+            Log.Fatal(ex, "Host terminated unexpectedly");
             res = 1;
         }
         finally
@@ -66,6 +100,16 @@ public class Program
     private static WebApplicationBuilder CreateBuilder(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddSerilog((services, configuration) =>
+        {
+            configuration
+                .ReadFrom.Configuration(builder.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext()
+                //.Enrich.WithClientIp()
+                .WriteTo.Console(outputTemplate: SerilogOutputTemplate)
+;
+        });
 
         builder.Services.AddInfrastructureServices(builder.Environment, builder.Configuration.GetConnectionString("DefaultConnection")!);
         builder.Services.AddApplicationServices();
@@ -120,26 +164,31 @@ public class Program
         return app;
     }
 
-    private static async Task SeedData()
+    private static async Task SeedData(string[] args)
     {
-        var sqliteBuilder = new SqliteConnectionStringBuilder(Configuration.GetConnectionString("DefaultConnection"));
+        var configuration = GetConfiguration(args);
+        var password = configuration["SeedPassword"];
+        var sqliteBuilder = new SqliteConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"));
         if (!IsFullPath(sqliteBuilder.DataSource))
         {
             sqliteBuilder.DataSource = Path.Combine(Directory.GetCurrentDirectory(), sqliteBuilder.DataSource);
         }
         var directory = Path.GetDirectoryName(sqliteBuilder.DataSource);
+        Log.ForContext<Program>().Information("Databese path {path}", directory);
+
         if (!Directory.Exists(directory))
         {
+            Log.ForContext<Program>().Information("Databese path {path} does not exist", directory);
             Directory.CreateDirectory(directory!);
+            Log.ForContext<Program>().Information("Databese path {path} created", directory);
         }
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationBaseDbContext>();
-        var s = Configuration.GetConnectionString("DefaultConnection");
-        optionsBuilder.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+        optionsBuilder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
 
         await using var dbContext = new ApplicationBaseDbContext(optionsBuilder.Options);
         var initializer = new DbInitializer(dbContext);
-        await initializer.SeedAsync();
+        await initializer.SeedAsync(password!);
     }
 
     private static bool IsFullPath(string path)

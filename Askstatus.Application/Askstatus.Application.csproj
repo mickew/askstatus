@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Askstatus.Domain\Askstatus.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Identity\Commands\" />
-  </ItemGroup>
-
 </Project>
