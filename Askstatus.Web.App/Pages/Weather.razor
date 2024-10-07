@@ -1,5 +1,5 @@
 ﻿@page "/weather"
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 
 <h1>Weather</h1>
 
@@ -9,7 +9,6 @@
 }
 else
 {
-    <p><a href="/">Back to home Page</a>.</p>
     <table class="table">
         <thead>
             <tr>
@@ -38,8 +37,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Http.BaseAddress = new Uri("https://localhost:7298");
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("api/WeatherForecast");
+        using var httpClient = HttpClientFactory.CreateClient("AskStatus.Web.API");
+        forecasts = await httpClient.GetFromJsonAsync<WeatherForecast[]>("api/WeatherForecast");
     }
 
 
