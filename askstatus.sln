@@ -37,13 +37,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Askstatus.Infrastructure", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Askstatus.Infrastructure.Tests", "Askstatus.Infrastructure.Tests\Askstatus.Infrastructure.Tests.csproj", "{54BB8378-395E-413D-BF06-65957135DC23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Askstatus.Common", "Askstatus.Common\Askstatus.Common.csproj", "{2531EC9C-17C2-43F8-A0D2-F91C7E7BDACA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Askstatus.Common", "Askstatus.Common\Askstatus.Common.csproj", "{2531EC9C-17C2-43F8-A0D2-F91C7E7BDACA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Askstatus.Web.API.Tests", "Askstatus.Web.API.Tests\Askstatus.Web.API.Tests.csproj", "{D274652C-CF82-4D14-96E9-6A902383F64F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Askstatus.Web.API.Tests", "Askstatus.Web.API.Tests\Askstatus.Web.API.Tests.csproj", "{D274652C-CF82-4D14-96E9-6A902383F64F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sdk", "Sdk", "{BCAF3E2C-6AF4-4B41-AD14-6A672976573B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Askstatus.Sdk", "Askstatus.Sdk\Askstatus.Sdk.csproj", "{5E33437F-69B1-4C43-B71D-A2269FAEE57E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Askstatus.Sdk", "Askstatus.Sdk\Askstatus.Sdk.csproj", "{5E33437F-69B1-4C43-B71D-A2269FAEE57E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
