@@ -28,4 +28,12 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal --logger "junit;LogFileName={assembly}.results.xml"
+      run: dotnet test --no-build --verbosity normal --logger "junit;LogFileName=../../TestResults/{assembly}.results.xml"
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: test-results
+        path: "TestResults/*.xml"
+        reporter: java-junit
