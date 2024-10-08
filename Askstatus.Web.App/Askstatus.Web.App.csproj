@@ -19,4 +19,9 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Askstatus.Application\Askstatus.Application.csproj" />
+    <ProjectReference Include="..\Askstatus.Sdk\Askstatus.Sdk.csproj" />
+  </ItemGroup>
+
 </Project>

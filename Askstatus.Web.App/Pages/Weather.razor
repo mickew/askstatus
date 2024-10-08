@@ -1,36 +1,18 @@
 ﻿@page "/weather"
+@attribute [Authorize(Permissions.ViewRoles)]
 @inject IHttpClientFactory HttpClientFactory
 
-<h1>Weather</h1>
+<PageTitle>Askstatus - Dashboard</PageTitle>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<MudDataGrid Items="@forecasts">
+    <Columns>
+        <PropertyColumn Property="x => x.Date" Title="Date" />
+        <PropertyColumn Property="x => x.TemperatureC" Title="(C))" />
+        <PropertyColumn Property="x => x.TemperatureF" Title="(F))" />
+        <PropertyColumn Property="x => x.Summary" Title="Summary" />
+    </Columns>
+</MudDataGrid>
+
 
 @code {
     private WeatherForecast[]? forecasts;

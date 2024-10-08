@@ -1,7 +1,9 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
-    <MudNavLink Href="/weather" Match="NavLinkMatch.Prefix">Weather</MudNavLink>
-@*     <MudNavGroup Title="Settings" Expanded="true">
+    <FlexibleAuthorizeView Permissions="@(Permissions.ViewRoles)">
+        <MudNavLink Href="/weather" Match="NavLinkMatch.Prefix">Weather</MudNavLink>
+    </FlexibleAuthorizeView>
+    @*     <MudNavGroup Title="Settings" Expanded="true">
         <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
         <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">Security</MudNavLink>
     </MudNavGroup>
