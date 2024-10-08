@@ -140,7 +140,6 @@ namespace Askstatus.Architecture.Tests
             var otherProjects = new[]
             {
                 WebAPINamespace,
-                SdkNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
                 InfrastructureTestsNamespace,
