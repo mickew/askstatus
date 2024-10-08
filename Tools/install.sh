@@ -18,13 +18,15 @@ else
    mkdir -p /usr/share/askstatus
    sudo chmod 777 /usr/share/askstatus
 
-   # /var/www/backend/Askstatus.Web.API --seed
+   sudo chmod +x /var/www/backend/Askstatus.Web.API
+   
+   /var/www/backend/Askstatus.Web.API --seed
 
-   # cp askstatusbackend.service /etc/systemd/system
-   # if [ ! -f /etc/systemd/system/askstatusbackend.service ]; then
-   #   whiptail --title "Installation aborted" --msgbox "There was a problem writing the askstatusbackend.service file" 8 78
-   #  exit
-   # fi
+   cp askstatusbackend.service /etc/systemd/system
+   if [ ! -f /etc/systemd/system/askstatusbackend.service ]; then
+     whiptail --title "Installation aborted" --msgbox "There was a problem writing the askstatusbackend.service file" 8 78
+    exit
+   fi
 
    # if [ ! -f /etc/nginx/sites-available/default.bak ]; then
    #   cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
@@ -37,8 +39,8 @@ else
    # fi
    # nginx -s reload
 
-   # systemctl enable /etc/systemd/system/askstatusbackend.service
-   # systemctl start /etc/systemd/system/askstatusbackend.service
+   systemctl enable /etc/systemd/system/askstatusbackend.service
+   systemctl start /etc/systemd/system/askstatusbackend.service
    whiptail --title "Installation complete" --msgbox "Askstatus System installation complete." 8 78
 
    #reboot

@@ -10,10 +10,10 @@ if [ ! $? = 0 ]; then
    exit 1
 else
 
-   # systemctl stop askstatusbackend.service
-   # systemctl disable /etc/systemd/askstatusbackend.service
+   systemctl stop askstatusbackend.service
+   systemctl disable /etc/systemd/askstatusbackend.service
 
-   # rm /etc/systemd/system/askstatusbackend.service
+   rm /etc/systemd/system/askstatusbackend.service
 
    rm -f -r /var/www/backend
    rm -f -r /var/www/frontend

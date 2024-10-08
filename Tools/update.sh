@@ -10,7 +10,7 @@ if [ ! $? = 0 ]; then
    exit 1
 else
 
-   # systemctl stop askstatusbackend.service
+   systemctl stop askstatusbackend.service
    sh ./getlatest.sh
 
    chmod +x /var/www/backend/Askstatus.Web.API
@@ -19,8 +19,8 @@ else
    mkdir -p /usr/share/askstatus
    sudo chmod 777 /usr/share/askstatus
 
-   # /var/www/backend/Askstatus.Web.API --seed
+   /var/www/backend/Askstatus.Web.API --seed
 
-   # systemctl start /etc/systemd/system/askstatusbackend.service
+   systemctl start /etc/systemd/system/askstatusbackend.service
    whiptail --title "Update complete" --msgbox "Askstatus System update complete." 8 78
 fi

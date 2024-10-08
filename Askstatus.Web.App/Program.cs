@@ -34,8 +34,8 @@ public class Program
         builder.Services.AddScoped(
             sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
 
-        builder.Services.AddHttpClient("AskStatus.Web.API", 
-            client => client.BaseAddress = new Uri("https://localhost:7298")).AddHttpMessageHandler<CookieHandler>();
+        builder.Services.AddHttpClient("AskStatus.Web.API",
+            client => client.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001")).AddHttpMessageHandler<CookieHandler>();
 
         builder.Services.AddTransient<AskstatusApiService>(o =>
         {
