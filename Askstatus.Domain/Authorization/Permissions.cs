@@ -4,7 +4,7 @@
 public enum Permissions
 {
     None = 0,
-    //ViewRoles = 1,
+    ViewRoles = 1,
     //ManageRoles = 2,
     //ViewUsers = 4,
     //ManageUsers = 8,

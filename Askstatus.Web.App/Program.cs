@@ -1,3 +1,8 @@
+using Askstatus.Application.Authorization;
+using Askstatus.Sdk;
+using Askstatus.Web.App.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -10,13 +15,36 @@ public class Program
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
+
+        // register the cookie handler
+        builder.Services.AddTransient<CookieHandler>();
+
+        // set up authorization
+        builder.Services.AddAuthorizationCore();
+
         builder.Services.AddMudServices();
 
-        //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        // register the custom state provider
+        builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
 
-        builder.Services.AddHttpClient("AskStatus.Web.API", client => client.BaseAddress = new Uri("https://localhost:7298"));
-        //.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        builder.Services.AddSingleton<IAuthorizationPolicyProvider, FlexibleAuthorizationPolicyProvider>();
 
+        // register the account management interface
+        builder.Services.AddScoped(
+            sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
+
+        builder.Services.AddHttpClient("AskStatus.Web.API", 
+            client => client.BaseAddress = new Uri("https://localhost:7298")).AddHttpMessageHandler<CookieHandler>();
+
+        builder.Services.AddTransient<AskstatusApiService>(o =>
+        {
+            if (o.GetRequiredService<IHttpClientFactory>().CreateClient("AskStatus.Web.API") is HttpClient client)
+            {
+                return new AskstatusApiService(client);
+            }
+            return null!;
+        });
         //// Supply HttpClient instances that include access tokens when making requests to the server project
         //builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Askstatus.Web.API"));
 

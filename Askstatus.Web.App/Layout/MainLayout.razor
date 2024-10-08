@@ -2,12 +2,14 @@
 
 <MudThemeProvider />
 <MudPopoverProvider />
-<MudDialogProvider />
+<MudDialogProvider BackdropClick="false" />
 <MudSnackbarProvider />
 
 <MudLayout>
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudSpacer />
+        <LoginDisplay />
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
         <MudDrawerHeader>

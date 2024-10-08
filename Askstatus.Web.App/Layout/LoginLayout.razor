@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider />
+<MudDialogProvider BackdropClick="false" />
+
+<MudLayout>
+@*     <MudAppBar>
+        <MudGrid Justify="Justify.Center" Style="margin-top:0; margin-left: 0;">
+                <MudText Align="Align.Center" Typo="Typo.h4">Askstatus</MudText>
+        </MudGrid>
+    </MudAppBar>
+ *@    <MudMainContent>
+        <div id="loginbg"/>
+        <div class="content" style="padding-bottom:60px">
+            @Body
+        </div>
+    </MudMainContent>
+    <MudAppBar Elevation="1" Style="top: auto; bottom: 0" Dense="true" Fixed="true">
+        <MudGrid Justify="Justify.Center" Style="margin-top:0; margin-left: 0;">
+            <MudText>© 2024 - <a style="color: white" href="http://promarmic.se" rel="nofollow" target="_blank">Askstatus</a> Version @Version @AspDotnetVersion</MudText>
+        </MudGrid>
+    </MudAppBar>
+</MudLayout>
+
+@code {
+     MudTheme _myCustomTheme = new MudTheme()
+     {
+         PaletteLight = new PaletteLight()
+         {
+            // TextPrimary = "#ffffff",
+
+             // Primary = Colors.Blue.Default,
+             // Secondary = Colors.Green.Accent4,
+             // AppbarBackground = Colors.Red.Default,
+         },
+         PaletteDark = new PaletteDark()
+         {
+             // Primary = Colors.Blue.Lighten1
+         },
+
+         LayoutProperties = new LayoutProperties()
+         {
+         }
+     };
+}

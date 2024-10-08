@@ -11,6 +11,8 @@ public sealed class DbInitializer
 
     private const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
+    private const string UserRole = "User";
+    public const string DefaultUserUserName = "user";
 
     private const string DefaultPassword = "Password123!";
 
@@ -30,9 +32,17 @@ public sealed class DbInitializer
             Permissions = Permissions.All
         };
 
+        ApplicationRole userRole = new()
+        {
+            Name = UserRole,
+            NormalizedName = UserRole.ToUpper(),
+            Permissions = Permissions.ViewRoles
+        };
+
         if (!await _context.Roles.AnyAsync())
         {
             await _context.Roles.AddAsync(adminRole);
+            await _context.Roles.AddAsync(userRole);
         }
         // Create default admin user
         var adminUserName = DefaultAdminUserName;
@@ -48,10 +58,28 @@ public sealed class DbInitializer
         PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
         var pw = passwordHasher.HashPassword(adminUser, DefaultPassword);
         adminUser.PasswordHash = pw;
+
+        // Create default user user
+        var userUserName = DefaultUserUserName;
+        var userUser = new ApplicationUser()
+        {
+            UserName = userUserName,
+            Email = "user@localhost.local",
+            NormalizedUserName = userUserName.ToUpper(),
+            NormalizedEmail = "user@localhost.local".ToUpper(),
+            FirstName = "User",
+            LastName = "User"
+        };
+        pw = passwordHasher.HashPassword(userUser, DefaultPassword);
+        userUser.PasswordHash = pw;
+
+
         if (!await _context.Users.AnyAsync())
         {
             await _context.Users.AddAsync(adminUser);
+            await _context.Users.AddAsync(userUser);
             await _context.AddAsync(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
+            await _context.AddAsync(new IdentityUserRole<string>() { RoleId = userRole.Id, UserId = userUser.Id });
         }
 
         if (!string.IsNullOrEmpty(seedPassword))

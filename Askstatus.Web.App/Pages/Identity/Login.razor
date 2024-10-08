@@ -1,0 +1,56 @@
+﻿@page "/login"
+@layout LoginLayout
+
+<PageTitle>Login</PageTitle>
+
+<AuthorizeView >
+    <Authorized>
+        <div style="height: 75vh; padding-top: 25vh">
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="12" sm="3">
+                    <MudCard style="background-color: transparent; box-shadow: none;">
+                        <MudCardHeader Style="z-index: 1">
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">Log in</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent Style="z-index: 1">
+                            <MudText>You're logged in as @context.User.Identity?.Name.</MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Href="/" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Goto home</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            </MudGrid>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div style="height: 75vh; padding-top: 25vh">
+            <EditForm Model="@_model" OnValidSubmit="OnValidSubmit" Context="loginform">
+                <DataAnnotationsValidator />
+                <MudGrid Justify="Justify.Center">
+                    <MudItem xs="12" sm="3">
+                        <MudCard style="background-color: transparent; box-shadow: none;">
+                            <MudCardHeader Style="z-index: 1">
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.h6">Log in</MudText>
+                                    <ValidationSummary />
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudTextField Label="User name" Variant="Variant.Outlined"
+                                              @bind-Value="_model.Username" For="@(() => _model.Username)" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Person" />
+                                <MudTextField Label="Password" Class="mt-3" Variant="Variant.Outlined"
+                                              @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Password" />
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Log in</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
