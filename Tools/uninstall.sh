@@ -11,7 +11,7 @@ if [ ! $? = 0 ]; then
 else
 
    systemctl stop askstatusbackend.service
-   systemctl disable /etc/systemd/askstatusbackend.service
+   systemctl disable askstatusbackend.service
 
    rm /etc/systemd/system/askstatusbackend.service
 

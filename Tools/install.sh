@@ -9,6 +9,7 @@ fi
 if [ ! $? = 0 ]; then
    exit 1
 else
+   BASEDIR=${PWD}
 
    sh ./getlatest.sh
 
@@ -20,7 +21,9 @@ else
 
    sudo chmod +x /var/www/backend/Askstatus.Web.API
    
+   cd /var/www/backend/
    /var/www/backend/Askstatus.Web.API --seed
+   cd ${BASEDIR}
 
    cp askstatusbackend.service /etc/systemd/system
    if [ ! -f /etc/systemd/system/askstatusbackend.service ]; then
@@ -39,8 +42,8 @@ else
    # fi
    # nginx -s reload
 
-   systemctl enable /etc/systemd/system/askstatusbackend.service
-   systemctl start /etc/systemd/system/askstatusbackend.service
+   systemctl enable askstatusbackend.service
+   systemctl start askstatusbackend.service
    whiptail --title "Installation complete" --msgbox "Askstatus System installation complete." 8 78
 
    #reboot

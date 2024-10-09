@@ -9,7 +9,7 @@ fi
 if [ ! $? = 0 ]; then
    exit 1
 else
-
+   BASEDIR=${PWD}
    systemctl stop askstatusbackend.service
    sh ./getlatest.sh
 
@@ -18,9 +18,11 @@ else
    # create database folder
    mkdir -p /usr/share/askstatus
    sudo chmod 777 /usr/share/askstatus
-
+   
+   cd /var/www/backend/
    /var/www/backend/Askstatus.Web.API --seed
+   cd ${BASEDIR}
 
-   systemctl start /etc/systemd/system/askstatusbackend.service
+   systemctl start askstatusbackend.service
    whiptail --title "Update complete" --msgbox "Askstatus System update complete." 8 78
 fi
