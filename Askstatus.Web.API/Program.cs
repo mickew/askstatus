@@ -17,15 +17,6 @@ public class Program
     private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] {Message}{NewLine}{Exception}";
     //private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] CLient IP: {ClientIp} {Message}{NewLine}{Exception}";
 
-    //public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-    //  .SetBasePath(Directory.GetCurrentDirectory())
-    //  .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    //  .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-    //  .AddEnvironmentVariables()
-    //  .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
-    //  .AddCommandLine(args)
-    //  .Build();
-
     private static IConfiguration GetConfiguration(string[] args)
     {
         var configuration = new ConfigurationBuilder()

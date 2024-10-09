@@ -8,3 +8,12 @@
 Add-Migration InitialCreate -OutputDir Data\Migrations
 
 Update-Database
+
+### linux commands
+
+```bash
+sudo systemctl status askstatusbackend.service
+sudo systemctl stop askstatusbackend.service
+sudo systemctl stop askstatusbackend.service
+sudo journalctl -t askstatus-control --since today
+```
