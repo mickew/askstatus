@@ -38,9 +38,10 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationBaseDbContext>()
             .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
             .AddApiEndpoints();
-        services.AddScoped<IIdentityService, IdentityService>();
 
         ///////////////////////////////////////////////
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddSingleton<IApplicationHostAddressService, ApplicationHostAddressService>();
 
         return services;
