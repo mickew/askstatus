@@ -1,7 +1,7 @@
 ﻿using Askstatus.Application.Interfaces;
 using Askstatus.Application.Users;
-using Askstatus.Common.Users;
 using Askstatus.Common.Authorization;
+using Askstatus.Common.Users;
 using FluentAssertions;
 using FluentResults;
 using Moq;

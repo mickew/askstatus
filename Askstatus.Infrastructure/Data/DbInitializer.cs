@@ -85,7 +85,7 @@ public sealed class DbInitializer
         if (!string.IsNullOrEmpty(seedPassword))
         {
             adminUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == adminUserName);
-            if (adminUser is not null) 
+            if (adminUser is not null)
             {
                 pw = passwordHasher.HashPassword(adminUser, seedPassword);
                 adminUser.PasswordHash = pw;
