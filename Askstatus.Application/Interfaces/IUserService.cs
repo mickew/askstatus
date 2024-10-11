@@ -21,4 +21,12 @@ public interface IUserService
     Task<Result<AccessControlVm>> GetAccessControlConfiguration();
 
     Task<Result> UpdateAccessControlConfiguration(RoleRequest roleRequest);
+
+    Task<Result<IEnumerable<RoleDto>>> GetRoles();
+
+    Task<Result<RoleDto>> CreateRole(RoleRequest roleRequest);
+
+    Task<Result> UpdateRole(RoleRequest roleRequest);
+
+    Task<Result> DeleteRole(string Id);
 }

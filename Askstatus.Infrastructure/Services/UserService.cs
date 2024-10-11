@@ -44,6 +44,26 @@ public class UserService : IUserService
         return Result.Fail("Could not change password");
     }
 
+    public async Task<Result<RoleDto>> CreateRole(RoleRequest roleRequest)
+    {
+        var role = new ApplicationRole
+        {
+            Name = roleRequest.Name,
+            Permissions = roleRequest.Permission
+        };
+        var result = await _roleManager.CreateAsync(role);
+        if (result.Succeeded)
+        {
+            return Result.Ok(new RoleDto(role.Id, role.Name, role.Permissions));
+        }
+        _logger.LogWarning("Could not create role {Role}", roleRequest.Name);
+        foreach (var error in result.Errors)
+        {
+            _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
+        }
+        return Result.Fail<RoleDto>("Could not create role");
+    }
+
     public async Task<Result<UserVM>> CreateUser(UserRequest userRequest)
     {
         var user = new ApplicationUser
@@ -64,6 +84,27 @@ public class UserService : IUserService
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
         return Result.Fail<UserVM>("Culd not create user");
+    }
+
+    public async Task<Result> DeleteRole(string Id)
+    {
+        var role = await _roleManager.FindByIdAsync(Id);
+        if (role is null)
+        {
+            _logger.LogWarning("Role with Id {Id} not found", Id);
+            return Result.Fail("Role not found");
+        }
+        var result = await _roleManager.DeleteAsync(role);
+        if (result.Succeeded)
+        {
+            return Result.Ok();
+        }
+        _logger.LogWarning("Could not delete role {Role}", role.Name);
+        foreach (var error in result.Errors)
+        {
+            _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
+        }
+        return Result.Fail("Could not delete role");
     }
 
     public async Task<Result> DeleteUser(string Id)
@@ -99,7 +140,15 @@ public class UserService : IUserService
             .Select(r => new RoleDto(r.Id, r.Name ?? string.Empty, r.Permissions))
             .OrderBy(r => r.Name)
             .ToList();
-        return Result.Ok( new AccessControlVm(roleDtos));
+        return Result.Ok(new AccessControlVm(roleDtos));
+    }
+
+    public async Task<Result<IEnumerable<RoleDto>>> GetRoles()
+    {
+        var roles = await _roleManager.Roles
+            .OrderBy(r => r.Name)
+            .ToListAsync();
+        return Result.Ok(roles.Select(r => new RoleDto(r.Id, r.Name ?? string.Empty, r.Permissions)).AsEnumerable());
     }
 
     public async Task<Result<UserVM>> GetUserById(string Id)
@@ -166,6 +215,30 @@ public class UserService : IUserService
         return Result.Fail("Could not update role");
     }
 
+    public async Task<Result> UpdateRole(RoleRequest roleRequest)
+    {
+        var role = await _roleManager.FindByIdAsync(roleRequest.Id);
+        if (role is null)
+        {
+            _logger.LogWarning("Role with Id {Id} not found", roleRequest.Id);
+            return Result.Fail("Role not found");
+        }
+
+        role.Name = roleRequest.Name;
+
+        var result = await _roleManager.UpdateAsync(role);
+        if (result.Succeeded)
+        {
+            return Result.Ok();
+        }
+        _logger.LogWarning("Could not update role {Role}", role.Name);
+        foreach (var error in result.Errors)
+        {
+            _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
+        }
+        return Result.Fail("Could not update role");
+    }
+
     public async Task<Result> UpdateUser(UserRequest userRequest)
     {
         var user = await _signInManager.UserManager.FindByIdAsync(userRequest.Id);
@@ -188,7 +261,7 @@ public class UserService : IUserService
             {
                 removedRoles = curentRoles.Except(userRequest.Roles).ToList();
             }
-            
+
             if (addedRoles.Any())
             {
                 result = await _signInManager.UserManager.AddToRolesAsync(user, addedRoles);

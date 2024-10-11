@@ -673,6 +673,244 @@ public class UsersTests
         ), Times.Once);
     }
 
+    [Fact]
+    public async Task GetRoles_Should_Return_Success()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+
+        // Act
+        var result = await usersService.GetRoles();
+
+        // Assert
+        result.Value.Should().NotBeNull();
+        result.Value.Should().HaveCount(2);
+        result.Value.First().Name.Should().Be("Admin");
+    }
+
+    [Fact]
+    public async Task CreateRoles_Should_Return_Success()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        roleManagerMock.Setup(roleManager => roleManager
+            .CreateAsync(It.IsAny<ApplicationRole>()))
+            .ReturnsAsync(IdentityResult.Success);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+
+        // Act
+        var result = await usersService.CreateRole(new RoleRequest(string.Empty, "Admin", Permissions.All));
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.Name.Should().Be("Admin");
+    }
+
+    [Fact]
+    public async Task CreateRoles_Should_Return_Failiure()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        roleManagerMock.Setup(roleManager => roleManager
+            .CreateAsync(It.IsAny<ApplicationRole>()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+
+        // Act
+        var result = await usersService.CreateRole(new RoleRequest(string.Empty, "Admin", Permissions.All));
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("Could not create role");
+        loggerMock.Verify(l =>
+        l.Log(LogLevel.Warning,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not create role Admin")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+        loggerMock.Verify(l =>
+        l.Log(LogLevel.Warning,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateRoles_Should_Return_Success()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        roleManagerMock.Setup(roleManager => roleManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new ApplicationRole { Id = "1", Name = "Admin", Permissions = Permissions.All });
+        roleManagerMock.Setup(roleManager => roleManager
+            .UpdateAsync(It.IsAny<ApplicationRole>()))
+            .ReturnsAsync(IdentityResult.Success);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+
+        // Act
+        var result = await usersService.UpdateRole(new RoleRequest("1", "Admin", Permissions.All));
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task UpdateRoles_Should_Return_Failiure()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        roleManagerMock.Setup(roleManager => roleManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new ApplicationRole { Id = "1", Name = "Admin", Permissions = Permissions.All });
+        roleManagerMock.Setup(roleManager => roleManager
+            .UpdateAsync(It.IsAny<ApplicationRole>()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+
+        // Act
+        var result = await usersService.UpdateRole(new RoleRequest("1", "Admin", Permissions.All));
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("Could not update role");
+        loggerMock.Verify(l =>
+        l.Log(LogLevel.Warning,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not update role Admin")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+        loggerMock.Verify(l =>
+        l.Log(LogLevel.Warning,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateRoles_Should_ReturnNotFound_Failiure()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        roleManagerMock.Setup(roleManager => roleManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => null);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+
+        // Act
+        var result = await usersService.UpdateRole(new RoleRequest("1", "Admin", Permissions.All));
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("Role not found");
+    }
+
+    [Fact]
+    public async Task DeleteRoles_Should_Return_Success()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        roleManagerMock.Setup(roleManager => roleManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new ApplicationRole { Id = "1", Name = "Admin", Permissions = Permissions.All });
+        roleManagerMock.Setup(roleManager => roleManager
+            .DeleteAsync(It.IsAny<ApplicationRole>()))
+            .ReturnsAsync(IdentityResult.Success);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+
+        // Act
+        var result = await usersService.DeleteRole("1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeleteRoles_Should_Return_Failiure()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        roleManagerMock.Setup(roleManager => roleManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new ApplicationRole { Id = "1", Name = "Admin", Permissions = Permissions.All });
+        roleManagerMock.Setup(roleManager => roleManager
+            .DeleteAsync(It.IsAny<ApplicationRole>()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+
+        // Act
+        var result = await usersService.DeleteRole("1");
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("Could not delete role");
+        loggerMock.Verify(l =>
+        l.Log(LogLevel.Warning,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not delete role Admin")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+        loggerMock.Verify(l =>
+        l.Log(LogLevel.Warning,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteRoles_Should_ReturnNotFound_Failiure()
+    {
+        // Arrange
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        roleManagerMock.Setup(roleManager => roleManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => null);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+
+        // Act
+        var result = await usersService.DeleteRole("1");
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("Role not found");
+    }
 
     private Mock<RoleManager<ApplicationRole>> MockRoleManager()
     {

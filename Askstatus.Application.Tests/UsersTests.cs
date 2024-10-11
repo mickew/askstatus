@@ -353,5 +353,149 @@ public class UsersTests
         result.Errors.Should().HaveCount(1);
         result.Errors.First().Message.Should().Be("Role not found");
     }
+    [Fact]
+    public async Task GetRoles_Should_Return_Success()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        var roles = new List<RoleDto>
+        {
+            new RoleDto("1", "Admin", Permissions.All),
+            new RoleDto("2", "User", Permissions.None)
+        };
+        mock.Setup(x => x.GetRoles()).ReturnsAsync(Result.Ok<IEnumerable<RoleDto>>(roles));
+        GetRolesQueryHandler getRolesQueryHandler = new GetRolesQueryHandler(mock.Object);
 
+        // Act
+        var result = await getRolesQueryHandler.Handle(new GetRolesQuery(), CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task CreateRole_Should_Return_Success()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        var role = new RoleDto("1", "Admin", Permissions.All);
+        mock.Setup(x => x.CreateRole(It.IsAny<RoleRequest>())).ReturnsAsync(Result.Ok(role));
+        CreateRoleCommandHandler createRoleCommandHandler = new CreateRoleCommandHandler(mock.Object);
+        var createRoleCommand = new CreateRoleCommand
+        {
+            Name = "Admin",
+            Permissions = Permissions.All
+        };
+
+        // Act
+        var result = await createRoleCommandHandler.Handle(createRoleCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.Id.Should().Be("1");
+    }
+
+    [Fact]
+    public async Task CreateRole_Should_Return_Failiure()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.CreateRole(It.IsAny<RoleRequest>())).ReturnsAsync(Result.Fail<RoleDto>("Role not found"));
+        CreateRoleCommandHandler createRoleCommandHandler = new CreateRoleCommandHandler(mock.Object);
+        var createRoleCommand = new CreateRoleCommand
+        {
+            Name = "Admin",
+            Permissions = Permissions.All
+        };
+
+        // Act
+        var result = await createRoleCommandHandler.Handle(createRoleCommand, CancellationToken.None);
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().HaveCount(1);
+        result.Errors.First().Message.Should().Be("Role not found");
+    }
+
+    [Fact]
+    public async Task UpdateRole_Should_Return_Success()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.UpdateRole(It.IsAny<RoleRequest>())).ReturnsAsync(Result.Ok());
+        UpdateRoleCommandHandler updateRoleCommandHandler = new UpdateRoleCommandHandler(mock.Object);
+        var updateRoleCommand = new UpdateRoleCommand
+        {
+            Id = "1",
+            Name = "Admin",
+            Permissions = Permissions.All
+        };
+
+        // Act
+        var result = await updateRoleCommandHandler.Handle(updateRoleCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task UpdateRole_Should_Return_Failiure()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.UpdateRole(It.IsAny<RoleRequest>())).ReturnsAsync(Result.Fail("Role not found"));
+        UpdateRoleCommandHandler updateRoleCommandHandler = new UpdateRoleCommandHandler(mock.Object);
+        var updateRoleCommand = new UpdateRoleCommand
+        {
+            Id = "1",
+            Name = "Admin",
+            Permissions = Permissions.All
+        };
+
+        // Act
+        var result = await updateRoleCommandHandler.Handle(updateRoleCommand, CancellationToken.None);
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().HaveCount(1);
+        result.Errors.First().Message.Should().Be("Role not found");
+    }
+
+    [Fact]
+    public async Task DeleteRole_Should_Return_Success()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.DeleteRole(It.IsAny<string>())).ReturnsAsync(Result.Ok());
+        DeleteRoleCommandHandler deleteRoleCommandHandler = new DeleteRoleCommandHandler(mock.Object);
+        var deleteRoleCommand = new DeleteRoleCommand("1");
+
+        // Act
+        var result = await deleteRoleCommandHandler.Handle(deleteRoleCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeleteRole_Should_Return_Failiure()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.DeleteRole(It.IsAny<string>())).ReturnsAsync(Result.Fail("Role not found"));
+        DeleteRoleCommandHandler deleteRoleCommandHandler = new DeleteRoleCommandHandler(mock.Object);
+        var deleteRoleCommand = new DeleteRoleCommand("1");
+
+        // Act
+        var result = await deleteRoleCommandHandler.Handle(deleteRoleCommand, CancellationToken.None);
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().HaveCount(1);
+        result.Errors.First().Message.Should().Be("Role not found");
+    }
 }
