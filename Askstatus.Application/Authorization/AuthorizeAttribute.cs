@@ -1,4 +1,4 @@
-﻿using Askstatus.Domain.Authorization;
+﻿using Askstatus.Common.Authorization;
 
 namespace Askstatus.Application.Authorization;
 

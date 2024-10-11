@@ -23,7 +23,7 @@ public sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand
 
     public async Task<Result<UserVM>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var userRequest = new UserRequest(string.Empty, request.UserName!, request.Email!, request.FirstName!, request.LastName!);
+        var userRequest = new UserRequest(string.Empty, request.UserName!, request.Email!, request.FirstName!, request.LastName!, new List<string>());
         var result = await _userService.CreateUser(userRequest);
         return result;
     }

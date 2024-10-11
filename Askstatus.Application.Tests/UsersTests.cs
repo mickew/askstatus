@@ -1,6 +1,7 @@
 ﻿using Askstatus.Application.Interfaces;
 using Askstatus.Application.Users;
 using Askstatus.Common.Users;
+using Askstatus.Common.Authorization;
 using FluentAssertions;
 using FluentResults;
 using Moq;
@@ -74,7 +75,7 @@ public class UsersTests
     {
         // Arrange
         Mock<IUserService> mock = new Mock<IUserService>();
-        var userRequest = new UserRequest("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        var userRequest = new UserRequest("1", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
         mock.Setup(x => x.UpdateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Ok());
         UpdateUserCommandHandler updateUserCommandHandler = new UpdateUserCommandHandler(mock.Object);
         var updateUserCommand = new UpdateUserCommand
@@ -98,7 +99,7 @@ public class UsersTests
     {
         // Arrange
         Mock<IUserService> mock = new Mock<IUserService>();
-        var userRequest = new UserRequest("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        var userRequest = new UserRequest("1", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
         mock.Setup(x => x.UpdateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Fail("User not found"));
         UpdateUserCommandHandler updateUserCommandHandler = new UpdateUserCommandHandler(mock.Object);
         var updateUserCommand = new UpdateUserCommand
@@ -125,7 +126,7 @@ public class UsersTests
     {
         // Arrange
         Mock<IUserService> mock = new Mock<IUserService>();
-        var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
         var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Ok(user));
         CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object);
@@ -151,7 +152,7 @@ public class UsersTests
     {
         // Arrange
         Mock<IUserService> mock = new Mock<IUserService>();
-        var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Fail("Could not create user"));
         CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object);
         var createUserCommand = new CreateUserCommand
@@ -284,6 +285,73 @@ public class UsersTests
         result.Errors.Should().NotBeEmpty();
         result.Errors.Should().HaveCount(1);
         result.Errors.First().Message.Should().Be("User not found");
+    }
+
+    [Fact]
+    public async Task GetAccessControlConfiguration_Should_Return_Success()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        var accessControlVm = new AccessControlVm(new List<RoleDto>
+        {
+            new RoleDto("1", "Admin", Permissions.All),
+            new RoleDto("2", "User", Permissions.None)
+        });
+        mock.Setup(x => x.GetAccessControlConfiguration()).ReturnsAsync(Result.Ok(accessControlVm));
+        GetAccessControlConfigurationQueryHandler getAccessControlConfigurationQueryHandler = new GetAccessControlConfigurationQueryHandler(mock.Object);
+        var getAccessControlConfigurationQuery = new GetAccessControlConfigurationQuery();
+
+        // Act
+        var result = await getAccessControlConfigurationQueryHandler.Handle(getAccessControlConfigurationQuery, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.Roles.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task UpdateAccessControlConfiguration_Should_Return_Success()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        var roleRequest = new RoleRequest("1", "Admin", Permissions.All);
+        mock.Setup(x => x.UpdateAccessControlConfiguration(It.IsAny<RoleRequest>())).ReturnsAsync(Result.Ok());
+        UpdateAccessControlConfigurationCommandHandler updateAccessControlConfigurationCommandHandler = new UpdateAccessControlConfigurationCommandHandler(mock.Object);
+        var updateAccessControlConfigurationCommand = new UpdateAccessControlConfigurationCommand
+        {
+            Id = "1",
+            Permission = Permissions.All
+        };
+
+        // Act
+        var result = await updateAccessControlConfigurationCommandHandler.Handle(updateAccessControlConfigurationCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task AccessControlConfiguration_Should_Return_Failiure()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.UpdateAccessControlConfiguration(It.IsAny<RoleRequest>())).ReturnsAsync(Result.Fail("Role not found"));
+        UpdateAccessControlConfigurationCommandHandler updateAccessControlConfigurationCommandHandler = new UpdateAccessControlConfigurationCommandHandler(mock.Object);
+        var updateAccessControlConfigurationCommand = new UpdateAccessControlConfigurationCommand
+        {
+            Id = "1",
+            Permission = Permissions.All
+        };
+
+        // Act
+        var result = await updateAccessControlConfigurationCommandHandler.Handle(updateAccessControlConfigurationCommand, CancellationToken.None);
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().HaveCount(1);
+        result.Errors.First().Message.Should().Be("Role not found");
     }
 
 }

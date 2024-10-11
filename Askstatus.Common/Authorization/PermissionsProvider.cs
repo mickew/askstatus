@@ -1,4 +1,4 @@
-﻿namespace Askstatus.Domain.Authorization;
+﻿namespace Askstatus.Common.Authorization;
 
 public static class PermissionsProvider
 {

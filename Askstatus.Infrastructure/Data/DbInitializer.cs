@@ -1,4 +1,4 @@
-using Askstatus.Domain.Authorization;
+using Askstatus.Common.Authorization;
 using Askstatus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

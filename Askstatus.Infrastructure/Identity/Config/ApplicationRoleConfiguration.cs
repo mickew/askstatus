@@ -1,4 +1,4 @@
-﻿using Askstatus.Domain.Authorization;
+﻿using Askstatus.Common.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

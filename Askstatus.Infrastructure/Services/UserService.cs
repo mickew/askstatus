@@ -11,14 +11,14 @@ using Microsoft.Extensions.Logging;
 namespace Askstatus.Infrastructure.Services;
 public class UserService : IUserService
 {
-    //private readonly UserManager<ApplicationUser> _signInManager.UserManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ILogger<UserService> _logger;
 
-    public UserService(SignInManager<ApplicationUser> signInManager, ILogger<UserService> logger)
+    public UserService(SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, ILogger<UserService> logger)
     {
-        //_signInManager.UserManager = userManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
         _logger = logger;
     }
 
@@ -92,6 +92,16 @@ public class UserService : IUserService
         return Result.Fail("Could not delete user");
     }
 
+    public async Task<Result<AccessControlVm>> GetAccessControlConfiguration()
+    {
+        var roles = await _roleManager.Roles.ToListAsync();
+        var roleDtos = roles
+            .Select(r => new RoleDto(r.Id, r.Name ?? string.Empty, r.Permissions))
+            .OrderBy(r => r.Name)
+            .ToList();
+        return Result.Ok( new AccessControlVm(roleDtos));
+    }
+
     public async Task<Result<UserVM>> GetUserById(string Id)
     {
         var result = await _signInManager.UserManager.Users.FirstOrDefaultAsync(u => u.Id == Id);
@@ -134,6 +144,28 @@ public class UserService : IUserService
         return Result.Fail("Could not reset password");
     }
 
+    public async Task<Result> UpdateAccessControlConfiguration(RoleRequest roleRequest)
+    {
+        var role = await _roleManager.FindByIdAsync(roleRequest.Id);
+        if (role is null)
+        {
+            _logger.LogWarning("Role with Id {Id} not found", roleRequest.Id);
+            return Result.Fail("Role not found");
+        }
+        role.Permissions = roleRequest.Permission;
+        var result = await _roleManager.UpdateAsync(role);
+        if (result.Succeeded)
+        {
+            return Result.Ok();
+        }
+        _logger.LogWarning("Could not update role {Role}", role.Name);
+        foreach (var error in result.Errors)
+        {
+            _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
+        }
+        return Result.Fail("Could not update role");
+    }
+
     public async Task<Result> UpdateUser(UserRequest userRequest)
     {
         var user = await _signInManager.UserManager.FindByIdAsync(userRequest.Id);
@@ -142,6 +174,42 @@ public class UserService : IUserService
             _logger.LogWarning("User with Id {Id} not found", userRequest.Id);
             return Result.Fail("User not found");
         }
-        return Result.Ok();
+        user.UserName = userRequest.UserName;
+        user.Email = userRequest.Email;
+        user.FirstName = userRequest.FirstName;
+        user.LastName = userRequest.LastName;
+        var result = await _signInManager.UserManager.UpdateAsync(user);
+        if (result.Succeeded)
+        {
+            var curentRoles = await _signInManager.UserManager.GetRolesAsync(user);
+            var addedRoles = userRequest.Roles.Except(curentRoles ?? new List<string>());
+            var removedRoles = new List<string>();
+            if (curentRoles is not null)
+            {
+                removedRoles = curentRoles.Except(userRequest.Roles).ToList();
+            }
+            
+            if (addedRoles.Any())
+            {
+                result = await _signInManager.UserManager.AddToRolesAsync(user, addedRoles);
+
+            }
+
+            if (removedRoles.Any() && result.Succeeded)
+            {
+                result = await _signInManager.UserManager.RemoveFromRolesAsync(user, removedRoles);
+            }
+
+            if (result.Succeeded)
+            {
+                return Result.Ok();
+            }
+        }
+        _logger.LogWarning("Could not update user {User}", user.UserName);
+        foreach (var error in result.Errors)
+        {
+            _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
+        }
+        return Result.Fail("Could not update user");
     }
 }

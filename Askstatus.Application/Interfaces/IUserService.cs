@@ -17,4 +17,8 @@ public interface IUserService
     Task<Result> ResetPassword(string Id);
 
     Task<Result> ChangePassword(ChangePasswordRequest changePasswordRequest);
+
+    Task<Result<AccessControlVm>> GetAccessControlConfiguration();
+
+    Task<Result> UpdateAccessControlConfiguration(RoleRequest roleRequest);
 }

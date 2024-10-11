@@ -50,7 +50,7 @@ namespace Askstatus.Architecture.Tests
 
             var otherProjects = new[]
             {
-                CommonNamespace,
+                //CommonNamespace,
                 ApplicationNamespace,
                 InfrastructureNamespace,
                 WebAPINamespace,

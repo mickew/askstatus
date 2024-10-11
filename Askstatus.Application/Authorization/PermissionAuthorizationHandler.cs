@@ -1,4 +1,4 @@
-﻿using Askstatus.Domain.Authorization;
+﻿using Askstatus.Common.Authorization;
 using Askstatus.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 

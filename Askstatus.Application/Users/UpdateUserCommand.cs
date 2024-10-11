@@ -11,7 +11,7 @@ public sealed record UpdateUserCommand : IRequest<Result>
     public string? Email { get; init; }
     public string? FirstName { get; init; }
     public string? LastName { get; init; }
-
+    public List<string>? Roles { get; init; }
 }
 
 public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result>
@@ -25,7 +25,7 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
 
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var userRequest = new UserRequest(request.Id!, request.UserName!, request.Email!, request.FirstName!, request.LastName!);
+        var userRequest = new UserRequest(request.Id!, request.UserName!, request.Email!, request.FirstName!, request.LastName!, request.Roles ?? new List<string>());
         var result = await _userService.UpdateUser(userRequest);
         return result;
     }

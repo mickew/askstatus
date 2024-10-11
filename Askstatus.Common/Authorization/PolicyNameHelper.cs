@@ -1,4 +1,4 @@
-﻿namespace Askstatus.Domain.Authorization;
+﻿namespace Askstatus.Common.Authorization;
 public static class PolicyNameHelper
 {
     public const string Prefix = "Permissions";
@@ -15,7 +15,7 @@ public static class PolicyNameHelper
 
     public static Permissions GetPermissionsFrom(string policyName)
     {
-        var permissionsValue = int.Parse(policyName[Prefix.Length..]!);
+        var permissionsValue = int.Parse(policyName.Substring(Prefix.Length));
 
         return (Permissions)permissionsValue;
     }
