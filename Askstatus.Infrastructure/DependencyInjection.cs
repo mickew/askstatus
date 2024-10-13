@@ -21,7 +21,7 @@ public static class DependencyInjection
         }
 
         // Establish cookie authentication
-        services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies(); // (o => o.ApplicationCookie!.Configure(s => s.LoginPath = "/Identity/Account/Login"));
+        services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies(o => o.ApplicationCookie!.Configure(s => s.ExpireTimeSpan = TimeSpan.FromHours(1)));
 
         // Configure authorization
         services.AddAuthorizationBuilder();
