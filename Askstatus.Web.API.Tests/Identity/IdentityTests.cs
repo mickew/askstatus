@@ -6,7 +6,8 @@ using FluentAssertions;
 
 namespace Askstatus.Web.API.Tests.Identity;
 
-public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
+[Collection(DatabaseCollection.WebAPICollectionDefinition)]
+public class IdentityTests
 {
     private readonly IIdentityApi _identityApi;
     private readonly HttpClient _client;
@@ -24,6 +25,7 @@ public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
     public async Task Login_Should_Return_Success()
     {
         //Aranage
+        _factory.ReSeedData();
 
         //Act
         var response = await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, IntegrationTestWebAppFactory.DefaultPassword));
@@ -37,6 +39,7 @@ public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
     public async Task Login_Should_Return_Unauthorized()
     {
         //Aranage
+        _factory.ReSeedData();
 
         //Act
         var response = await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, "wrongpassword"));
@@ -50,6 +53,8 @@ public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
     public async Task Logout_Should_Return_Success()
     {
         //Aranage
+        _factory.ReSeedData();
+        var r = await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Act
         var response = await _identityApi.Logout();
@@ -60,9 +65,24 @@ public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
     }
 
     [Fact]
+    public async Task Logout_Should_Return_Unauthorized()
+    {
+        //Aranage
+        _factory.ReSeedData();
+
+        //Act
+        var response = await _identityApi.Logout();
+
+        //Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
     public async Task GetUserInfo_Should_Return_Success()
     {
         //Aranage
+        _factory.ReSeedData();
         var r = await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Act
@@ -81,6 +101,7 @@ public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
     public async Task GetUserInfo_Should_Return_Unauthorized()
     {
         //Aranage
+        _factory.ReSeedData();
         var r = await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, "wrongpassword"));
 
         //Act
@@ -95,6 +116,7 @@ public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
     public async Task GetApplicationClaims_Should_Return_Success()
     {
         //Aranage
+        _factory.ReSeedData();
         var r = await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Act
@@ -111,6 +133,7 @@ public class IdentityTests : IClassFixture<IntegrationTestWebAppFactory>
     public async Task GetApplicationClaims_Should_Return_Unauthorized()
     {
         //Aranage
+        _factory.ReSeedData();
         var r = await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, "wrongpassword"));
 
         //Act

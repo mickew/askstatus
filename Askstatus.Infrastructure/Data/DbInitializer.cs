@@ -11,7 +11,7 @@ public sealed class DbInitializer
 
     private const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
-    private const string UserRole = "User";
+    private const string UserRole = "Users";
     public const string DefaultUserUserName = "user";
 
     private const string DefaultPassword = "Password123!";

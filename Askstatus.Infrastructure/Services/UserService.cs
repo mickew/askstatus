@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Askstatus.Infrastructure.Services;
-public class UserService : IUserService
+public partial class UserService : IUserService
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
@@ -29,8 +29,14 @@ public class UserService : IUserService
         if (user is null)
         {
             _logger.LogWarning("User with Id {Id} not found", userId);
-            return Result.Fail("User not found");
+            return Result.Fail(new NotFoundError("User not found"));
         }
+        if (user.UserName == DbInitializer.DefaultAdminUserName)
+        {
+            _logger.LogWarning("Cannot change password for administrator {UserName} user", user.UserName);
+            return Result.Fail(new BadRequestError("Cannot change password for admin user"));
+        }
+
         var result = await _signInManager.UserManager.ChangePasswordAsync(user, changePasswordRequest.OldPassword, changePasswordRequest.NewPassword);
         if (result.Succeeded)
         {
@@ -41,7 +47,7 @@ public class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail("Could not change password");
+        return Result.Fail(new BadRequestError("Could not change password", result.Errors));
     }
 
     public async Task<Result<RoleDto>> CreateRole(RoleRequest roleRequest)
@@ -73,7 +79,7 @@ public class UserService : IUserService
             FirstName = userRequest.FirstName,
             LastName = userRequest.LastName
         };
-        var result = await _signInManager.UserManager.CreateAsync(user, userRequest.UserName);
+        var result = await _signInManager.UserManager.CreateAsync(user, $"!1{char.ToUpper(userRequest.UserName![0])}{userRequest.UserName.Substring(1)}1!");
         if (result.Succeeded)
         {
             return Result.Ok(new UserVM(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!));
@@ -83,7 +89,7 @@ public class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail<UserVM>("Culd not create user");
+        return Result.Fail<UserVM>(new BadRequestError("Culd not create user", result.Errors));
     }
 
     public async Task<Result> DeleteRole(string Id)
@@ -113,12 +119,12 @@ public class UserService : IUserService
         if (result is null)
         {
             _logger.LogWarning("User with Id {Id} not found", Id);
-            return Result.Fail("User not found");
+            return Result.Fail(new NotFoundError("User not found"));
         }
         if (result.UserName == DbInitializer.DefaultAdminUserName)
         {
             _logger.LogWarning("Cannot delete default administrator {UserName} user", result.UserName);
-            return Result.Fail("Cannot delete default admin user");
+            return Result.Fail(new BadRequestError("Cannot delete default admin user"));
         }
         var deleteResult = await _signInManager.UserManager.DeleteAsync(result);
         if (deleteResult.Succeeded)
@@ -130,7 +136,7 @@ public class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail("Could not delete user");
+        return Result.Fail(new BadRequestError("Could not delete user", deleteResult.Errors));
     }
 
     public async Task<Result<AccessControlVm>> GetAccessControlConfiguration()
@@ -157,7 +163,7 @@ public class UserService : IUserService
         if (result is null)
         {
             _logger.LogWarning("User with Id {Id} not found", Id);
-            return Result.Fail<UserVM>("User not found");
+            return Result.Fail<UserVM>(new NotFoundError("User not found"));
         }
         return Result.Ok(new UserVM(result!.Id, result.UserName!, result.Email!, result.FirstName!, result.LastName!));
     }
@@ -176,7 +182,12 @@ public class UserService : IUserService
         if (result is null)
         {
             _logger.LogWarning("User with Id {Id} not found", Id);
-            return Result.Fail("User not found");
+            return Result.Fail(new NotFoundError("User not found"));
+        }
+        if (result.UserName == DbInitializer.DefaultAdminUserName)
+        {
+            _logger.LogWarning("Cannot reset password for administrator {UserName} user", result.UserName);
+            return Result.Fail(new BadRequestError("Cannot reset password for admin user"));
         }
 
         var token = await _signInManager.UserManager.GeneratePasswordResetTokenAsync(result);
@@ -190,7 +201,7 @@ public class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail("Could not reset password");
+        return Result.Fail(new BadRequestError("Could not reset password", resetResult.Errors));
     }
 
     public async Task<Result> UpdateAccessControlConfiguration(RoleRequest roleRequest)
@@ -245,8 +256,14 @@ public class UserService : IUserService
         if (user is null)
         {
             _logger.LogWarning("User with Id {Id} not found", userRequest.Id);
-            return Result.Fail("User not found");
+            return Result.Fail(new NotFoundError("User not found"));
         }
+        if (user.UserName == DbInitializer.DefaultAdminUserName)
+        {
+            _logger.LogWarning("Cannot update default administrator {UserName} user", user.UserName);
+            return Result.Fail(new BadRequestError("Cannot update default admin user"));
+        }
+
         user.UserName = userRequest.UserName;
         user.Email = userRequest.Email;
         user.FirstName = userRequest.FirstName;
@@ -265,7 +282,6 @@ public class UserService : IUserService
             if (addedRoles.Any())
             {
                 result = await _signInManager.UserManager.AddToRolesAsync(user, addedRoles);
-
             }
 
             if (removedRoles.Any() && result.Succeeded)
@@ -283,6 +299,7 @@ public class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail("Could not update user");
+        //return Result.Fail("Could not update user");
+        return Result.Fail(new BadRequestError("Could not update user", result.Errors));
     }
 }

@@ -10,12 +10,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Askstatus.Web.API.Tests;
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private const string AdministratorsRole = "Administrators";
+    public const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
+    public const string UserRole = "Users";
+    public const string DefaultUserUserName = "user";
 
-    public const string DefaultPassword = "admin";
+    public const string DefaultPassword = "!PassW0rd!";
 
-    //private ApplicationDbContext? _context;
+    public string? AdminId { get; private set; }
+
+    public string? UserId { get; private set; }
 
     public Task InitializeAsync()
     {
@@ -25,6 +29,19 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public new Task DisposeAsync()
     {
+        return Task.CompletedTask;
+    }
+
+    public Task SetUsersPermission(Permissions permission)
+    {
+        using var scope = Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationBaseDbContext>();
+        var role = context.Roles.FirstOrDefault(r => r.Name == UserRole);
+        if (role != null)
+        {
+            role.Permissions = permission;
+            context.SaveChanges();
+        }
         return Task.CompletedTask;
     }
 
@@ -47,6 +64,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             // Add a database context using an in-memory database for testing.
             services.AddDbContext<ApplicationBaseDbContext>(options =>
             {
+                //options.UseInMemoryDatabase(Guid.NewGuid().ToString());
                 options.UseInMemoryDatabase("TestDb");
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
@@ -57,6 +75,22 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                 SeedData(db);
             };
         });
+    }
+
+    public void ReSeedData()
+    {
+        using var scope = Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationBaseDbContext>();
+        UnSeedData(context);
+        SeedData(context);
+    }
+
+    private void UnSeedData(ApplicationBaseDbContext context)
+    {
+        context.UserRoles.RemoveRange(context.UserRoles);
+        context.Users.RemoveRange(context.Users);
+        context.Roles.RemoveRange(context.Roles);
+        context.SaveChanges();
     }
 
     private void SeedData(ApplicationBaseDbContext context)
@@ -71,10 +105,17 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             NormalizedName = AdministratorsRole.ToUpper(),
             Permissions = Permissions.All
         };
+        ApplicationRole userRole = new()
+        {
+            Name = UserRole,
+            NormalizedName = UserRole.ToUpper(),
+            Permissions = Permissions.None
+        };
 
         if (!context.Roles.Any())
         {
             context.Roles.Add(adminRole);
+            context.Roles.Add(userRole);
         }
 
         // Create default admin user
@@ -91,10 +132,29 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
         var pw = passwordHasher.HashPassword(adminUser, DefaultPassword);
         adminUser.PasswordHash = pw;
+
+        // Create default user user
+        var userUserName = DefaultUserUserName;
+        var userUser = new ApplicationUser()
+        {
+            UserName = userUserName,
+            Email = "user@localhost.local",
+            NormalizedUserName = userUserName.ToUpper(),
+            NormalizedEmail = "user@localhost.local".ToUpper(),
+            FirstName = "User",
+            LastName = "User"
+        };
+        pw = passwordHasher.HashPassword(userUser, DefaultPassword);
+        userUser.PasswordHash = pw;
+
         if (!context.Users.Any())
         {
-            context.Users.Add(adminUser);
+            var admn = context.Users.Add(adminUser);
+            AdminId = admn.Entity.Id;
+            context.Users.Add(userUser);
+            UserId = userUser.Id;
             context.Add(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
+            context.Add(new IdentityUserRole<string>() { RoleId = userRole.Id, UserId = userUser.Id });
         }
         context.SaveChanges();
     }
