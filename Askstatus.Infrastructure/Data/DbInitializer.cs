@@ -9,7 +9,7 @@ public sealed class DbInitializer
 {
     private readonly ApplicationBaseDbContext _context;
 
-    private const string AdministratorsRole = "Administrators";
+    public const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
     private const string UserRole = "Users";
     public const string DefaultUserUserName = "user";

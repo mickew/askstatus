@@ -10,9 +10,6 @@ public interface IRoleAPI
     [Get("/api/role")]
     Task<IApiResponse<IEnumerable<RoleDto>>> GetRoles();
 
-    [Get("/api/role/{id}")]
-    Task<IApiResponse<RoleDto>> GetRoleById(string id);
-
     [Post("/api/role")]
     Task<IApiResponse<RoleDto>> CreateRole(RoleRequest request);
 
@@ -22,10 +19,10 @@ public interface IRoleAPI
     [Delete("/api/role/{id}")]
     Task<IApiResponse> DeleteRole(string id);
 
-    [Put("/api/role/{id}/permissions")]
+    [Put("/api/role/permission")]
     Task<IApiResponse> UpdatePermissions(RoleRequest roleRequest);
 
-    [Get("/api/role/{id}/permissions")]
+    [Get("/api/role/permissions")]
     Task<IApiResponse<AccessControlVm>> GetPermissions();
 
 }

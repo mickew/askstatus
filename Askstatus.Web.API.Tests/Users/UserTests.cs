@@ -19,7 +19,6 @@ namespace Askstatus.Web.API.Tests.Users;
 public class UserTests
 {
     private readonly IIdentityApi _identityApi;
-
     private readonly IUserAPI _userAPI;
     private readonly HttpClient _client;
     private readonly IntegrationTestWebAppFactory _factory;
@@ -30,7 +29,6 @@ public class UserTests
         var askstatusApiService = new AskstatusApiService(_client);
         _identityApi = askstatusApiService.IdentityApi;
         _userAPI = askstatusApiService.UserAPI;
-
         _factory = factory;
     }
 

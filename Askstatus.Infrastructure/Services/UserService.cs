@@ -67,7 +67,7 @@ public partial class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail<RoleDto>("Could not create role");
+        return Result.Fail<RoleDto>(new BadRequestError("Could not create role", result.Errors));
     }
 
     public async Task<Result<UserVM>> CreateUser(UserRequest userRequest)
@@ -98,8 +98,14 @@ public partial class UserService : IUserService
         if (role is null)
         {
             _logger.LogWarning("Role with Id {Id} not found", Id);
-            return Result.Fail("Role not found");
+            return Result.Fail(new NotFoundError("Role not found"));
         }
+        if (role.Name == DbInitializer.AdministratorsRole)
+        {
+            _logger.LogWarning("Cannot delete default administrator {UserName} role", role.Name);
+            return Result.Fail(new BadRequestError("Cannot delete default administrator role"));
+        }
+
         var result = await _roleManager.DeleteAsync(role);
         if (result.Succeeded)
         {
@@ -110,7 +116,7 @@ public partial class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail("Could not delete role");
+        return Result.Fail(new BadRequestError("Could not delete role", result.Errors));
     }
 
     public async Task<Result> DeleteUser(string Id)
@@ -210,8 +216,14 @@ public partial class UserService : IUserService
         if (role is null)
         {
             _logger.LogWarning("Role with Id {Id} not found", roleRequest.Id);
-            return Result.Fail("Role not found");
+            return Result.Fail(new NotFoundError("Role not found"));
         }
+        if (role.Name == DbInitializer.AdministratorsRole)
+        {
+            _logger.LogWarning("Cannot update default administrator {UserName} role", role.Name);
+            return Result.Fail(new BadRequestError("Cannot update default administrator role"));
+        }
+
         role.Permissions = roleRequest.Permission;
         var result = await _roleManager.UpdateAsync(role);
         if (result.Succeeded)
@@ -223,7 +235,7 @@ public partial class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail("Could not update role");
+        return Result.Fail(new BadRequestError("Could not update role", result.Errors));
     }
 
     public async Task<Result> UpdateRole(RoleRequest roleRequest)
@@ -232,7 +244,12 @@ public partial class UserService : IUserService
         if (role is null)
         {
             _logger.LogWarning("Role with Id {Id} not found", roleRequest.Id);
-            return Result.Fail("Role not found");
+            return Result.Fail(new NotFoundError("Role not found"));
+        }
+        if (role.Name == DbInitializer.AdministratorsRole)
+        {
+            _logger.LogWarning("Cannot update default administrator {UserName} role", role.Name);
+            return Result.Fail(new BadRequestError("Cannot update default administrator role"));
         }
 
         role.Name = roleRequest.Name;
@@ -247,7 +264,7 @@ public partial class UserService : IUserService
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail("Could not update role");
+        return Result.Fail(new BadRequestError("Could not update role", result.Errors));
     }
 
     public async Task<Result> UpdateUser(UserRequest userRequest)

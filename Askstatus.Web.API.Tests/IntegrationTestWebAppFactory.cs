@@ -21,6 +21,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public string? UserId { get; private set; }
 
+    public string? AdministratorsRoleId { get; private set; }
+
+    public string? UserRoleId { get; private set; }
+
     public Task InitializeAsync()
     {
         Program.IsIntegrationTestRun = true;
@@ -115,7 +119,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         if (!context.Roles.Any())
         {
             context.Roles.Add(adminRole);
+            AdministratorsRoleId = adminRole.Id;
             context.Roles.Add(userRole);
+            UserRoleId = userRole.Id;
         }
 
         // Create default admin user

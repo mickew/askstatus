@@ -41,7 +41,6 @@ public class RoleController : ControllerBase
     }
 
     [HttpPut]
-    [Route("{id}")]
     [Authorize(Permissions.ManageRoles)]
     [ProducesResponseType(StatusCodes.Status200OK)] 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -65,7 +64,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPut]
-    [Route("{id}/permissions")]
+    [Route("permission")]
     [Authorize(Permissions.ManageRoles)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -77,7 +76,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{id}/permissions")]
+    [Route("permissions")]
     [Authorize(Permissions.ViewRoles)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

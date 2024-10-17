@@ -17,9 +17,16 @@ public sealed class AskstatusApiService
         {
             ContentSerializer = contentSerializer
         });
+
+        RoleAPI = RestService.For<IRoleAPI>(httpClient, new RefitSettings
+        {
+            ContentSerializer = contentSerializer
+        });
     }
 
     public IIdentityApi IdentityApi { get; private set; }
 
     public IUserAPI UserAPI { get; private set; }
+
+    public IRoleAPI RoleAPI { get; private set; }
 }
