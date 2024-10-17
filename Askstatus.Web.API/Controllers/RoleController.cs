@@ -1,9 +1,9 @@
-﻿using System.Net;
-using Askstatus.Application.Authorization;
-using Askstatus.Application.Interfaces;
+﻿using Askstatus.Application.Authorization;
+using Askstatus.Application.Users;
 using Askstatus.Common.Authorization;
 using Askstatus.Common.Users;
 using FluentResults.Extensions.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Askstatus.Web.API.Controllers;
@@ -12,11 +12,11 @@ namespace Askstatus.Web.API.Controllers;
 [Authorize]
 public class RoleController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly ISender _sender;
 
-    public RoleController(IUserService userService)
+    public RoleController(ISender sender)
     {
-        _userService = userService;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -25,7 +25,7 @@ public class RoleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Get()
     {
-        var result = await _userService.GetRoles();
+        var result = await _sender.Send(new GetRolesQuery());
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -36,18 +36,18 @@ public class RoleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Post([FromBody] RoleRequest request)
     {
-        var result = await _userService.CreateRole(request);
+        var result = await _sender.Send(new CreateRoleCommand { Name = request.Name, Permissions = request.Permission });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
     [HttpPut]
     [Authorize(Permissions.ManageRoles)]
-    [ProducesResponseType(StatusCodes.Status200OK)] 
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Put([FromBody] RoleRequest request)
     {
-        var result = await _userService.UpdateRole(request);
+        var result = await _sender.Send(new UpdateRoleCommand { Id = request.Id, Name = request.Name, Permissions = request.Permission });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -59,7 +59,7 @@ public class RoleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _userService.DeleteRole(id);
+        var result = await _sender.Send(new DeleteRoleCommand(id));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -71,7 +71,7 @@ public class RoleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> PutPermissions([FromBody] RoleRequest request)
     {
-        var result = await _userService.UpdateAccessControlConfiguration(request);
+        var result = await _sender.Send(new UpdateAccessControlConfigurationCommand { Id = request.Id, Permission = request.Permission });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -82,7 +82,7 @@ public class RoleController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetPermissions()
     {
-        var result = await _userService.GetAccessControlConfiguration();
+        var result = await _sender.Send(new GetAccessControlConfigurationQuery());
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 }

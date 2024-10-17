@@ -1,9 +1,11 @@
 ﻿using System.Net;
 using Askstatus.Application.Authorization;
 using Askstatus.Application.Interfaces;
+using Askstatus.Application.Users;
 using Askstatus.Common.Authorization;
 using Askstatus.Common.Users;
 using FluentResults.Extensions.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Askstatus.Web.API.Controllers;
@@ -12,11 +14,11 @@ namespace Askstatus.Web.API.Controllers;
 [Authorize]
 public class UserController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly ISender _sender;
 
-    public UserController(IUserService userService)
+    public UserController(ISender sender)
     {
-        _userService = userService;
+        _sender = sender;
     }
 
     [HttpGet]
@@ -25,7 +27,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Get()
     {
-        var result = await _userService.GetUsers();
+        var result = await _sender.Send(new GetUsersQuery());
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -37,7 +39,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(string id)
     {
-        var result = await _userService.GetUserById(id);
+        var result = await _sender.Send(new GetUserByIdQuery(id));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -48,7 +50,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Post([FromBody] UserRequest request)
     {
-        var result = await _userService.CreateUser(request);
+        var result = await _sender.Send(new CreateUserCommand { UserName = request.UserName, Email = request.Email, FirstName = request.FirstName, LastName = request.LastName });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -60,7 +62,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Put([FromBody] UserRequest request)
     {
-        var result = await _userService.UpdateUser(request);
+        var result = await _sender.Send(new UpdateUserCommand { Id = request.Id, UserName = request.UserName, Email = request.Email, FirstName = request.FirstName, LastName = request.LastName });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -72,7 +74,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(string id)
     {
-        var result = await _userService.DeleteUser(id);
+        var result = await _sender.Send(new DeleteUserCommand(id));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -84,7 +86,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ResetPassword(string id)
     {
-        var result = await _userService.ResetPassword(id);
+        var result = await _sender.Send(new ResetPasswordCommand(id));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -96,7 +98,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
-        var result = await _userService.ChangePassword(request);
+        var result = await _sender.Send(new ChangePasswordCommand { OldPassword = request.OldPassword, NewPassword = request.NewPassword});
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 }
