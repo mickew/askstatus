@@ -1,0 +1,38 @@
+﻿@page "/admin/users"
+@using Askstatus.Common.Users
+@attribute [Authorize(Permissions.ViewUsers | Permissions.ManageUsers)]
+
+<PageTitle>Power Control - Users</PageTitle>
+<div>
+     <MudChip T="string" Label="true" Color="Color.Info" Icon="@Icons.Material.Filled.People">Users</MudChip>
+</div>
+<FlexibleAuthorizeView Permissions="@Permissions.ManageUsers">
+    <Authorized>
+        @{
+            UserGotNoRights = false;
+        }
+    </Authorized>
+    <NotAuthorized>
+        @{
+            UserGotNoRights = true;
+        }
+    </NotAuthorized>
+</FlexibleAuthorizeView>
+<MudDataGrid Items="@Users">
+    <Columns>
+        <PropertyColumn Property="x => x.UserName" Title="UserName" />
+        <PropertyColumn Property="x => x.Email" />
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.LockReset" @onclick="() => ResetPassword(context.Item)" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">Reset password</MudButton>
+                    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.Edit" @onclick="() => AddEditUser(context.Item, false)" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">Edit</MudButton>
+                    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.Delete" @onclick="() => DeleteUser(context.Item)" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Warning">Delete</MudButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+<div class="d-flex flex-wrap mt-4 justify-end">
+    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.Add" @onclick="() => AddEditUser(new UserVM(), true)" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Success">Add</MudButton>
+</div>

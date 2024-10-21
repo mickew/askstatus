@@ -82,6 +82,16 @@ public partial class UserService : IUserService
         var result = await _signInManager.UserManager.CreateAsync(user, $"!1{char.ToUpper(userRequest.UserName![0])}{userRequest.UserName.Substring(1)}1!");
         if (result.Succeeded)
         {
+            result = await _signInManager.UserManager.AddToRolesAsync(user, userRequest.Roles);
+            if (!result.Succeeded)
+            {
+                _logger.LogWarning("Could not add roles to user {User}", userRequest.UserName);
+                foreach (var error in result.Errors)
+                {
+                    _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
+                }
+                return Result.Fail<UserVM>(new BadRequestError("Could not add roles to user", result.Errors));
+            }
             return Result.Ok(new UserVM(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!));
         }
         _logger.LogWarning("Could not create user {User}", userRequest.UserName);
@@ -171,7 +181,15 @@ public partial class UserService : IUserService
             _logger.LogWarning("User with Id {Id} not found", Id);
             return Result.Fail<UserVM>(new NotFoundError("User not found"));
         }
-        return Result.Ok(new UserVM(result!.Id, result.UserName!, result.Email!, result.FirstName!, result.LastName!));
+        UserVM user = new(result.Id, result.UserName!, result.Email!, result.FirstName!, result.LastName!);
+        var roles = await _signInManager.UserManager.GetRolesAsync(result);
+        if (roles is null)
+        {
+            _logger.LogWarning("Could not get any roles");
+            return Result.Fail<UserVM>(new BadRequestError("Could not get any roles"));
+        }
+        user.Roles.AddRange(roles);
+        return Result.Ok(user);
     }
 
     public async Task<Result<IEnumerable<UserVM>>> GetUsers()

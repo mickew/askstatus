@@ -42,6 +42,7 @@ public class UsersTests
         Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        userManagerMock.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(new List<string> { "Admin" });
         var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
 
         // Act

@@ -45,6 +45,10 @@ public class RoleTests
         response.Content.Should().NotBeNull();
         response.Content.Should().NotBeEmpty();
         response.Content.Should().HaveCount(2);
+        response.Content.Should().Contain(r => r.Name == IntegrationTestWebAppFactory.AdministratorsRole);
+        response.Content.Should().Contain(r => r.Name == IntegrationTestWebAppFactory.UserRole);
+        response.Content.Should().Contain(r => r.Permissions == Permissions.All);
+        response.Content.Should().Contain(r => r.Permissions == Permissions.ViewRoles);
     }
 
     [Fact]
@@ -269,6 +273,14 @@ public class RoleTests
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Content.Should().NotBeNull();
+        response.Content!.Roles.Should().NotBeNull();
+        response.Content!.Roles.Should().NotBeEmpty();
+        response.Content!.Roles.Should().HaveCount(2);
+        response.Content!.Roles.Should().Contain(r => r.Name == IntegrationTestWebAppFactory.AdministratorsRole);
+        response.Content!.Roles.Should().Contain(r => r.Name == IntegrationTestWebAppFactory.UserRole);
+        response.Content!.Roles.Should().Contain(r => r.Permissions == Permissions.All);
+        response.Content!.Roles.Should().Contain(r => r.Permissions == Permissions.ViewRoles);
     }
 
     [Fact]

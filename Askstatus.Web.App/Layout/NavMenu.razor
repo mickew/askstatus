@@ -1,8 +1,12 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
-    <FlexibleAuthorizeView Permissions="@(Permissions.ViewRoles)">
-        <MudNavLink Href="/weather" Match="NavLinkMatch.Prefix">Weather</MudNavLink>
+    <FlexibleAuthorizeView Permissions="@(Permissions.ViewUsers | Permissions.ManageUsers)">
+        <MudNavLink Icon="@Icons.Material.Filled.People" Href="/admin/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
     </FlexibleAuthorizeView>
+    <FlexibleAuthorizeView Permissions="@(Permissions.ViewAccessControl | Permissions.ConfigureAccessControl)">
+        <MudNavLink Icon="@Icons.Material.Filled.Lock" Href="admin/access-control" Match="NavLinkMatch.Prefix">Access Control</MudNavLink>
+    </FlexibleAuthorizeView>
+
     @*     <MudNavGroup Title="Settings" Expanded="true">
         <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
         <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">Security</MudNavLink>

@@ -10,6 +10,8 @@ public sealed record CreateUserCommand : IRequest<Result<UserVM>>
     public string? Email { get; init; }
     public string? FirstName { get; init; }
     public string? LastName { get; init; }
+    public List<string>? Roles { get; init; }
+
 }
 
 public sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserVM>>
@@ -23,7 +25,7 @@ public sealed class CreateUserCommandHandler : IRequestHandler<CreateUserCommand
 
     public async Task<Result<UserVM>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var userRequest = new UserRequest(string.Empty, request.UserName!, request.Email!, request.FirstName!, request.LastName!, new List<string>());
+        var userRequest = new UserRequest(string.Empty, request.UserName!, request.Email!, request.FirstName!, request.LastName!, request.Roles ?? new List<string>());
         var result = await _userService.CreateUser(userRequest);
         return result;
     }

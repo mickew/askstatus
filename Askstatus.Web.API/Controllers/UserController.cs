@@ -50,7 +50,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Post([FromBody] UserRequest request)
     {
-        var result = await _sender.Send(new CreateUserCommand { UserName = request.UserName, Email = request.Email, FirstName = request.FirstName, LastName = request.LastName });
+        var result = await _sender.Send(new CreateUserCommand { UserName = request.UserName, Email = request.Email, FirstName = request.FirstName, LastName = request.LastName, Roles = request.Roles });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -62,7 +62,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Put([FromBody] UserRequest request)
     {
-        var result = await _sender.Send(new UpdateUserCommand { Id = request.Id, UserName = request.UserName, Email = request.Email, FirstName = request.FirstName, LastName = request.LastName });
+        var result = await _sender.Send(new UpdateUserCommand { Id = request.Id, UserName = request.UserName, Email = request.Email, FirstName = request.FirstName, LastName = request.LastName, Roles = request.Roles });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 

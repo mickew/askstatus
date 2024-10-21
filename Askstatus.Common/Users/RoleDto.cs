@@ -17,15 +17,16 @@ public sealed class RoleDto
         Permissions = permissions;
     }
 
-    public string Id { get; init; }
+    public string Id { get; set; }
 
-    public string Name { get; init; }
+    public string Name { get; set; }
 
-    public Permissions Permissions { get; private set; }
+    public Permissions Permissions { get; set; }
 
     public bool Has(Permissions permission)
     {
-        return Permissions.HasFlag(permission); ;
+        var b = Permissions.HasFlag(permission); ;
+        return b;
     }
 
     public void Set(Permissions permission, bool granted)
@@ -40,13 +41,19 @@ public sealed class RoleDto
         }
     }
 
-    public void Grant(Permissions permission)
+    private void Grant(Permissions permission)
     {
         Permissions |= permission;
     }
 
-    public void Revoke(Permissions permission)
+    private void Revoke(Permissions permission)
     {
+        if (Permissions.HasFlag(Permissions.All))
+        {
+            var v = 32 - (Enum.GetValues(typeof(Permissions)).Length - 2);
+            var vv = (int)Permissions >>> v;
+            Permissions = (Permissions)vv;
+        }
         Permissions ^= permission;
     }
 
