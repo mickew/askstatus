@@ -269,6 +269,7 @@ public class UsersTests
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
         userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+        userManagerMock.Setup(userManager => userManager.AddToRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>())).ReturnsAsync(IdentityResult.Success);
         var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
 
         // Act
@@ -516,7 +517,7 @@ public class UsersTests
         var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
 
         // Act
-        var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword"));
+        var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword", "NewPassword"));
     }
 
     [Fact]
@@ -530,7 +531,7 @@ public class UsersTests
         var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
 
         // Act
-        var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword"));
+        var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword", "NewPassword"));
 
         // Assert
         result.IsFailed.Should().BeTrue();
@@ -555,7 +556,7 @@ public class UsersTests
         var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
 
         // Act
-        var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword"));
+        var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword", "NewPassword"));
 
         // Assert
         result.IsFailed.Should().BeTrue();

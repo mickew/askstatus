@@ -98,7 +98,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
-        var result = await _sender.Send(new ChangePasswordCommand { OldPassword = request.OldPassword, NewPassword = request.NewPassword});
+        var result = await _sender.Send(new ChangePasswordCommand { OldPassword = request.OldPassword, NewPassword = request.NewPassword, ConfirmPassword = request.ConfirmPassword });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 }

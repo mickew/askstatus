@@ -247,13 +247,14 @@ public class UsersTests
     {
         // Arrange
         Mock<IUserService> mock = new Mock<IUserService>();
-        var changePasswordRequest = new ChangePasswordRequest("oldpassword", "newpassword");
+        var changePasswordRequest = new ChangePasswordRequest("oldpassword", "!Newpassword123", "!Newpassword123");
         mock.Setup(x => x.ChangePassword(It.IsAny<ChangePasswordRequest>())).ReturnsAsync(Result.Ok());
         ChangePasswordCommandHandler changePasswordCommandHandler = new ChangePasswordCommandHandler(mock.Object);
         var changePasswordCommand = new ChangePasswordCommand
         {
             OldPassword = "oldpassword",
-            NewPassword = "newpassword"
+            NewPassword = "!Newpassword123",
+            ConfirmPassword = "!Newpassword123"
         };
 
         // Act
@@ -268,13 +269,15 @@ public class UsersTests
     {
         // Arrange
         Mock<IUserService> mock = new Mock<IUserService>();
-        var changePasswordRequest = new ChangePasswordRequest("oldpassword", "newpassword");
+        var changePasswordRequest = new ChangePasswordRequest("oldpassword", "!Newpassword123", "!Newpassword123");
         mock.Setup(x => x.ChangePassword(It.IsAny<ChangePasswordRequest>())).ReturnsAsync(Result.Fail("User not found"));
         ChangePasswordCommandHandler changePasswordCommandHandler = new ChangePasswordCommandHandler(mock.Object);
         var changePasswordCommand = new ChangePasswordCommand
         {
             OldPassword = "oldpassword",
-            NewPassword = "newpassword"
+            NewPassword = "!Newpassword123",
+            ConfirmPassword = "!Newpassword123"
+
         };
 
         // Act

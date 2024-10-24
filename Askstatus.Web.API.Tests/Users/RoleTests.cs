@@ -264,7 +264,7 @@ public class RoleTests
     {
         // Arrange
         _factory.ReSeedData();
-        await _factory.SetUsersPermission(Permissions.ViewRoles);
+        await _factory.SetUsersPermission(Permissions.ViewAccessControl);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         // Act
@@ -280,7 +280,7 @@ public class RoleTests
         response.Content!.Roles.Should().Contain(r => r.Name == IntegrationTestWebAppFactory.AdministratorsRole);
         response.Content!.Roles.Should().Contain(r => r.Name == IntegrationTestWebAppFactory.UserRole);
         response.Content!.Roles.Should().Contain(r => r.Permissions == Permissions.All);
-        response.Content!.Roles.Should().Contain(r => r.Permissions == Permissions.ViewRoles);
+        response.Content!.Roles.Should().Contain(r => r.Permissions == Permissions.ViewAccessControl);
     }
 
     [Fact]
@@ -288,7 +288,7 @@ public class RoleTests
     {
         // Arrange
         _factory.ReSeedData();
-        await _factory.SetUsersPermission(Permissions.ManageRoles);
+        await _factory.SetUsersPermission(Permissions.ConfigureAccessControl);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         // Act
@@ -304,7 +304,7 @@ public class RoleTests
     {
         // Arrange
         _factory.ReSeedData();
-        await _factory.SetUsersPermission(Permissions.ManageRoles);
+        await _factory.SetUsersPermission(Permissions.ConfigureAccessControl);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         // Act
@@ -320,7 +320,7 @@ public class RoleTests
     {
         // Arrange
         _factory.ReSeedData();
-        await _factory.SetUsersPermission(Permissions.ManageRoles);
+        await _factory.SetUsersPermission(Permissions.ConfigureAccessControl);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         // Act

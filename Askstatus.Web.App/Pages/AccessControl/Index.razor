@@ -1,10 +1,22 @@
 ﻿@page "/admin/access-control"
 @attribute [Authorize(Permissions.ViewAccessControl | Permissions.ConfigureAccessControl)]
 
-<PageTitle>Power Control - Access Control</PageTitle>
+<PageTitle>Askstatus - Access Control</PageTitle>
 <div>
     <MudChip T="string" Label="true" Color="Color.Info" Icon="@Icons.Material.Filled.Lock">Access Control</MudChip>
 </div>
+<FlexibleAuthorizeView Permissions="@Permissions.ConfigureAccessControl">
+    <Authorized>
+        @{
+            UserGotNoRights = false;
+        }
+    </Authorized>
+    <NotAuthorized>
+        @{
+            UserGotNoRights = true;
+        }
+    </NotAuthorized>
+</FlexibleAuthorizeView>
 @if (_vm == null) return;
 <MudSimpleTable>
     <thead>
@@ -24,21 +36,12 @@
                 @foreach (var role in _vm.Roles)
                 {
                     <th>
-                        <FlexibleAuthorizeView Permissions="@Permissions.ConfigureAccessControl">
-                            <Authorized>
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       checked="@role.Has(permission)"
-                                       @onchange="(args) =>
-                                    Set(role, permission, (bool)args.Value!)" />
-                            </Authorized>
-                            <NotAuthorized>
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       checked="@role.Has(permission)"
-                                       disabled="disabled" />
-                            </NotAuthorized>
-                        </FlexibleAuthorizeView>
+                        <input type="checkbox"
+                                class="form-check-input"
+                                checked="@role.Has(permission)"
+                                disabled=@UserGotNoRights
+                                @onchange="(args) =>
+                            Set(role, permission, (bool)args.Value!)" />
                     </th>
                 }
             </tr>

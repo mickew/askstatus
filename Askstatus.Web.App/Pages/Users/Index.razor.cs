@@ -1,4 +1,5 @@
-﻿using Askstatus.Common.Users;
+﻿using System.Data;
+using Askstatus.Common.Users;
 using Askstatus.Sdk;
 using Askstatus.Sdk.Users;
 using Microsoft.AspNetCore.Components;
@@ -21,6 +22,7 @@ public partial class Index
     [Inject]
     private ISnackbar Snackbar { get; set; } = null!;
 
+    [Inject]
     private ILogger<Index> Logger { get; set; } = null!;
 
     protected bool UserGotNoRights { get; set; } = true;
@@ -41,30 +43,68 @@ public partial class Index
 
     private async Task AddEditUser(UserVM user, bool add)
     {
-        IEnumerable<RoleDto> roles;
-        var roleResponse = await ApiService.RoleAPI.GetRoles();
-        if (!roleResponse.IsSuccessStatusCode)
+        var severety = Severity.Success;
+        string message = $"User {user.UserName} updated";
+        IEnumerable<RoleDto> roles = new List<RoleDto>();
+        try
         {
-            Logger.LogError(roleResponse.Error, roleResponse.Error.Content);
-            Snackbar.Add(roleResponse.Error.Content!, Severity.Error);
+            var roleResponse = await ApiService.RoleAPI.GetRoles();
+            if (!roleResponse.IsSuccessStatusCode)
+            {
+                Logger.LogError(roleResponse.Error, roleResponse.Error.Content);
+                message = roleResponse.Error.Message;
+                severety = Severity.Error;
+            }
+            if (severety == Severity.Success)
+            {
+                roles = roleResponse.Content!;
+            }
+        }
+        catch (ApiException ex)
+        {
+            Logger.LogError(ex, "Error adding user");
+            Logger.LogError(ex.Message);
+            message = ex.Message;
+            severety = Severity.Error;
+        }
+        if (severety != Severity.Success)
+        {
+            Snackbar.Add(message, severety);
             return;
         }
-        roles = roleResponse.Content!;
-        UserVM theUser;
+        UserVM theUser = null!;
         if (add)
         {
             theUser = user;
         }
         else
         {
-            var response = await ApiService.UserAPI.GetUserById(user.Id);
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                Logger.LogError(response.Error, response.Error.Content);
-                Snackbar.Add(response.Error.Content!, Severity.Error);
-                return;
+                var response = await ApiService.UserAPI.GetUserById(user.Id);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Logger.LogError(response.Error, response.Error.Content);
+                    message = response.Error.Message;
+                    severety = Severity.Error;
+                }
+                if (severety == Severity.Success)
+                {
+                    theUser = response.Content!;
+                }
             }
-            theUser = response.Content!;
+            catch (ApiException ex)
+            {
+                Logger.LogError(ex, "Error adding user");
+                Logger.LogError(ex.Message);
+                message = ex.Message;
+                severety = Severity.Error;
+            }
+        }
+        if (severety != Severity.Success)
+        {
+            Snackbar.Add(message, severety);
+            return;
         }
         var parameters = new DialogParameters();
         parameters.Add(nameof(AddEditUserDialog.User), theUser);
@@ -87,20 +127,27 @@ public partial class Index
                         if (!response.IsSuccessStatusCode)
                         {
                             Logger.LogError(response.Error, response.Error.Content);
-                            Snackbar.Add(response.Error.Content!, Severity.Error);
-                            return;
+                            message = response.Error.Message;
+                            severety = Severity.Error;
                         }
-                        theUser = response.Content!;
+                        if (severety == Severity.Success)
+                        {
+                            theUser = response.Content!;
+                        }
                     }
                     catch (ApiException ex)
                     {
                         Logger.LogError(ex, "Error adding user");
                         Logger.LogError(ex.Message);
-                        Snackbar.Add(ex.Message, Severity.Error);
-                        return;
+                        message = ex.Message;
+                        severety = Severity.Error;
                     }
-                    Users.Add(theUser);
-                    Snackbar.Add($"User {user.UserName} added", Severity.Success);
+                    if (severety == Severity.Success)
+                    {
+                        Users.Add(theUser);
+                        message = $"User {user.UserName} added";
+                        severety = Severity.Success;
+                    }
                 }
                 else
                 {
@@ -110,21 +157,26 @@ public partial class Index
                         if (!response.IsSuccessStatusCode)
                         {
                             Logger.LogError(response.Error, response.Error.Content);
-                            Snackbar.Add(response.Error.Content!, Severity.Error);
-                            return;
+                            message = response.Error.Message;
+                            severety = Severity.Error;
                         }
                     }
                     catch (ApiException ex)
                     {
                         Logger.LogError(ex, "Error updating user");
                         Logger.LogError(ex.Message);
-                        Snackbar.Add(ex.Message, Severity.Error);
-                        return;
+                        message = ex.Message;
+                        severety = Severity.Error;
                     }
-                    Users.Remove(user);
-                    Users.Add(theUser);
-                    Snackbar.Add($"User {user.UserName} updated", Severity.Success);
+                    if (severety == Severity.Success)
+                    {
+                        Users.Remove(user);
+                        Users.Add(theUser);
+                        message = $"User {user.UserName} updated";
+                        severety = Severity.Success;
+                    }
                 }
+                Snackbar.Add(message, severety);
                 StateHasChanged();
             }
         }
@@ -138,26 +190,31 @@ public partial class Index
             yesText: "Delete!", cancelText: "Cancel");
         if (result != null && result.Value)
         {
+            var severety = Severity.Success;
+            string message = $"User {user.UserName} deleted";
             try
             {
                 var response = await ApiService.UserAPI.DeleteUser(user.Id);
                 if (!response.IsSuccessStatusCode)
                 {
                     Logger.LogError(response.Error, response.Error.Content);
-                    Snackbar.Add(response.Error.Content!, Severity.Error);
-                    return;
+                    message = response.Error.Message;
+                    severety = Severity.Error;
                 }
             }
             catch (ApiException ex)
             {
                 Logger.LogError(ex, "Error deleting user");
                 Logger.LogError(ex.Message);
-                Snackbar.Add(ex.Message, Severity.Error);
-                return;
+                message = ex.Message;
+                severety = Severity.Error;
             }
-            Users.Remove(user);
-            StateHasChanged();
-            Snackbar.Add($"User {user.UserName} deleted", Severity.Success);
+            if (severety == Severity.Success)
+            {
+                Users.Remove(user);
+                StateHasChanged();
+            }
+            Snackbar.Add(message, severety);
         }
     }
 
@@ -169,24 +226,26 @@ public partial class Index
             yesText: "Reset!", cancelText: "Cancel");
         if (result != null && result.Value)
         {
+            var severety = Severity.Success;
+            string message = $"Password for user {user.UserName} reset";
             try
             {
                 var response = await ApiService.UserAPI.ResetPassword(user.Id);
                 if (!response.IsSuccessStatusCode)
                 {
                     Logger.LogError(response.Error, response.Error.Content);
-                    Snackbar.Add(response.Error.Content!, Severity.Error);
-                    return;
+                    message = response.Error.Message;
+                    severety = Severity.Error;
                 }
             }
             catch (ApiException ex)
             {
                 Logger.LogError(ex, "Error resetting password");
                 Logger.LogError(ex.Message);
-                Snackbar.Add(ex.Message, Severity.Error);
-                return;
+                message = ex.Message;
+                severety = Severity.Error;
             }
-            Snackbar.Add($"Password for user {user.UserName} reset", Severity.Success);
+            Snackbar.Add(message, severety);
         }
     }
 }

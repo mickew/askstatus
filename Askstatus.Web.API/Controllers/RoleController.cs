@@ -20,7 +20,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Permissions.ViewRoles)]
+    [Authorize(Permissions.ViewRoles | Permissions.ManageUsers)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Get()
@@ -65,7 +65,7 @@ public class RoleController : ControllerBase
 
     [HttpPut]
     [Route("permission")]
-    [Authorize(Permissions.ManageRoles)]
+    [Authorize(Permissions.ConfigureAccessControl)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -77,7 +77,7 @@ public class RoleController : ControllerBase
 
     [HttpGet]
     [Route("permissions")]
-    [Authorize(Permissions.ViewRoles)]
+    [Authorize(Permissions.ViewAccessControl)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetPermissions()

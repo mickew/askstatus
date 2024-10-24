@@ -363,7 +363,7 @@ public class UserTests
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Act
-        var response = await _userAPI.ChangePassword(new ChangePasswordRequest(IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword));
+        var response = await _userAPI.ChangePassword(new ChangePasswordRequest(IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -379,7 +379,7 @@ public class UserTests
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Act
-        var response = await _userAPI.ChangePassword(new ChangePasswordRequest(IntegrationTestWebAppFactory.DefaultPassword, "nopassword"));
+        var response = await _userAPI.ChangePassword(new ChangePasswordRequest(IntegrationTestWebAppFactory.DefaultPassword, "nopassword", "nopassword"));
 
         //Assert
         response.IsSuccessStatusCode.Should().BeFalse();
@@ -394,7 +394,7 @@ public class UserTests
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Act
-        var response = await _userAPI.ChangePassword(new ChangePasswordRequest(IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword));
+        var response = await _userAPI.ChangePassword(new ChangePasswordRequest(IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Assert
         response.IsSuccessStatusCode.Should().BeFalse();
@@ -408,7 +408,7 @@ public class UserTests
         _factory.ReSeedData();
 
         //Act
-        var response = await _userAPI.ChangePassword(new ChangePasswordRequest(IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword));
+        var response = await _userAPI.ChangePassword(new ChangePasswordRequest(IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword, IntegrationTestWebAppFactory.DefaultPassword));
 
         //Assert
         response.IsSuccessStatusCode.Should().BeFalse();
