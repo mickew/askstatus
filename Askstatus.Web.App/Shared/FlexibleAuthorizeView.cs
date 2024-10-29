@@ -1,4 +1,4 @@
-﻿using Askstatus.Domain.Authorization;
+﻿using Askstatus.Common.Authorization;
 using Microsoft.AspNetCore.Components;
 
 namespace Askstatus.Web.App.Shared;

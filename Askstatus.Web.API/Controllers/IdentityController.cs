@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Askstatus.Application.Authorization;
 using Askstatus.Application.Identity;
 using Askstatus.Common.Identity;
 using FluentResults;
@@ -26,10 +27,11 @@ public class IdentityController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest login)
     {
         Result result = await _sender.Send(new LoginUserCommand { UserName = login.UserName, Password = login.Password });
-        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile(HttpStatusCode.Unauthorized));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
     [HttpPost("logout")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Logout()
@@ -39,20 +41,22 @@ public class IdentityController : ControllerBase
     }
 
     [HttpGet("userinfo")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetUserInfo()
     {
         var result = await _sender.Send(new GetUserInfoQuery());
-        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile(HttpStatusCode.Unauthorized));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
     [HttpGet("claims")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetApplicationClaims()
     {
         var result = await _sender.Send(new GetApplicationClaimsQuery());
-        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile(HttpStatusCode.Unauthorized));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 }

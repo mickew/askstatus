@@ -14,6 +14,7 @@ internal class ApplicationHostAddressService : IApplicationHostAddressService
             {
                 _ipAddress = Dns.GetHostEntry(Dns.GetHostName())
                     .AddressList
+                    .Where(x => x.ToString() != "127.0.1.1")
                     .FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)!
                     .ToString();
             }

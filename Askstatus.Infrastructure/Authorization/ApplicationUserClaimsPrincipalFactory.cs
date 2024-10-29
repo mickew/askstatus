@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Askstatus.Domain.Authorization;
+using Askstatus.Common.Authorization;
 using Askstatus.Domain.Constants;
 using Askstatus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;

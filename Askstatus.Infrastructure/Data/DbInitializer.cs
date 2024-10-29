@@ -1,4 +1,4 @@
-using Askstatus.Domain.Authorization;
+using Askstatus.Common.Authorization;
 using Askstatus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +9,9 @@ public sealed class DbInitializer
 {
     private readonly ApplicationBaseDbContext _context;
 
-    private const string AdministratorsRole = "Administrators";
+    public const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
-    private const string UserRole = "User";
+    private const string UserRole = "Users";
     public const string DefaultUserUserName = "user";
 
     private const string DefaultPassword = "Password123!";
@@ -85,7 +85,7 @@ public sealed class DbInitializer
         if (!string.IsNullOrEmpty(seedPassword))
         {
             adminUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == adminUserName);
-            if (adminUser is not null) 
+            if (adminUser is not null)
             {
                 pw = passwordHasher.HashPassword(adminUser, seedPassword);
                 adminUser.PasswordHash = pw;

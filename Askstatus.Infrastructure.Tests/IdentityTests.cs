@@ -144,136 +144,136 @@ public class IdentityTests
         result.Reasons.Should().HaveCount(1);
         result.Reasons.First().Message.Should().Be("Not authorized");
     }
-}
-
-public class FakeUserManager : UserManager<ApplicationUser>
-{
-    public FakeUserManager()
-        : base(new Mock<IUserStore<ApplicationUser>>().Object,
-          new Mock<IOptions<IdentityOptions>>().Object,
-          new Mock<IPasswordHasher<ApplicationUser>>().Object,
-          new IUserValidator<ApplicationUser>[0],
-          new IPasswordValidator<ApplicationUser>[0],
-          new Mock<ILookupNormalizer>().Object,
-          new Mock<IdentityErrorDescriber>().Object,
-          new Mock<IServiceProvider>().Object,
-          new Mock<ILogger<UserManager<ApplicationUser>>>().Object)
-    { }
-
-    public override Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
+    public class FakeUserManager : UserManager<ApplicationUser>
     {
-        return Task.FromResult(IdentityResult.Success);
-    }
+        public FakeUserManager()
+            : base(new Mock<IUserStore<ApplicationUser>>().Object,
+              new Mock<IOptions<IdentityOptions>>().Object,
+              new Mock<IPasswordHasher<ApplicationUser>>().Object,
+              new IUserValidator<ApplicationUser>[0],
+              new IPasswordValidator<ApplicationUser>[0],
+              new Mock<ILookupNormalizer>().Object,
+              new Mock<IdentityErrorDescriber>().Object,
+              new Mock<IServiceProvider>().Object,
+              new Mock<ILogger<UserManager<ApplicationUser>>>().Object)
+        { }
 
-    public override Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
-    {
-        return Task.FromResult(IdentityResult.Success);
-    }
-
-    public override Task<string> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
-    {
-        return Task.FromResult(Guid.NewGuid().ToString());
-    }
-
-    public override Task<IdentityResult> ConfirmEmailAsync(ApplicationUser user, string token)
-    {
-        return Task.FromResult(IdentityResult.Success);
-    }
-
-    public override Task<ApplicationUser?> FindByEmailAsync(string email)
-    {
-        return base.FindByEmailAsync(email);
-    }
-
-    public override Task<ApplicationUser?> GetUserAsync(ClaimsPrincipal principal)
-    {
-        if (principal.Identity!.Name != "admin")
-            return Task.FromResult<ApplicationUser?>(null);
-        ApplicationUser user = new ApplicationUser
+        public override Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
         {
-            UserName = principal.Identity!.Name,
-            Email = principal.FindFirstValue(ClaimTypes.Email)
-        };
-        return Task.FromResult<ApplicationUser?>(user);
-    }
-}
+            return Task.FromResult(IdentityResult.Success);
+        }
 
-public class FakeHttpContextAccessor : IHttpContextAccessor
-{
-    public FakeHttpContextAccessor(bool simulateSuccess = true)
-    {
-        if (simulateSuccess)
+        public override Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
         {
-            HttpContext = new DefaultHttpContext
+            return Task.FromResult(IdentityResult.Success);
+        }
+
+        public override Task<string> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
+        {
+            return Task.FromResult(Guid.NewGuid().ToString());
+        }
+
+        public override Task<IdentityResult> ConfirmEmailAsync(ApplicationUser user, string token)
+        {
+            return Task.FromResult(IdentityResult.Success);
+        }
+
+        public override Task<ApplicationUser?> FindByEmailAsync(string email)
+        {
+            return base.FindByEmailAsync(email);
+        }
+
+        public override Task<ApplicationUser?> GetUserAsync(ClaimsPrincipal principal)
+        {
+            if (principal.Identity!.Name != "admin")
+                return Task.FromResult<ApplicationUser?>(null);
+            ApplicationUser user = new ApplicationUser
             {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                UserName = principal.Identity!.Name,
+                Email = principal.FindFirstValue(ClaimTypes.Email)
+            };
+            return Task.FromResult<ApplicationUser?>(user);
+        }
+    }
+
+    public class FakeHttpContextAccessor : IHttpContextAccessor
+    {
+        public FakeHttpContextAccessor(bool simulateSuccess = true)
+        {
+            if (simulateSuccess)
+            {
+                HttpContext = new DefaultHttpContext
                 {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
                     new Claim(ClaimTypes.Name, "admin"),
                     new Claim(ClaimTypes.NameIdentifier, "1"),
                     new Claim(ClaimTypes.Email, "admin@localhost"),
                     new Claim(ClaimTypes.Role, "Admin"),
                     new Claim(CustomClaimTypes.Permissions, "-1")
-                }, "someAuthTypeName"))
-            };
-        }
-        else
-        {
-            HttpContext = new DefaultHttpContext
+                    }, "someAuthTypeName"))
+                };
+            }
+            else
             {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                HttpContext = new DefaultHttpContext
                 {
-                }))
-            };
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
+                    }))
+                };
+            }
+        }
+
+        public HttpContext? HttpContext { get; set; }
+    }
+
+    public class FakeSignInManager : SignInManager<ApplicationUser>
+    {
+        private readonly bool _simulateSuccess = false;
+
+        public FakeSignInManager(bool simulateSuccess = true)
+                : base(new FakeUserManager(),
+                     new FakeHttpContextAccessor(simulateSuccess),
+                     new Mock<IUserClaimsPrincipalFactory<ApplicationUser>>().Object,
+                     new Mock<IOptions<IdentityOptions>>().Object,
+                     new Mock<ILogger<SignInManager<ApplicationUser>>>().Object,
+                     new Mock<IAuthenticationSchemeProvider>().Object,
+                     new Mock<IUserConfirmation<ApplicationUser>>().Object)
+        {
+            this._simulateSuccess = simulateSuccess;
+        }
+
+        public override Task<SignInResult> PasswordSignInAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
+        {
+            return this.ReturnResult(this._simulateSuccess);
+        }
+
+        public override Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
+        {
+            return this.ReturnResult(this._simulateSuccess);
+        }
+
+        public override Task<SignInResult> CheckPasswordSignInAsync(ApplicationUser user, string password, bool lockoutOnFailure)
+        {
+            return this.ReturnResult(this._simulateSuccess);
+        }
+
+        public override Task SignOutAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        private Task<SignInResult> ReturnResult(bool isSuccess = true)
+        {
+            SignInResult result = SignInResult.Success;
+
+            if (!isSuccess)
+                result = SignInResult.Failed;
+
+            return Task.FromResult(result);
         }
     }
-
-    public HttpContext? HttpContext { get; set; }
 }
 
-public class FakeSignInManager : SignInManager<ApplicationUser>
-{
-    private readonly bool _simulateSuccess = false;
-
-    public FakeSignInManager(bool simulateSuccess = true)
-            : base(new FakeUserManager(),
-                 new FakeHttpContextAccessor(simulateSuccess),
-                 new Mock<IUserClaimsPrincipalFactory<ApplicationUser>>().Object,
-                 new Mock<IOptions<IdentityOptions>>().Object,
-                 new Mock<ILogger<SignInManager<ApplicationUser>>>().Object,
-                 new Mock<IAuthenticationSchemeProvider>().Object,
-                 new Mock<IUserConfirmation<ApplicationUser>>().Object)
-    {
-        this._simulateSuccess = simulateSuccess;
-    }
-
-    public override Task<SignInResult> PasswordSignInAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
-    {
-        return this.ReturnResult(this._simulateSuccess);
-    }
-
-    public override Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
-    {
-        return this.ReturnResult(this._simulateSuccess);
-    }
-
-    public override Task<SignInResult> CheckPasswordSignInAsync(ApplicationUser user, string password, bool lockoutOnFailure)
-    {
-        return this.ReturnResult(this._simulateSuccess);
-    }
-
-    public override Task SignOutAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    private Task<SignInResult> ReturnResult(bool isSuccess = true)
-    {
-        SignInResult result = SignInResult.Success;
-
-        if (!isSuccess)
-            result = SignInResult.Failed;
-
-        return Task.FromResult(result);
-    }
-}
 

@@ -4,6 +4,7 @@ using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Identity;
 using Askstatus.Infrastructure.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -21,10 +22,24 @@ public static class DependencyInjection
         }
 
         // Establish cookie authentication
-        services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies(); // (o => o.ApplicationCookie!.Configure(s => s.LoginPath = "/Identity/Account/Login"));
+        services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies(o =>
+        {
+            o.ApplicationCookie!.Configure(s =>
+            {
+                s.Events.OnRedirectToAccessDenied = 
+                s.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                };
+                s.ExpireTimeSpan = TimeSpan.FromHours(1);
+            });              
+        });
 
         // Configure authorization
-        services.AddAuthorizationBuilder();
+        //services.AddAuthorizationBuilder();
+        services.AddAuthorization();
+
 
         // Add the database
         services.AddDbContext<ApplicationBaseDbContext>(options =>
@@ -38,9 +53,10 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationBaseDbContext>()
             .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
             .AddApiEndpoints();
-        services.AddScoped<IIdentityService, IdentityService>();
 
         ///////////////////////////////////////////////
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddSingleton<IApplicationHostAddressService, ApplicationHostAddressService>();
 
         return services;
