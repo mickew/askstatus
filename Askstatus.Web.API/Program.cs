@@ -105,6 +105,9 @@ public class Program
         builder.Services.AddInfrastructureServices(builder.Environment, builder.Configuration.GetConnectionString("DefaultConnection")!);
         builder.Services.AddApplicationServices();
 
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+
         // Add services to the container.
         // Add a CORS policy for the client
         builder.Services.AddCors(
@@ -139,6 +142,8 @@ public class Program
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
         });
+
+        app.UseExceptionHandler();
 
         app.UseHttpsRedirection();
         // Activate the CORS policy
