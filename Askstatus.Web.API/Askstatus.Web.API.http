@@ -25,3 +25,16 @@ GET {{Askstatus.Web.API_HostAddress}}/api/identity/userinfo
 GET {{Askstatus.Web.API_HostAddress}}/api/identity/claims
 
 ###
+
+GET {{Askstatus.Web.API_HostAddress}}/api/role
+
+###
+
+POST {{Askstatus.Web.API_HostAddress}}/api/roles
+
+###
+
+GET {{Askstatus.Web.API_HostAddress}}/api/role/permissions
+
+###
+
