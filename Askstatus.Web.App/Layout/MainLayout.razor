@@ -6,7 +6,7 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
+    <MudAppBar Style="margin-left: 0px; width: 100%">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
         <LoginDisplay />
@@ -24,7 +24,7 @@
             </div>
         </MudContainer>
     </MudMainContent>
-    <MudAppBar Elevation="1" Style="top: auto; bottom: 0" Dense="true" Fixed="true">
+    <MudAppBar Elevation="1" Style="top: auto; bottom: 0; margin-left: 0px; width: 100%" Dense="true" Fixed="true">
         <MudGrid Justify="Justify.Center" Style="margin-top:0; margin-left: 0;">
             <MudText>© 2024 - <a style="color: white" href="http://promarmic.se" rel="nofollow" target="_blank">Askstatus</a> Version @Version @AspDotnetVersion</MudText>
         </MudGrid>
