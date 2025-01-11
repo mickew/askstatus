@@ -1,9 +1,9 @@
 ﻿using System.Net;
 
 namespace Askstatus.Infrastructure.Services;
-public class NotFoundError : BaseIdentityError
+public class IdentityNotFoundError : BaseIdentityError
 {
-    public NotFoundError(string message)
+    public IdentityNotFoundError(string message)
         : base(message, HttpStatusCode.NotFound)
     {
     }

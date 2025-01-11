@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using FluentResults;
 
-namespace Askstatus.Infrastructure.Services;
+namespace Askstatus.Application.Errors;
 public class BaseError : Error
 {
     public BaseError(string message, HttpStatusCode httpStatusCode)

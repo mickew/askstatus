@@ -33,7 +33,7 @@ public sealed class IdentityService : IIdentityService
             return Task.FromResult(Result.Ok(claims));
         }
         _logger.LogWarning("Not authorized");
-        return Task.FromResult(Result.Fail<IEnumerable<ApplicationClaimVM>>(new UnauthorizedError("Not authorized")));
+        return Task.FromResult(Result.Fail<IEnumerable<ApplicationClaimVM>>(new IdentityUnauthorizedError("Not authorized")));
     }
 
     public async Task<Result<UserInfoVM>> GetUserInfo()
@@ -47,7 +47,7 @@ public sealed class IdentityService : IIdentityService
             return Result.Ok(userInfo);
         }
         _logger.LogWarning("User not found");
-        return Result.Fail<UserInfoVM>(new NotFoundError("User not found"));
+        return Result.Fail<UserInfoVM>(new IdentityNotFoundError("User not found"));
     }
 
     public async Task<Result> Login(LoginRequest loginRequest)
@@ -60,7 +60,7 @@ public sealed class IdentityService : IIdentityService
             return Result.Ok();
         }
         _logger.LogWarning("Login failed for user {User}", loginRequest.UserName);
-        return Result.Fail(new UnauthorizedError("Login failed"));
+        return Result.Fail(new IdentityUnauthorizedError("Login failed"));
     }
 
     public async Task<Result> Logout()

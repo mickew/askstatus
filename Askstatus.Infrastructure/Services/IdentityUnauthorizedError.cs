@@ -1,9 +1,9 @@
 ﻿using System.Net;
 
 namespace Askstatus.Infrastructure.Services;
-public class UnauthorizedError : BaseIdentityError
+public class IdentityUnauthorizedError : BaseIdentityError
 {
-    public UnauthorizedError(string message)
+    public IdentityUnauthorizedError(string message)
         : base(message, HttpStatusCode.Unauthorized)
     {
     }

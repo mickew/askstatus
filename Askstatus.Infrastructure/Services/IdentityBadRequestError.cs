@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Identity;
 
 namespace Askstatus.Infrastructure.Services;
-public class BadRequestError : BaseIdentityError
+public class IdentityBadRequestError : BaseIdentityError
 {
-    public BadRequestError(string message)
+    public IdentityBadRequestError(string message)
         : base(message, HttpStatusCode.BadRequest)
     {
     }
 
-    public BadRequestError(string message, IEnumerable<IdentityError> errors)
+    public IdentityBadRequestError(string message, IEnumerable<IdentityError> errors)
         : base(message, HttpStatusCode.BadRequest, errors)
     {
     }
