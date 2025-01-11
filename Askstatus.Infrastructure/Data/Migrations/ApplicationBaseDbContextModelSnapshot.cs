@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Askstatus.Infrastructure.Data.Migrations
 {
-    [DbContext(typeof(ApplicationBaseDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationBaseDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

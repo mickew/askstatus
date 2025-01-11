@@ -39,7 +39,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public Task SetUsersPermission(Permissions permission)
     {
         using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationBaseDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var role = context.Roles.FirstOrDefault(r => r.Name == UserRole);
         if (role != null)
         {
@@ -58,7 +58,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             // Remove the existing service registration for the DbContext
             var descriptor = services.SingleOrDefault(
                 d => d.ServiceType ==
-                    typeof(DbContextOptions<ApplicationBaseDbContext>));
+                    typeof(DbContextOptions<ApplicationDbContext>));
 
             if (descriptor != null)
             {
@@ -66,7 +66,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             }
 
             // Add a database context using an in-memory database for testing.
-            services.AddDbContext<ApplicationBaseDbContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
             {
                 //options.UseInMemoryDatabase(Guid.NewGuid().ToString());
                 options.UseInMemoryDatabase("TestDb");
@@ -75,7 +75,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             });
             using (var scope = services.BuildServiceProvider().CreateScope())
             {
-                var db = scope.ServiceProvider.GetRequiredService<ApplicationBaseDbContext>();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 SeedData(db);
             };
         });
@@ -84,12 +84,12 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public void ReSeedData()
     {
         using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationBaseDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         UnSeedData(context);
         SeedData(context);
     }
 
-    private void UnSeedData(ApplicationBaseDbContext context)
+    private void UnSeedData(ApplicationDbContext context)
     {
         context.UserRoles.RemoveRange(context.UserRoles);
         context.Users.RemoveRange(context.Users);
@@ -97,7 +97,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         context.SaveChanges();
     }
 
-    private void SeedData(ApplicationBaseDbContext context)
+    private void SeedData(ApplicationDbContext context)
     {
         if (context.Users.Any())
         {

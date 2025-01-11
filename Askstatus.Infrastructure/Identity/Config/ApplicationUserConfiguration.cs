@@ -6,7 +6,7 @@ public sealed class ApplicationUserConfiguration : IEntityTypeConfiguration<Appl
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
-        builder.Property(e => e.FirstName).HasMaxLength(256);
-        builder.Property(e => e.LastName).HasMaxLength(256);
+        builder.Property(e => e.FirstName).HasMaxLength(50);
+        builder.Property(e => e.LastName).HasMaxLength(50);
     }
 }

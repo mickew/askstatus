@@ -42,7 +42,7 @@ public static class DependencyInjection
 
 
         // Add the database
-        services.AddDbContext<ApplicationBaseDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseSqlite(sqliteBuilder.ToString());
         });
@@ -50,7 +50,7 @@ public static class DependencyInjection
         // Add identity and opt-in to endpoints
         services.AddIdentityCore<ApplicationUser>()
             .AddRoles<ApplicationRole>()
-            .AddEntityFrameworkStores<ApplicationBaseDbContext>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
             .AddApiEndpoints();
 
@@ -58,6 +58,9 @@ public static class DependencyInjection
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IUserService, UserService>();
         services.AddSingleton<IApplicationHostAddressService, ApplicationHostAddressService>();
+
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

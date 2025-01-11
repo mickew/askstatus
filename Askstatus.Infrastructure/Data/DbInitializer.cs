@@ -7,7 +7,7 @@ namespace Askstatus.Infrastructure.Data;
 
 public sealed class DbInitializer
 {
-    private readonly ApplicationBaseDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     public const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
@@ -16,7 +16,7 @@ public sealed class DbInitializer
 
     private const string DefaultPassword = "Password123!";
 
-    public DbInitializer(ApplicationBaseDbContext context)
+    public DbInitializer(ApplicationDbContext context)
     {
         _context = context;
     }

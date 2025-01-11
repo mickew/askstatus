@@ -179,10 +179,10 @@ public class Program
             Log.ForContext<Program>().Information("Databese path {path} created", directory);
         }
 
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationBaseDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
 
-        await using var dbContext = new ApplicationBaseDbContext(optionsBuilder.Options);
+        await using var dbContext = new ApplicationDbContext(optionsBuilder.Options);
         var initializer = new DbInitializer(dbContext);
         await initializer.SeedAsync(password!);
     }
