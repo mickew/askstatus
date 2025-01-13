@@ -1,6 +1,6 @@
 ﻿namespace Askstatus.Application.Interfaces;
 public interface IUnitOfWork : IDisposable
 {
-    Task SaveChangesAsync();
+    Task<int> SaveChangesAsync();
     IPowerDeviceRepository PowerDeviceRepository { get; }
 }

@@ -5,7 +5,7 @@ public class PowerDeviceDto
 
     public PowerDeviceDto(int id, string name, PowerDeviceTypes deviceType, string hostName, string deviceName, string deviceId, string deviceMac, string deviceModel, int deviceGen)
     {
-        ID = id;
+        Id = id;
         Name = name;
         DeviceType = deviceType;
         HostName = hostName;
@@ -15,7 +15,7 @@ public class PowerDeviceDto
         DeviceModel = deviceModel;
         DeviceGen = deviceGen;
     }
-    public int ID { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; }
     public PowerDeviceTypes DeviceType { get; set; }
     public string HostName { get; set; }
