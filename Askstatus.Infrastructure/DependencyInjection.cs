@@ -1,4 +1,5 @@
 ﻿using Askstatus.Application.Interfaces;
+using Askstatus.Common.PowerDevice;
 using Askstatus.Infrastructure.Authorization;
 using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Identity;
@@ -59,8 +60,8 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddSingleton<IApplicationHostAddressService, ApplicationHostAddressService>();
 
-
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddTransient<IRepository<Askstatus.Domain.Entities.PowerDevice>, Repository<Askstatus.Domain.Entities.PowerDevice>>();
 
         return services;
     }

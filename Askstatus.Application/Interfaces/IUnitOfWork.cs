@@ -2,5 +2,5 @@
 public interface IUnitOfWork : IDisposable
 {
     Task<int> SaveChangesAsync();
-    IPowerDeviceRepository PowerDeviceRepository { get; }
+    IRepository<Askstatus.Domain.Entities.PowerDevice> PowerDeviceRepository { get; }
 }

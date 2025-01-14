@@ -1,4 +1,5 @@
 ﻿using Askstatus.Application.Interfaces;
+using Askstatus.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Askstatus.Infrastructure.Data;
@@ -14,7 +15,7 @@ public class UnitOfWork : IUnitOfWork
         _serviceProvider = serviceProvider;
     }
 
-    public IPowerDeviceRepository PowerDeviceRepository => _serviceProvider.GetRequiredService<IPowerDeviceRepository>();
+    public IRepository<PowerDevice> PowerDeviceRepository => _serviceProvider.GetRequiredService<IRepository<PowerDevice>>();
 
     protected virtual void Dispose(bool disposing)
     {

@@ -28,6 +28,6 @@ public class ApplicationBaseDbContext<TPowerDevice> : IdentityDbContext<Applicat
     }
 }
 
-public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : ApplicationBaseDbContext<PowerDevice>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : ApplicationBaseDbContext<PowerDevice>(options)
 {
 }

@@ -1,4 +1,6 @@
 ﻿using Askstatus.Common.Authorization;
+using Askstatus.Common.PowerDevice;
+using Askstatus.Domain.Entities;
 using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +26,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public string? AdministratorsRoleId { get; private set; }
 
     public string? UserRoleId { get; private set; }
+
+    public int PowerDeviceId { get; private set; }
 
     public Task InitializeAsync()
     {
@@ -54,20 +58,23 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         base.ConfigureWebHost(builder);
         builder.ConfigureServices(services =>
         {
-
             // Remove the existing service registration for the DbContext
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType ==
-                    typeof(DbContextOptions<ApplicationDbContext>));
+            RemoveAllDbContextsFromServices(services);
+            //var descriptor = services.SingleOrDefault(
+            //    d => d.ServiceType ==
+            //        typeof(DbContextOptions<ApplicationDbContext>));
 
-            if (descriptor != null)
-            {
-                services.Remove(descriptor);
-            }
+            //if (descriptor != null)
+            //{
+            //    services.Remove(descriptor);
+            //}
 
             // Add a database context using an in-memory database for testing.
             services.AddDbContext<ApplicationDbContext>(options =>
             {
+                //var connectionString = new SqliteConnectionStringBuilder { DataSource = ":memory:" }.ToString();
+                //var connection = new SqliteConnection(connectionString);
+                //options.UseSqlite(connection);
                 //options.UseInMemoryDatabase(Guid.NewGuid().ToString());
                 options.UseInMemoryDatabase("TestDb");
                 options.EnableDetailedErrors(true);
@@ -76,6 +83,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             using (var scope = services.BuildServiceProvider().CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                //db.Database.EnsureCreated();
                 SeedData(db);
             };
         });
@@ -94,7 +102,18 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         context.UserRoles.RemoveRange(context.UserRoles);
         context.Users.RemoveRange(context.Users);
         context.Roles.RemoveRange(context.Roles);
+        context.PowerDevices.RemoveRange(context.PowerDevices);
         context.SaveChanges();
+    }
+
+    private void RemoveAllDbContextsFromServices(IServiceCollection services)
+    {
+        // reverse operation of AddDbContext<XDbContext> which removes  DbContexts from services
+        var descriptors = services.Where(d => d.ServiceType.BaseType == typeof(DbContextOptions)).ToList();
+        descriptors.ForEach(d => services.Remove(d));
+
+        var dbContextDescriptors = services.Where(d => d.ServiceType.BaseType == typeof(DbContext)).ToList();
+        dbContextDescriptors.ForEach(d => services.Remove(d));
     }
 
     private void SeedData(ApplicationDbContext context)
@@ -161,6 +180,22 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             UserId = userUser.Id;
             context.Add(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
             context.Add(new IdentityUserRole<string>() { RoleId = userRole.Id, UserId = userUser.Id });
+        }
+
+        if (!context.PowerDevices.Any())
+        {
+            var powdev = context.PowerDevices.Add(new PowerDevice()
+            {
+                Name = "Test Device",
+                DeviceType = PowerDeviceTypes.ShellyGen2,
+                HostName = "localhost",
+                DeviceName = "Test Device",
+                DeviceId = "Test Device",
+                DeviceMac = "00:00:00:00:00:00",
+                DeviceModel = "Test Model",
+                DeviceGen = 1
+            });
+            PowerDeviceId = powdev.Entity.Id;
         }
         context.SaveChanges();
     }
