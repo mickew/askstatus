@@ -20,3 +20,6 @@ sudo systemctl stop askstatusbackend.service
 sudo systemctl stop askstatusbackend.service
 sudo journalctl -t askstatus-control --since today
 ```
+
+## Setup Raspbery PI
+[Setup Raspbery PI for Askholmen Status System](Tools/RPISetup.md)
