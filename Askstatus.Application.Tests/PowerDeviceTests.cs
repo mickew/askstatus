@@ -1,7 +1,9 @@
-﻿using Askstatus.Application.Interfaces;
+﻿using Askstatus.Application.Errors;
+using Askstatus.Application.Interfaces;
 using Askstatus.Application.PowerDevice;
 using Askstatus.Common.PowerDevice;
 using FluentAssertions;
+using FluentResults;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -430,6 +432,206 @@ public class PowerDeviceTests
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
             It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error deleting PowerDevice with id 1")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task TogglePowerDevice_Should_Return_Success()
+    {
+        // Arrange
+        var powerDevice = new Askstatus.Domain.Entities.PowerDevice
+        {
+            Id = 1,
+            Name = "PowerDevice1",
+            DeviceType = PowerDeviceTypes.Generic,
+            HostName = "HostName1",
+            DeviceName = "DeviceName1",
+            DeviceId = "DeviceId1",
+            DeviceMac = "DeviceMac1",
+            DeviceModel = "DeviceModel1",
+            DeviceGen = 1
+        };
+        var logger = new Mock<ILogger<TogglePowerDeviceCommandHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var deviceService = new Mock<IDeviceService>();
+
+        unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
+        deviceService.Setup(x => x.Toggle(It.IsAny<string>(), 0)).ReturnsAsync(Result.Ok());
+        var handler = new TogglePowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
+        var command = new TogglePowerDeviceCommand(1);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
+        deviceService.Verify(x => x.Toggle(powerDevice.HostName, 0), Times.Once);
+    }
+
+    [Fact]
+    public async Task TogglePowerDevice_Should_Return_NotFound()
+    {
+        // Arrange
+        Domain.Entities.PowerDevice powerDevice = null!;
+        var logger = new Mock<ILogger<TogglePowerDeviceCommandHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var deviceService = new Mock<IDeviceService>();
+
+        unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
+        deviceService.Setup(x => x.Toggle(It.IsAny<string>(), 0)).ReturnsAsync(Result.Ok());
+        var handler = new TogglePowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
+        var command = new TogglePowerDeviceCommand(1);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Should().BeOfType<NotFoundError>();
+        result.Errors.First().Message.Should().Be("PowerDevice not found");
+        unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
+        logger.Verify(l =>
+        l.Log(LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with Id: 1 not found")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task SwitchPowerDevice_Should_Return_Success()
+    {
+        // Arrange
+        var powerDevice = new Askstatus.Domain.Entities.PowerDevice
+        {
+            Id = 1,
+            Name = "PowerDevice1",
+            DeviceType = PowerDeviceTypes.Generic,
+            HostName = "HostName1",
+            DeviceName = "DeviceName1",
+            DeviceId = "DeviceId1",
+            DeviceMac = "DeviceMac1",
+            DeviceModel = "DeviceModel1",
+            DeviceGen = 1
+        };
+        var logger = new Mock<ILogger<SwitchPowerDeviceCommandHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var deviceService = new Mock<IDeviceService>();
+
+        unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
+        deviceService.Setup(x => x.Switch(It.IsAny<string>(), 0, true)).ReturnsAsync(Result.Ok());
+        var handler = new SwitchPowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
+        var command = new SwitchPowerDeviceCommand(1, true);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
+        deviceService.Verify(x => x.Switch(powerDevice.HostName, 0, true), Times.Once);
+    }
+
+    [Fact]
+    public async Task SwitchPowerDevice_Should_Return_NotFound()
+    {
+        // Arrange
+        Domain.Entities.PowerDevice powerDevice = null!;
+        var logger = new Mock<ILogger<SwitchPowerDeviceCommandHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var deviceService = new Mock<IDeviceService>();
+
+        unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
+        var handler = new SwitchPowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
+        var command = new SwitchPowerDeviceCommand(1, true);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Should().BeOfType<NotFoundError>();
+        result.Errors.First().Message.Should().Be("PowerDevice not found");
+        unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
+        logger.Verify(l =>
+        l.Log(LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with Id: 1 not found")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task PowerDeviceState_Should_Return_Success()
+    {
+        // Arrange
+        var powerDevice = new Askstatus.Domain.Entities.PowerDevice
+        {
+            Id = 1,
+            Name = "PowerDevice1",
+            DeviceType = PowerDeviceTypes.Generic,
+            HostName = "HostName1",
+            DeviceName = "DeviceName1",
+            DeviceId = "DeviceId1",
+            DeviceMac = "DeviceMac1",
+            DeviceModel = "DeviceModel1",
+            DeviceGen = 1
+        };
+        var logger = new Mock<ILogger<GetPowerDeviceStateQueryHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var deviceService = new Mock<IDeviceService>();
+
+        unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
+        deviceService.Setup(x => x.State(It.IsAny<string>(), 0)).ReturnsAsync(Result.Ok(true));
+        var handler = new GetPowerDeviceStateQueryHandler(unitOfWork.Object, logger.Object, deviceService.Object);
+        var command = new GetPowerDeviceStateQuery(1);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeTrue();
+        unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
+        deviceService.Verify(x => x.State(powerDevice.HostName, 0), Times.Once);
+    }
+
+    [Fact]
+    public async Task PowerDeviceState_Should_Return_NotFound()
+    {
+        // Arrange
+        Domain.Entities.PowerDevice powerDevice = null!;
+        var logger = new Mock<ILogger<GetPowerDeviceStateQueryHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var deviceService = new Mock<IDeviceService>();
+
+        unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
+        var handler = new GetPowerDeviceStateQueryHandler(unitOfWork.Object, logger.Object, deviceService.Object);
+        var command = new GetPowerDeviceStateQuery(1);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Should().BeOfType<NotFoundError>();
+        result.Errors.First().Message.Should().Be("PowerDevice not found");
+        unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
+        logger.Verify(l =>
+        l.Log(LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with Id: 1 not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
