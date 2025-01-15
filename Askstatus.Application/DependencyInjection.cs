@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using Askstatus.Application.Authorization;
+using Askstatus.Application.Interfaces;
+using Askstatus.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,8 +15,10 @@ public static class DependencyInjection
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
         });
 
+        services.AddHttpClient();
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, FlexibleAuthorizationPolicyProvider>();
+        services.AddScoped<IDiscoverDeviceService, ShellyDiscoverDeviceService>();
         return services;
     }
 }

@@ -27,7 +27,7 @@ public static class DependencyInjection
         {
             o.ApplicationCookie!.Configure(s =>
             {
-                s.Events.OnRedirectToAccessDenied = 
+                s.Events.OnRedirectToAccessDenied =
                 s.Events.OnRedirectToLogin = context =>
                 {
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
