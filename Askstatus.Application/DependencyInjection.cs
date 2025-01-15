@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, FlexibleAuthorizationPolicyProvider>();
         services.AddScoped<IDiscoverDeviceService, ShellyDiscoverDeviceService>();
+        services.AddScoped<IDeviceService, Shelly2DeviceService>();
         return services;
     }
 }

@@ -83,7 +83,7 @@ public class Shelly2DeviceService : IDeviceService
 
     public async Task<Result> Toggle(string host, int channel)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"http://{host}/rpc/Switch.Set?id={channel}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"http://{host}/rpc/Switch.Toggle?id={channel}");
         var client = _clientFactory.CreateClient();
         try
         {

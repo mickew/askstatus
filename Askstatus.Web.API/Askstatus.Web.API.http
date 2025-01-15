@@ -1,4 +1,7 @@
 @Askstatus.Web.API_HostAddress = https://localhost:7298
+@ip=192.168.1.85
+@id=1
+@onoff=False
 
 GET {{Askstatus.Web.API_HostAddress}}/api/weatherforecast/
 Accept: application/json
@@ -38,3 +41,48 @@ GET {{Askstatus.Web.API_HostAddress}}/api/role/permissions
 
 ###
 
+GET {{Askstatus.Web.API_HostAddress}}/api/devicediscover?ip={{ip}}
+
+###
+
+GET {{Askstatus.Web.API_HostAddress}}/api/powerdevice
+
+###
+
+POST {{Askstatus.Web.API_HostAddress}}/api/powerdevice
+Content-Type: application/json
+
+{
+  //PowerDeviceRequest
+}
+
+###
+
+PUT {{Askstatus.Web.API_HostAddress}}/api/powerdevice
+Content-Type: application/json
+
+{
+  //PowerDeviceRequest
+}
+
+###
+
+DELETE {{Askstatus.Web.API_HostAddress}}/api/powerdevice/{{id}}
+
+###
+
+GET {{Askstatus.Web.API_HostAddress}}/api/powerdevice/{{id}}
+
+###
+
+GET {{Askstatus.Web.API_HostAddress}}/api/powerdevice/{{id}}/state
+
+###
+
+GET {{Askstatus.Web.API_HostAddress}}/api/powerdevice/{{id}}/switch/{{onoff}}
+
+###
+
+GET {{Askstatus.Web.API_HostAddress}}/api/powerdevice/{{id}}/toggle
+
+###

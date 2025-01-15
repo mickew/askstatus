@@ -96,4 +96,37 @@ public class PowerDeviceController : ControllerBase
         var result = await _sender.Send(new DeletePowerDeviceCommand(id));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
+
+    [HttpGet]
+    [Route("{id}/state")]
+    [Authorize(Permissions.ViewPowerDevices)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetState(int id)
+    {
+        var result = await _sender.Send(new GetPowerDeviceStateQuery(id));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
+    [HttpGet]
+    [Route("{id}/toggle")]
+    [Authorize(Permissions.ViewPowerDevices)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Toggle(int id)
+    {
+        var result = await _sender.Send(new TogglePowerDeviceCommand(id));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
+    [HttpGet]
+    [Route("{id}/switch/{onoff}")]
+    [Authorize(Permissions.ViewPowerDevices)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Switch(int id, bool onoff)
+    {
+        var result = await _sender.Send(new SwitchPowerDeviceCommand(id, onoff));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
 }
