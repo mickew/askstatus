@@ -1,0 +1,19 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.DeviceUnknown" Class="mr-3 mb-n1" />
+            Edit Device!
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="@device.Name" Label="Name" />
+        <MudTextField @bind-Value="@device.HostName" Label="Host" />
+        <MudTextField @bind-Value="@device.DeviceMac" Label="Mac address" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Success" OnClick="SaveDevice">Save</MudButton>
+    </DialogActions>
+
+</MudDialog>
+

@@ -2,9 +2,72 @@
 @attribute [Authorize]
 
 <PageTitle>Askstatus - Dashboard</PageTitle>
+<FlexibleAuthorizeView Permissions="@Permissions.ConfigurePowerDevices">
+    <Authorized>
+        @{
+            UserGotNoRights = false;
+        }
+    </Authorized>
+    <NotAuthorized>
+        @{
+            UserGotNoRights = true;
+        }
+    </NotAuthorized>
+</FlexibleAuthorizeView>
 
-<h1 style="text-align: center;">Hello, world!</h1>
+<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="6">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Devices</MudText>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudIconButton Disabled="@UserGotNoRights" Icon="@Icons.Material.Filled.Devices" Href="admin/devices" Color="Color.Default" />
+                    </CardHeaderActions>
+                </MudCardHeader>
+                @foreach (var device in Devices)
+                {
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem Style="width: 100%">
+                                <MudPaper Elevation="2" Class="pa-4">
+                                    @{
+                                        Color stateColor = device.State ? Color.Success : Color.Error;
+                                        string stateIcon = device.State ? AskstatusIcons.HeatOn : AskstatusIcons.HeatOff;
+                                        bool prossesing = device.Prosessing;
+                                    }
+                                    <MudIconButton Disabled="@prossesing" Icon="@stateIcon" Color="@stateColor" aria-label="delete" Size="Size.Medium" @onclick="() => ToggleDevice(device.Id)" title="@(device.State ? "On" : "Off")" />
+                                    <MudChip T="string" Variant="Variant.Outlined" Color="@stateColor"><span>@device.Name is @(device.State ? "On" : "Off")</span></MudChip>
+                                    
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                }
+            </MudCard>
+        </MudItem>
 
-<h3 style="text-align: center;">Welcome to Askstatus.</h3>
+        <MudItem xs="12" sm="6" md="6">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Climate</MudText>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                    </CardHeaderActions>
+                </MudCardHeader>
 
+                <MudCardContent>
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 50px;"></MudPaper>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
+@code {
+    public bool AlarmOn { get; set; }
+}

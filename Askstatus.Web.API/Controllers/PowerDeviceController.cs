@@ -19,7 +19,7 @@ public class PowerDeviceController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Permissions.ViewPowerDevices)]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Get()
@@ -99,7 +99,7 @@ public class PowerDeviceController : ControllerBase
 
     [HttpGet]
     [Route("{id}/state")]
-    [Authorize(Permissions.ViewPowerDevices)]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetState(int id)
@@ -110,7 +110,7 @@ public class PowerDeviceController : ControllerBase
 
     [HttpGet]
     [Route("{id}/toggle")]
-    [Authorize(Permissions.ViewPowerDevices)]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Toggle(int id)
@@ -121,7 +121,7 @@ public class PowerDeviceController : ControllerBase
 
     [HttpGet]
     [Route("{id}/switch/{onoff}")]
-    [Authorize(Permissions.ViewPowerDevices)]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Switch(int id, bool onoff)

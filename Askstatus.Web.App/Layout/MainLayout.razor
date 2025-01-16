@@ -8,17 +8,15 @@
 <MudLayout>
     <MudAppBar Style="margin-left: 0px; width: 100%">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="d-none d-sm-flex ml-3">Askstatus</MudText>
         <MudSpacer />
         <LoginDisplay />
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h6">Askstatus</MudText>
-        </MudDrawerHeader>
+    <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
-        <MudContainer Class="mt-6" MaxWidth="MaxWidth.Medium" >
+        <MudContainer Class="mud-container mud-container-maxwidth-false mud-container--gutters mt-16 px-8">
             <div class="content" style="padding-bottom:60px">
                 @Body
             </div>

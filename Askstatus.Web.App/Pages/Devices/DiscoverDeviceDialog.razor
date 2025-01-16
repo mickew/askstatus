@@ -1,0 +1,46 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.DeviceUnknown" Class="mr-3 mb-n1" />
+            Discover device!
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (Loading)
+        {
+            <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+        }
+        else
+        {
+            <MudText>@Device.Name</MudText>
+            <MudText>@Device.DeviceType</MudText>
+            <MudText>@Device.HostName</MudText>
+            <MudText>@Device.DeviceName</MudText>
+            <MudText>@Device.DeviceId</MudText>
+            <MudText>@Device.DeviceMac</MudText>
+            <MudText>@Device.DeviceModel</MudText>
+            <MudText>@Device.DeviceGen</MudText>
+        }
+        @*Nested dialog*@
+        <MudDialog @bind-Visible="nestedVisible">
+            <TitleContent>
+                <MudText Typo="Typo.h6">
+                    Enter device host/ip address!
+                </MudText>
+            </TitleContent>
+            <DialogContent>
+                <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="HandleIntervalElapsed" Variant="Variant.Filled" @bind-Value="@Url" Label="host/ip" />
+            </DialogContent>
+            <DialogActions>
+                <MudButton OnClick="CancelNested">Cancel</MudButton>
+                <MudButton Disabled=@CloseNestedDisabled Color="Color.Primary" OnClick="CloseNested">Ok</MudButton>
+            </DialogActions>
+        </MudDialog>
+    </DialogContent>
+    <DialogActions>
+        @* <MudButton OnClick="DiscoverHost">Discover</MudButton> *@
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled=@saveDisabled Color="Color.Success" OnClick="SaveDevice">Save</MudButton>
+    </DialogActions>
+
+</MudDialog>

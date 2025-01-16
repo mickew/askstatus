@@ -28,6 +28,11 @@ public sealed class AskstatusApiService
         {
             ContentSerializer = contentSerializer
         });
+
+        DeviceDiscoverAPI = RestService.For<IDeviceDiscoverAPI>(httpClient, new RefitSettings
+        {
+            ContentSerializer = contentSerializer
+        });
     }
 
     public IIdentityApi IdentityApi { get; private set; }
@@ -37,4 +42,6 @@ public sealed class AskstatusApiService
     public IRoleAPI RoleAPI { get; private set; }
 
     public IPowerDeviceAPI PowerDeviceAPI { get; private set; }
+
+    public IDeviceDiscoverAPI DeviceDiscoverAPI { get; private set; }
 }
