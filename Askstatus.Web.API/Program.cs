@@ -103,6 +103,13 @@ public class Program
 ;
         });
 
+        builder.Services.AddOptions<AskstatusApiSettings>()
+            .Bind(builder.Configuration.GetSection(AskstatusApiSettings.Section))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        var askstatusApiSettings = builder.Configuration.GetSection(AskstatusApiSettings.Section).Get<AskstatusApiSettings>();
+
         builder.Services.AddInfrastructureServices(builder.Environment, builder.Configuration.GetConnectionString("DefaultConnection")!);
         builder.Services.AddApplicationServices();
 
@@ -114,8 +121,8 @@ public class Program
             options => options.AddPolicy(
                 "wasm",
                 policy => policy.WithOrigins([
-                    builder.Configuration["BackendUrl"] ?? "https://localhost:7298",
-                    builder.Configuration["FrontendUrl"] ?? "https://localhost:7117"]
+                    askstatusApiSettings!.BackendUrl!,
+                    askstatusApiSettings.FrontendUrl!]
                     )
                     .AllowAnyMethod()
                     .AllowAnyHeader()

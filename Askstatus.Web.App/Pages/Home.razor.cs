@@ -1,6 +1,7 @@
 ﻿using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Options;
 using MudBlazor;
 
 namespace Askstatus.Web.App.Pages;
@@ -20,7 +21,7 @@ public partial class Home : IAsyncDisposable
     public NavigationManager? Navigation { get; set; } = null!;
 
     [Inject]
-    public IConfiguration config { get; set; } = null!;
+    private IOptions<AskstatusSettings> Settings { get; set; } = null!;
 
     public List<Device> Devices { get; set; } = new List<Device>();
 
@@ -30,8 +31,7 @@ public partial class Home : IAsyncDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        var url = config["BackendUrl"];
-        _hubConnection = new HubConnectionBuilder().WithUrl(Navigation!.ToAbsoluteUri($"{url}/statushub")).Build();
+        _hubConnection = new HubConnectionBuilder().WithUrl(Settings.Value.AskStatusSignalRUrl!).Build();
 
         var response = await ApiService.PowerDeviceAPI.GetPowerDevices();
         if (!response.IsSuccessStatusCode)

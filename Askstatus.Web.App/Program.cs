@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Options;
 using MudBlazor.Services;
 
 namespace Askstatus.Web.App;
@@ -13,8 +14,15 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
+        builder.Services.AddOptions<AskstatusSettings>()
+            .Bind(builder.Configuration.GetSection(AskstatusSettings.Section))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
+
+        var app = builder.Build();
+        var askstatusSettings = app.Services.GetRequiredService<IOptions<AskstatusSettings>>().Value;
 
         // register the cookie handler
         builder.Services.AddTransient<CookieHandler>();
@@ -35,7 +43,7 @@ public class Program
             sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
 
         builder.Services.AddHttpClient("AskStatus.Web.API",
-            client => client.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001")).AddHttpMessageHandler<CookieHandler>();
+            client => client.BaseAddress = new Uri(askstatusSettings.AskstatusUrl!)).AddHttpMessageHandler<CookieHandler>();
 
         builder.Services.AddTransient<AskstatusApiService>(o =>
         {

@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Channels;
 using Askstatus.Application.Errors;
 using Askstatus.Application.Interfaces;
 using Askstatus.Common.Models;
@@ -146,8 +145,8 @@ public class Shelly2DeviceService : IDeviceService
         }
         return Result.Fail(new BadRequestError("Failed to get status from device"));
     }
-   
-    
+
+
     internal string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
 
     internal record ChannelStatus(
@@ -163,7 +162,7 @@ public class Shelly2DeviceService : IDeviceService
     internal record ToggleSwitchStatus(
         [property: JsonPropertyName("was_on")] bool Was_On);
 
-    
+
     internal record Hook(
         [property: JsonPropertyName("id")] int Id,
         [property: JsonPropertyName("cid")] int Cid,
