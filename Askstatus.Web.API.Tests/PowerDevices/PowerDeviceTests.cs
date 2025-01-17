@@ -47,7 +47,6 @@ public class PowerDeviceTests
     {
         // Arrange
         _factory.ReSeedData();
-        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         // Act
         var response = await _powerDeviceAPI.GetPowerDevices();
