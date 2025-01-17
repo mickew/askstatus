@@ -4,6 +4,7 @@ using Askstatus.Application.PowerDevice;
 using Askstatus.Common.PowerDevice;
 using FluentAssertions;
 using FluentResults;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -632,6 +633,107 @@ public class PowerDeviceTests
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
             It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with Id: 1 not found")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task PowerDeviceWebhook_Should_Return_Success()
+    {
+        // Arrange
+        // Arrange
+        var powerDevice1 = new Askstatus.Domain.Entities.PowerDevice
+        {
+            Id = 1,
+            Name = "PowerDevice1",
+            DeviceType = PowerDeviceTypes.Generic,
+            HostName = "HostName1",
+            DeviceName = "DeviceName1",
+            DeviceId = "DeviceId1",
+            DeviceMac = "DeviceMac1",
+            DeviceModel = "DeviceModel1",
+            DeviceGen = 1
+        };
+        var poweDevice2 = new Askstatus.Domain.Entities.PowerDevice
+        {
+            Id = 2,
+            Name = "PowerDevice2",
+            DeviceType = PowerDeviceTypes.Generic,
+            HostName = "HostName2",
+            DeviceName = "DeviceName2",
+            DeviceId = "DeviceId2",
+            DeviceMac = "DeviceMac2",
+            DeviceModel = "DeviceModel2",
+            DeviceGen = 2
+        };
+        var powerDevices = new List<Askstatus.Domain.Entities.PowerDevice> { powerDevice1, poweDevice2 };
+        var logger = new Mock<ILogger<PowerDeviceWebhookQueryHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var iPublisher = new Mock<IPublisher>();
+        unitOfWork.Setup(x => x.PowerDeviceRepository.ListAllAsync()).ReturnsAsync(powerDevices);
+        var handler = new PowerDeviceWebhookQueryHandler(unitOfWork.Object, logger.Object, iPublisher.Object);
+        var command = new PowerDeviceWebhookQuery(powerDevices.First().DeviceMac, true);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        unitOfWork.Verify(x => x.PowerDeviceRepository.ListAllAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task PowerDeviceWebhook_Should_Return_NotFound()
+    {
+        // Arrange
+        // Arrange
+        var powerDevice1 = new Askstatus.Domain.Entities.PowerDevice
+        {
+            Id = 1,
+            Name = "PowerDevice1",
+            DeviceType = PowerDeviceTypes.Generic,
+            HostName = "HostName1",
+            DeviceName = "DeviceName1",
+            DeviceId = "DeviceId1",
+            DeviceMac = "DeviceMac1",
+            DeviceModel = "DeviceModel1",
+            DeviceGen = 1
+        };
+        var poweDevice2 = new Askstatus.Domain.Entities.PowerDevice
+        {
+            Id = 2,
+            Name = "PowerDevice2",
+            DeviceType = PowerDeviceTypes.Generic,
+            HostName = "HostName2",
+            DeviceName = "DeviceName2",
+            DeviceId = "DeviceId2",
+            DeviceMac = "DeviceMac2",
+            DeviceModel = "DeviceModel2",
+            DeviceGen = 2
+        };
+        var powerDevices = new List<Askstatus.Domain.Entities.PowerDevice> { powerDevice1, poweDevice2 };
+        var logger = new Mock<ILogger<PowerDeviceWebhookQueryHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var iPublisher = new Mock<IPublisher>();
+        unitOfWork.Setup(x => x.PowerDeviceRepository.ListAllAsync()).ReturnsAsync(powerDevices);
+        var handler = new PowerDeviceWebhookQueryHandler(unitOfWork.Object, logger.Object, iPublisher.Object);
+        var command = new PowerDeviceWebhookQuery("NOMAC", true);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Should().BeOfType<NotFoundError>();
+        result.Errors.First().Message.Should().Be("PowerDevice not found");
+        unitOfWork.Verify(x => x.PowerDeviceRepository.ListAllAsync(), Times.Once);
+        logger.Verify(l =>
+        l.Log(LogLevel.Warning,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with mac NOMAC not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);

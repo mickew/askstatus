@@ -1,9 +1,10 @@
-﻿using Askstatus.Application.Interfaces;
-using Askstatus.Common.PowerDevice;
+﻿using System.Reflection;
+using Askstatus.Application.Interfaces;
 using Askstatus.Infrastructure.Authorization;
 using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Identity;
 using Askstatus.Infrastructure.Services;
+using MediatR.NotificationPublishers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +17,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IWebHostEnvironment environment, string connectionString = "Data Source=db.db")
     {
+        ArgumentNullException.ThrowIfNull(services);
         var sqliteBuilder = new SqliteConnectionStringBuilder(connectionString);
         if (!Path.IsPathRooted(sqliteBuilder.DataSource))
         {
@@ -34,7 +36,7 @@ public static class DependencyInjection
                     return Task.CompletedTask;
                 };
                 s.ExpireTimeSpan = TimeSpan.FromHours(1);
-            });              
+            });
         });
 
         // Configure authorization
@@ -54,6 +56,15 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
             .AddApiEndpoints();
+
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            //cfg.NotificationPublisher = new ForeachAwaitPublisher();
+            cfg.NotificationPublisher = new TaskWhenAllPublisher();
+        });
+
+        services.AddSignalR();
 
         ///////////////////////////////////////////////
         services.AddScoped<IIdentityService, IdentityService>();

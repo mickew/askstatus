@@ -2,6 +2,7 @@ using Askstatus.Application;
 using Askstatus.Application.Interfaces;
 using Askstatus.Infrastructure;
 using Askstatus.Infrastructure.Data;
+using Askstatus.Infrastructure.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -108,19 +109,21 @@ public class Program
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
 
-        // Add services to the container.
         // Add a CORS policy for the client
         builder.Services.AddCors(
             options => options.AddPolicy(
                 "wasm",
-                policy => policy.WithOrigins([builder.Configuration["BackendUrl"] ?? "https://localhost:7298",
-            builder.Configuration["FrontendUrl"] ?? "https://localhost:7117"])
+                policy => policy.WithOrigins([
+                    builder.Configuration["BackendUrl"] ?? "https://localhost:7298",
+                    builder.Configuration["FrontendUrl"] ?? "https://localhost:7117"]
+                    )
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()));
 
 
         builder.Services.AddControllers();
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -145,7 +148,7 @@ public class Program
 
         app.UseExceptionHandler();
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
         // Activate the CORS policy
         app.UseCors("wasm");
 
@@ -156,7 +159,9 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
+
         app.MapControllers();
+        app.MapHub<StatusHub>("/statushub");
         return app;
     }
 

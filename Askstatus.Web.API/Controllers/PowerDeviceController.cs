@@ -129,4 +129,21 @@ public class PowerDeviceController : ControllerBase
         var result = await _sender.Send(new SwitchPowerDeviceCommand(id, onoff));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
+
+    [HttpGet]
+    [Route("webhook")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Webhook([FromQuery] string? mac, [FromQuery] string? state)
+    {
+        if (string.IsNullOrEmpty(mac) || string.IsNullOrEmpty(state))
+        {
+            return BadRequest();
+        }
+        var boolState = Convert.ToBoolean(state);
+        var result = await _sender.Send(new PowerDeviceWebhookQuery(mac!, boolState));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
+
 }

@@ -1,10 +1,11 @@
 ﻿using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using MudBlazor;
 
 namespace Askstatus.Web.App.Pages;
 
-public partial class Home
+public partial class Home : IAsyncDisposable
 {
     [Inject]
     private AskstatusApiService ApiService { get; set; } = null!;
@@ -15,12 +16,23 @@ public partial class Home
     [Inject]
     private ISnackbar Snackbar { get; set; } = null!;
 
+    [Inject]
+    public NavigationManager? Navigation { get; set; } = null!;
+
+    [Inject]
+    public IConfiguration config { get; set; } = null!;
+
     public List<Device> Devices { get; set; } = new List<Device>();
 
     protected bool UserGotNoRights { get; set; } = true;
 
+    private HubConnection? _hubConnection;
+
     protected override async Task OnInitializedAsync()
     {
+        var url = config["BackendUrl"];
+        _hubConnection = new HubConnectionBuilder().WithUrl(Navigation!.ToAbsoluteUri($"{url}/statushub")).Build();
+
         var response = await ApiService.PowerDeviceAPI.GetPowerDevices();
         if (!response.IsSuccessStatusCode)
         {
@@ -45,6 +57,27 @@ public partial class Home
             }
             device.State = stateResponse.Content!;
         }
+        _hubConnection.On<int, bool>("UpdateDeviceStatus", (id, onoff) =>
+        {
+            Logger.LogInformation("UpdateDeviceStatus received");
+            var deviceToUpdate = Devices.FirstOrDefault(d => d.Id == id);
+            if (deviceToUpdate != null)
+            {
+                deviceToUpdate.State = onoff;
+                StateHasChanged();
+            }
+        });
+        try
+        {
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message);
+            Snackbar.Add(ex.Message, Severity.Error);
+            return;
+        }
+        Logger.LogInformation("_hubConnection started");
     }
 
     private async Task ToggleDevice(int id)
@@ -71,6 +104,15 @@ public partial class Home
         //    onoff = "toggled";
         //}
         Snackbar.Add($"{device.Name} toggled!", Severity.Success);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+            GC.SuppressFinalize(this);
+        }
     }
 }
 

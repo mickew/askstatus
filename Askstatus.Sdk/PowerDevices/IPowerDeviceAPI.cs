@@ -20,7 +20,7 @@ public interface IPowerDeviceAPI
     [Delete("/api/powerdevice/{id}")]
     Task<IApiResponse> DeletePowerDevice(int id);
 
-    [Get("/api/powerdevice/{id}/status")]
+    [Get("/api/powerdevice/{id}/state")]
     Task<IApiResponse<bool>> GetPowerDeviceStatus(int id);
 
     [Get("/api/powerdevice/{id}/toggle")]

@@ -1,6 +1,6 @@
 @Askstatus.Web.API_HostAddress = https://localhost:7298
 @ip=192.168.1.85
-@id=1
+@id=3
 @onoff=False
 
 GET {{Askstatus.Web.API_HostAddress}}/api/weatherforecast/
