@@ -22,14 +22,7 @@ public sealed class PowerDeviceWebhookQueryHandler : IRequestHandler<PowerDevice
     }
     public async Task<Result> Handle(PowerDeviceWebhookQuery request, CancellationToken cancellationToken)
     {
-        //TODO: implement GetByMac in PowerDeviceRepository
-        var powerDevices = await _unitOfWork.PowerDeviceRepository.ListAllAsync();
-        if (powerDevices == null)
-        {
-            _logger.LogWarning("PowerDevices with mac {Mac} not found", request.Mac);
-            return Result.Fail(new NotFoundError($"PowerDevice not found"));
-        }
-        var powerDevice = powerDevices.FirstOrDefault(x => x.DeviceMac == request.Mac);
+        var powerDevice = await _unitOfWork.PowerDeviceRepository.GetBy(x=> x.DeviceMac == request.Mac);
         if (powerDevice == null)
         {
             _logger.LogWarning("PowerDevice with mac {Mac} not found", request.Mac);

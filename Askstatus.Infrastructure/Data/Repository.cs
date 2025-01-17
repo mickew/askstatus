@@ -1,4 +1,5 @@
-﻿using Askstatus.Application.Interfaces;
+﻿using System.Linq.Expressions;
+using Askstatus.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -91,5 +92,19 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
             _logger.LogError(ex, "DeleteAsync error");
         }
         return Task.FromResult(result);
+    }
+
+    public async Task<TEntity> GetBy(Expression<Func<TEntity, bool>> predicate)
+    {
+        TEntity? result = null;
+        try
+        {
+            result = await _context.Set<TEntity>().Where(predicate).FirstOrDefaultAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetBy error");
+        }
+        return result!;
     }
 }
