@@ -44,7 +44,7 @@ public partial class Home : IAsyncDisposable
         {
             Id = x.Id,
             Mac = x.DeviceMac,
-            Name = x.DeviceName,
+            Name = x.Name,
         }).ToList();
         foreach (var device in Devices)
         {

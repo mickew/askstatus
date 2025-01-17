@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Channels;
 using Askstatus.Application.Errors;
 using Askstatus.Application.Interfaces;
+using Askstatus.Common.Models;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +18,34 @@ public class Shelly2DeviceService : IDeviceService
     {
         _logger = logger;
         _clientFactory = clientFactory;
+    }
+
+    public async Task<Result<IEnumerable<WebHookInfo>>> GetWebHooks(string host)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"http://{host}/rpc/Webhook.List");
+        var client = _clientFactory.CreateClient();
+        try
+        {
+            HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var apiString = await response.Content.ReadAsStringAsync();
+                WebHooks? result = JsonSerializer.Deserialize<WebHooks>(apiString);
+                var WebHookInfos = result!.Hooks.Select(hook => new WebHookInfo(hook.Id, hook.Name, hook.Enable));
+                return Result.Ok<IEnumerable<WebHookInfo>>(WebHookInfos);
+            }
+            else
+            {
+                var apiString = await response.Content.ReadAsStringAsync();
+                _logger.LogError(apiString);
+                return Result.Fail<IEnumerable<WebHookInfo>>(new BadRequestError(apiString));
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        return Result.Fail<IEnumerable<WebHookInfo>>(new BadRequestError("Failed to get webhooks from device"));
     }
 
     public async Task<Result<bool>> State(string host, int channel)
@@ -116,8 +146,9 @@ public class Shelly2DeviceService : IDeviceService
         }
         return Result.Fail(new BadRequestError("Failed to get status from device"));
     }
-
-    private string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
+   
+    
+    internal string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
 
     internal record ChannelStatus(
         [property: JsonPropertyName("id")] int Id,
@@ -131,5 +162,24 @@ public class Shelly2DeviceService : IDeviceService
 
     internal record ToggleSwitchStatus(
         [property: JsonPropertyName("was_on")] bool Was_On);
+
+    
+    internal record Hook(
+        [property: JsonPropertyName("id")] int Id,
+        [property: JsonPropertyName("cid")] int Cid,
+        [property: JsonPropertyName("enable")] bool Enable,
+        [property: JsonPropertyName("event")] string Event,
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("ssl_ca")] string SslCa,
+        [property: JsonPropertyName("urls")] IReadOnlyList<string> Urls,
+        [property: JsonPropertyName("condition")] object Condition,
+        [property: JsonPropertyName("repeat_period")] int RepeatPeriod
+    );
+
+    internal record WebHooks(
+        [property: JsonPropertyName("hooks")] IReadOnlyList<Hook> Hooks,
+        [property: JsonPropertyName("rev")] int Rev
+    );
+
 
 }

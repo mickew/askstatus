@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Askstatus.Infrastructure.Hubs;
 
-[Authorize]
 public class StatusHub : Hub<IStatusClient>
 {
     private readonly ILogger<StatusHub> _logger;

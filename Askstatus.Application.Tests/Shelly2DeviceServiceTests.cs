@@ -316,4 +316,90 @@ public class Shelly2DeviceServiceTests
     }
 
     private string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
+
+    [Fact]
+    public async Task GetWebHooks_Should_Return_Success()
+    {
+        // Arrange
+        string reqRetunString = @"{""hooks"": [{""id"": 1,""cid"": 0,""enable"": true,""event"": ""switch.on"",""name"": ""OnHookSender"",""ssl_ca"": ""ca.pem"",""urls"": [""http://10.10.10.10/api/PowerDevice/webhook?mac=${config.sys.device.mac}&state=${status[\""switch:0\""].output}""],""condition"": null,""repeat_period"": 0},{""id"": 2,""cid"": 0,""enable"": true,""event"": ""switch.off"",""name"": ""OffHookSender"",""ssl_ca"": ""ca.pem"",""urls"": [""http://10.10.10.10/api/PowerDevice/webhook?mac=${config.sys.device.mac}&state=${status[\""switch:0\""].output}""],""condition"": null,""repeat_period"": 0}],""rev"": 32}";
+        var content = new StringContent(reqRetunString);
+        var logger = new Mock<ILogger<Shelly2DeviceService>>();
+        var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+        var httpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        httpMessageHandler.Protected()
+            // Setup the PROTECTED method to mock
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            // prepare the expected response of the mocked http call
+            .ReturnsAsync(new HttpResponseMessage()
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = content
+            })
+            .Verifiable();
+
+        var httpClient = new HttpClient(httpMessageHandler.Object);
+        httpClientFactory.Setup(_ => _.CreateClient(string.Empty))
+        .Returns(httpClient).Verifiable();
+        var service = new Shelly2DeviceService(logger.Object, httpClientFactory.Object);
+
+        // Act
+        var result = await service.GetWebHooks("10.10.10.10");
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeEmpty();
+        result.Value.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task GetWebHooks_Should_Return_BadRequest()
+    {
+        // Arrange
+        var content = new StringContent("{\"code\": -105,\"message\": \"Argument 'id', value 1 not found!\"}");
+        var logger = new Mock<ILogger<Shelly2DeviceService>>();
+        var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+        var httpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        httpMessageHandler.Protected()
+            // Setup the PROTECTED method to mock
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            // prepare the expected response of the mocked http call
+            .ReturnsAsync(new HttpResponseMessage()
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Content = content
+            })
+            .Verifiable();
+
+        var httpClient = new HttpClient(httpMessageHandler.Object);
+        httpClientFactory.Setup(_ => _.CreateClient(string.Empty))
+        .Returns(httpClient).Verifiable();
+        var service = new Shelly2DeviceService(logger.Object, httpClientFactory.Object);
+
+        // Act
+        var result = await service.GetWebHooks("10.10.10.10");
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Should().BeOfType<BadRequestError>();
+        logger.Verify(l =>
+        l.Log(LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Argument 'id', value 1 not found!")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
 }
+
+

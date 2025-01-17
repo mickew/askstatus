@@ -1,4 +1,5 @@
-﻿using FluentResults;
+﻿using Askstatus.Common.Models;
+using FluentResults;
 
 namespace Askstatus.Application.Interfaces;
 public interface IDeviceService
@@ -8,4 +9,6 @@ public interface IDeviceService
     Task<Result> Switch(string host, int channel, bool onOff);
 
     Task<Result> Toggle(string host, int channel);
+
+    Task<Result<IEnumerable<WebHookInfo>>> GetWebHooks(string host);
 }
