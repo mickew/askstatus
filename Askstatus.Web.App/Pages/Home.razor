@@ -14,7 +14,6 @@
         }
     </NotAuthorized>
 </FlexibleAuthorizeView>
-
 <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
     <MudGrid>
         <MudItem xs="12" sm="6" md="6">
@@ -24,7 +23,14 @@
                         <MudText Typo="Typo.h6">Devices</MudText>
                     </CardHeaderContent>
                     <CardHeaderActions>
-                        <MudIconButton Disabled="@UserGotNoRights" Icon="@Icons.Material.Filled.Devices" Href="admin/devices" Color="Color.Default" />
+                        @if(UserGotNoRights)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Devices" Color="@HubIsConnectedColor" />
+                        }
+                        else
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Devices" Href="admin/devices" Color="@HubIsConnectedColor" />
+                        }
                     </CardHeaderActions>
                 </MudCardHeader>
                 @foreach (var device in Devices)
@@ -32,14 +38,14 @@
                     <MudCardContent>
                         <MudGrid>
                             <MudItem Style="width: 100%">
-                                <MudPaper Elevation="2" Class="pa-4">
+                                <MudPaper Elevation="2" Class="pa-4" >
                                     @{
-                                        Color stateColor = device.State ? Color.Success : Color.Error;
+                                        Color stateColor = device.IsOnline ? device.State ? Color.Success : Color.Error : Color.Warning;
                                         string stateIcon = device.State ? AskstatusIcons.HeatOn : AskstatusIcons.HeatOff;
                                         bool prossesing = device.Prosessing;
                                     }
-                                    <MudIconButton Disabled="@prossesing" Icon="@stateIcon" Color="@stateColor" aria-label="delete" Size="Size.Medium" @onclick="() => ToggleDevice(device.Id)" title="@(device.State ? "On" : "Off")" />
-                                    <MudChip T="string" Variant="Variant.Outlined" Color="@stateColor"><span>@device.Name is @(device.State ? "On" : "Off")</span></MudChip>
+                                    <MudIconButton Disabled="@(prossesing || !(device.IsOnline))" Icon="@stateIcon" Color="@stateColor" aria-label="delete" Size="Size.Medium" @onclick="() => ToggleDevice(device.Id)" title="@(device.State ? "On" : "Off")" />
+                                    <MudChip T="string" Variant="Variant.Outlined" Color="@stateColor"><span>@device.Name is @(device.IsOnline ? device.State ? "On" : "Off" : "offline")</span></MudChip>
                                     
                                 </MudPaper>
                             </MudItem>
@@ -56,7 +62,7 @@
                         <MudText Typo="Typo.h6">Climate</MudText>
                     </CardHeaderContent>
                     <CardHeaderActions>
-                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="@HubIsConnectedColor" />
                     </CardHeaderActions>
                 </MudCardHeader>
 
@@ -67,7 +73,3 @@
         </MudItem>
     </MudGrid>
 </MudContainer>
-
-@code {
-    public bool AlarmOn { get; set; }
-}

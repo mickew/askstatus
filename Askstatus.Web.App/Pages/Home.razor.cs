@@ -29,6 +29,12 @@ public partial class Home : IAsyncDisposable
 
     private HubConnection? _hubConnection;
 
+    public bool HubIsConnected =>
+    _hubConnection?.State == HubConnectionState.Connected;
+
+    public Color HubIsConnectedColor => _hubConnection?.State == HubConnectionState.Connected ? Color.Success : Color.Error;
+
+
     protected override async Task OnInitializedAsync()
     {
         _hubConnection = new HubConnectionBuilder().WithUrl(Settings.Value.AskStatusSignalRUrl!).Build();
@@ -38,22 +44,22 @@ public partial class Home : IAsyncDisposable
         {
             Logger.LogError(response.Error, response.Error.Content);
             Snackbar.Add(response.Error.Content!, Severity.Error);
-            return;
         }
         Devices = response.Content!.Select(x => new Device
         {
             Id = x.Id,
             Mac = x.DeviceMac,
             Name = x.Name,
+            IsOnline = true,
         }).ToList();
         foreach (var device in Devices)
         {
             var stateResponse = await ApiService.PowerDeviceAPI.GetPowerDeviceStatus(device.Id);
             if (!stateResponse.IsSuccessStatusCode)
             {
+                device.IsOnline = false;
                 Logger.LogError(stateResponse.Error, stateResponse.Error.Content);
-                Snackbar.Add(stateResponse.Error.Content!, Severity.Error);
-                return;
+                Snackbar.Add($"{device.Name} is offline", Severity.Warning);
             }
             device.State = stateResponse.Content!;
         }
@@ -63,7 +69,9 @@ public partial class Home : IAsyncDisposable
             var deviceToUpdate = Devices.FirstOrDefault(d => d.Id == id);
             if (deviceToUpdate != null)
             {
+                deviceToUpdate.IsOnline = true;
                 deviceToUpdate.State = onoff;
+                Snackbar.Add($"{deviceToUpdate.Name} turned {BooleanToOnOff(onoff)}!", Severity.Success);
                 StateHasChanged();
             }
         });
@@ -88,6 +96,7 @@ public partial class Home : IAsyncDisposable
         var response = await ApiService.PowerDeviceAPI.TogglePowerDevice(id);
         if (!response.IsSuccessStatusCode)
         {
+            device.IsOnline = false;
             Logger.LogError(response.Error, response.Error.Content);
             Snackbar.Add(response.Error.Content!, Severity.Error);
             device.Prosessing = false;
@@ -95,15 +104,7 @@ public partial class Home : IAsyncDisposable
             return;
         }
         await Task.Delay(1000);
-        //var status = await powerClient.GetPowerDeviceSwitchAsync(id);
-        //device.State = status.state;
         device!.Prosessing = false;
-        //var onoff = device.State ? "turned on" : "turned off";
-        //if (state != !device.State)
-        //{
-        //    onoff = "toggled";
-        //}
-        Snackbar.Add($"{device.Name} toggled!", Severity.Success);
     }
 
     public async ValueTask DisposeAsync()
@@ -114,6 +115,8 @@ public partial class Home : IAsyncDisposable
             GC.SuppressFinalize(this);
         }
     }
+
+    private string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
 }
 
 public class Device
@@ -123,4 +126,5 @@ public class Device
     public string? Name { get; init; }
     public bool State { get; set; }
     public bool Prosessing { get; set; }
+    public bool IsOnline { get; set; }
 }
