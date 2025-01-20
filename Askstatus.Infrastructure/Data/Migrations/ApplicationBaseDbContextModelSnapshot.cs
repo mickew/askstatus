@@ -15,7 +15,7 @@ namespace Askstatus.Infrastructure.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.12");
 
             modelBuilder.Entity("Askstatus.Domain.Entities.PowerDevice", b =>
                 {
@@ -23,7 +23,7 @@ namespace Askstatus.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DeviceGen")
+                    b.Property<int>("Channel")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("DeviceId")
@@ -55,10 +55,13 @@ namespace Askstatus.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceMac")
+                    b.HasIndex("DeviceId", "Channel")
                         .IsUnique();
 
-                    b.HasIndex("HostName")
+                    b.HasIndex("DeviceMac", "Channel")
+                        .IsUnique();
+
+                    b.HasIndex("HostName", "Channel")
                         .IsUnique();
 
                     b.ToTable("PowerDevices");

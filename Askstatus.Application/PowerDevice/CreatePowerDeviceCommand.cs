@@ -15,7 +15,7 @@ public sealed record CreatePowerDeviceCommand : IRequest<Result<PowerDeviceDto>>
     public string DeviceId { get; init; } = null!;
     public string DeviceMac { get; init; } = null!;
     public string DeviceModel { get; init; } = null!;
-    public int DeviceGen { get; init; }
+    public int Channel { get; init; }
 }
 
 public sealed class CreatePowerDeviceCommandHandler : IRequestHandler<CreatePowerDeviceCommand, Result<PowerDeviceDto>>
@@ -38,7 +38,7 @@ public sealed class CreatePowerDeviceCommandHandler : IRequestHandler<CreatePowe
             DeviceId = request.DeviceId,
             DeviceMac = request.DeviceMac,
             DeviceModel = request.DeviceModel,
-            DeviceGen = request.DeviceGen
+            Channel = request.Channel
         };
         var result = await _unitOfWork.PowerDeviceRepository.AddAsync(powerDevice);
         if (result is null)
@@ -47,6 +47,6 @@ public sealed class CreatePowerDeviceCommandHandler : IRequestHandler<CreatePowe
             return Result.Fail<PowerDeviceDto>(new BadRequestError("Error creating PowerDevice"));
         }
         await _unitOfWork.SaveChangesAsync();
-        return Result.Ok(new PowerDeviceDto(result.Id, result.Name, result.DeviceType, result.HostName, result.DeviceName, result.DeviceId, result.DeviceMac, result.DeviceModel, result.DeviceGen));
+        return Result.Ok(new PowerDeviceDto(result.Id, result.Name, result.DeviceType, result.HostName, result.DeviceName, result.DeviceId, result.DeviceMac, result.DeviceModel, result.Channel));
     }
 }

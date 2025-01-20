@@ -13,7 +13,7 @@ public class PowerDeviceDto
         DeviceId = deviceId;
         DeviceMac = deviceMac;
         DeviceModel = deviceModel;
-        DeviceGen = deviceGen;
+        Channel = deviceGen;
     }
     public int Id { get; set; }
     public string Name { get; set; }
@@ -23,5 +23,5 @@ public class PowerDeviceDto
     public string DeviceId { get; set; }
     public string DeviceMac { get; set; }
     public string DeviceModel { get; set; }
-    public int DeviceGen { get; set; }
+    public int Channel { get; set; }
 }

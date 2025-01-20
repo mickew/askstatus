@@ -32,7 +32,7 @@ public class RepositoryPowerDeviceTests
             DeviceId = "DeviceId1",
             DeviceMac = "DeviceMac1",
             DeviceModel = "DeviceModel1",
-            DeviceGen = 1,
+            Channel = 1,
         };
         // Act
         var result = await powerDeviceRepository.AddAsync(powerDevice);
@@ -45,7 +45,7 @@ public class RepositoryPowerDeviceTests
         result.DeviceId.Should().Be(powerDevice.DeviceId);
         result.DeviceMac.Should().Be(powerDevice.DeviceMac);
         result.DeviceModel.Should().Be(powerDevice.DeviceModel);
-        result.DeviceGen.Should().Be(powerDevice.DeviceGen);
+        result.Channel.Should().Be(powerDevice.Channel);
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class RepositoryPowerDeviceTests
             DeviceId = "DeviceId1",
             DeviceMac = "DeviceMac1",
             DeviceModel = "DeviceModel1",
-            DeviceGen = 1,
+            Channel = 1,
         };
         var addedPowerDevice = await powerDeviceRepository.AddAsync(powerDevice);
 
@@ -84,7 +84,7 @@ public class RepositoryPowerDeviceTests
         result.DeviceId.Should().Be(powerDevice.DeviceId);
         result.DeviceMac.Should().Be(powerDevice.DeviceMac);
         result.DeviceModel.Should().Be(powerDevice.DeviceModel);
-        result.DeviceGen.Should().Be(powerDevice.DeviceGen);
+        result.Channel.Should().Be(powerDevice.Channel);
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public class RepositoryPowerDeviceTests
             DeviceId = "DeviceId1",
             DeviceMac = "DeviceMac1",
             DeviceModel = "DeviceModel1",
-            DeviceGen = 1,
+            Channel = 1,
         };
         var powerDevice2 = new PowerDevice
         {
@@ -118,7 +118,7 @@ public class RepositoryPowerDeviceTests
             DeviceId = "DeviceId2",
             DeviceMac = "DeviceMac2",
             DeviceModel = "DeviceModel2",
-            DeviceGen = 2,
+            Channel = 2,
         };
         await powerDeviceRepository.AddAsync(powerDevice1);
         await powerDeviceRepository.AddAsync(powerDevice2);
@@ -152,7 +152,7 @@ public class RepositoryPowerDeviceTests
             DeviceId = "DeviceId1",
             DeviceMac = "DeviceMac1",
             DeviceModel = "DeviceModel1",
-            DeviceGen = 1,
+            Channel = 1,
         };
         var addedPowerDevice = await powerDeviceRepository.AddAsync(powerDevice);
         await unitOfWork.SaveChangesAsync();
@@ -164,7 +164,7 @@ public class RepositoryPowerDeviceTests
         addedPowerDevice.DeviceId = "DeviceId2";
         addedPowerDevice.DeviceMac = "DeviceMac2";
         addedPowerDevice.DeviceModel = "DeviceModel2";
-        addedPowerDevice.DeviceGen = 2;
+        addedPowerDevice.Channel = 2;
 
         // Act
         var result = await powerDeviceRepository.UpdateAsync(addedPowerDevice);
@@ -192,7 +192,7 @@ public class RepositoryPowerDeviceTests
             DeviceId = "DeviceId1",
             DeviceMac = "DeviceMac1",
             DeviceModel = "DeviceModel1",
-            DeviceGen = 1,
+            Channel = 1,
         };
         var addedPowerDevice = await powerDeviceRepository.AddAsync(powerDevice);
         await unitOfWork.SaveChangesAsync();

@@ -59,7 +59,7 @@ public partial class DiscoverDeviceDialog
             Device.DeviceId = response.Content!.DeviceId;
             Device.DeviceMac = response.Content!.DeviceMac;
             Device.DeviceModel = response.Content!.DeviceModel;
-            Device.DeviceGen = response.Content!.DeviceGen;
+            Device.Channel = response.Content!.Channel;
 
             saveDisabled = (string.IsNullOrEmpty(Device.DeviceMac));
             Loading = false;

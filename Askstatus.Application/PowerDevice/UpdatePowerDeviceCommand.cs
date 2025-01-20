@@ -16,7 +16,7 @@ public sealed record UpdatePowerDeviceCommand : IRequest<Result>
     public string? DeviceId { get; init; }
     public string? DeviceMac { get; init; }
     public string? DeviceModel { get; init; }
-    public int DeviceGen { get; init; }
+    public int Channel { get; init; }
 }
 
 public sealed class UpdatePowerDeviceCommandHandler : IRequestHandler<UpdatePowerDeviceCommand, Result>
@@ -45,7 +45,7 @@ public sealed class UpdatePowerDeviceCommandHandler : IRequestHandler<UpdatePowe
         powerDevice.DeviceId = request.DeviceId!;
         powerDevice.DeviceMac = request.DeviceMac!;
         powerDevice.DeviceModel = request.DeviceModel!;
-        powerDevice.DeviceGen = request.DeviceGen;
+        powerDevice.Channel = request.Channel;
         var result = await _unitOfWork.PowerDeviceRepository.UpdateAsync(powerDevice);
         if (!result)
         {

@@ -23,7 +23,7 @@ namespace Askstatus.Infrastructure.Data.Migrations
                     DeviceId = table.Column<string>(type: "TEXT", nullable: false),
                     DeviceMac = table.Column<string>(type: "TEXT", nullable: false),
                     DeviceModel = table.Column<string>(type: "TEXT", nullable: false),
-                    DeviceGen = table.Column<int>(type: "INTEGER", nullable: false)
+                    Channel = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,15 +31,21 @@ namespace Askstatus.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PowerDevices_DeviceMac",
+                name: "IX_PowerDevices_DeviceId_Channel",
                 table: "PowerDevices",
-                column: "DeviceMac",
+                columns: new[] { "DeviceId", "Channel" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PowerDevices_HostName",
+                name: "IX_PowerDevices_DeviceMac_Channel",
                 table: "PowerDevices",
-                column: "HostName",
+                columns: new[] { "DeviceMac", "Channel" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PowerDevices_HostName_Channel",
+                table: "PowerDevices",
+                columns: new[] { "HostName", "Channel" },
                 unique: true);
         }
 

@@ -11,5 +11,5 @@ public class PowerDevice
     public string DeviceId { get; set; } = null!;
     public string DeviceMac { get; set; } = null!;
     public string DeviceModel { get; set; } = null!;
-    public int DeviceGen { get; set; }
+    public int Channel { get; set; }
 }

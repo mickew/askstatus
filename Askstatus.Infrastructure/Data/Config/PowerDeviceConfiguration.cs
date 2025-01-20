@@ -12,12 +12,14 @@ internal class PowerDeviceConfiguration : IEntityTypeConfiguration<PowerDevice>
         builder.Property(p => p.Name).IsRequired();
         builder.Property(p => p.DeviceType).IsRequired();
         builder.Property(p => p.HostName).IsRequired();
-        builder.HasIndex(p => p.HostName).IsUnique();
         builder.Property(p => p.DeviceName).IsRequired();
         builder.Property(p => p.DeviceId).IsRequired();
         builder.Property(p => p.DeviceMac).IsRequired();
-        builder.HasIndex(p => p.DeviceMac).IsUnique();
         builder.Property(p => p.DeviceModel).IsRequired();
-        builder.Property(p => p.DeviceGen).IsRequired();
+        builder.Property(p => p.Channel).IsRequired();
+
+        builder.HasIndex(p => new {p.DeviceId, p.Channel}).IsUnique();
+        builder.HasIndex(p => new { p.DeviceMac, p.Channel }).IsUnique();
+        builder.HasIndex(p => new {p.HostName, p.Channel }).IsUnique();
     }
 }

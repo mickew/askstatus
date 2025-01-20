@@ -55,7 +55,7 @@ public class PowerDeviceTests
         result.Value.DeviceId.Should().Be(powerDevices.First().DeviceId);
         result.Value.DeviceMac.Should().Be(powerDevices.First().DeviceMac);
         result.Value.DeviceModel.Should().Be(powerDevices.First().DeviceModel);
-        result.Value.DeviceGen.Should().Be(powerDevices.First().DeviceGen);
+        result.Value.Channel.Should().Be(powerDevices.First().Channel);
         unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
     }
 
@@ -109,7 +109,7 @@ public class PowerDeviceTests
             DeviceId = powerDevices.First().DeviceId,
             DeviceMac = powerDevices.First().DeviceMac,
             DeviceModel = powerDevices.First().DeviceModel,
-            DeviceGen = 1
+            Channel = 1
         };
 
         // Act
@@ -141,7 +141,7 @@ public class PowerDeviceTests
             DeviceId = "DeviceId1Nem",
             DeviceMac = "DeviceMac1New",
             DeviceModel = "DeviceModel1New",
-            DeviceGen = 2,
+            Channel = 2,
         };
 
         // Act
@@ -180,7 +180,7 @@ public class PowerDeviceTests
             DeviceId = powerDevices.First().DeviceId,
             DeviceMac = powerDevices.First().DeviceMac,
             DeviceModel = powerDevices.First().DeviceModel,
-            DeviceGen = 1
+            Channel = 1
         };
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -218,7 +218,7 @@ public class PowerDeviceTests
             DeviceId = powerDevices.First().DeviceId,
             DeviceMac = powerDevices.First().DeviceMac,
             DeviceModel = powerDevices.First().DeviceModel,
-            DeviceGen = 1
+            Channel = 1
         };
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -233,7 +233,7 @@ public class PowerDeviceTests
         result.Value.DeviceId.Should().Be("DeviceId1");
         result.Value.DeviceMac.Should().Be("DeviceMac1");
         result.Value.DeviceModel.Should().Be("DeviceModel1");
-        result.Value.DeviceGen.Should().Be(1);
+        result.Value.Channel.Should().Be(1);
         unitOfWork.Verify(x => x.PowerDeviceRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.PowerDevice>()), Times.Once);
         unitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
     }
@@ -256,7 +256,7 @@ public class PowerDeviceTests
             DeviceId = "DeviceId1",
             DeviceMac = "DeviceMac1",
             DeviceModel = "DeviceModel1",
-            DeviceGen = 1
+            Channel = 1
         };
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -592,7 +592,7 @@ public class PowerDeviceTests
         result.Value.DeviceId.Should().Be("DeviceId1");
         result.Value.DeviceMac.Should().Be("DeviceMac1");
         result.Value.DeviceModel.Should().Be("DeviceModel1");
-        result.Value.DeviceGen.Should().Be(1);
+        result.Value.Channel.Should().Be(1);
         unitOfWork.Verify(x => x.PowerDeviceRepository.GetBy(It.IsAny<Expression<Func<Askstatus.Domain.Entities.PowerDevice, bool>>>()), Times.Once);
     }
 
@@ -638,7 +638,7 @@ public class PowerDeviceTests
             DeviceId = "DeviceId1",
             DeviceMac = "DeviceMac1",
             DeviceModel = "DeviceModel1",
-            DeviceGen = 1
+            Channel = 1
         };
         var poweDevice2 = new Askstatus.Domain.Entities.PowerDevice
         {
@@ -650,7 +650,7 @@ public class PowerDeviceTests
             DeviceId = "DeviceId2",
             DeviceMac = "DeviceMac2",
             DeviceModel = "DeviceModel2",
-            DeviceGen = 2
+            Channel = 2
         };
         return new List<Askstatus.Domain.Entities.PowerDevice> { powerDevice1, poweDevice2 };
     }

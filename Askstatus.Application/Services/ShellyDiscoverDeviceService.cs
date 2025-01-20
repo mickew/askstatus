@@ -42,7 +42,7 @@ public sealed class ShellyDiscoverDeviceService : IDiscoverDeviceService
                         info.Id,
                         info.Mac,
                         info.Model,
-                        info.Gen));
+                        0));
                 }
                 else
                 {
@@ -53,7 +53,7 @@ public sealed class ShellyDiscoverDeviceService : IDiscoverDeviceService
                         $"{info.Type}-{info.Mac}",
                         info.Mac,
                         info.Type,
-                        info.Gen));
+                        0));
                 }
             }
         }

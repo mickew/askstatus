@@ -193,7 +193,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                 DeviceId = "Test Device",
                 DeviceMac = "00:00:00:00:00:00",
                 DeviceModel = "Test Model",
-                DeviceGen = 1
+                Channel = 1
             });
             PowerDeviceId = powdev.Entity.Id;
         }

@@ -25,7 +25,7 @@ public sealed class GetPowerDeviceByMacQueryHandler : IRequestHandler<GetPowerDe
             _logger.LogWarning("PowerDevice with mac {Mac} not found", request.Mac);
             return Result.Fail<PowerDeviceDto>(new NotFoundError($"PowerDevice not found"));
         }
-        var result = new PowerDeviceDto(powerDevice.Id, powerDevice.Name, powerDevice.DeviceType, powerDevice.HostName, powerDevice.DeviceName, powerDevice.DeviceId, powerDevice.DeviceMac, powerDevice.DeviceModel, powerDevice.DeviceGen);
+        var result = new PowerDeviceDto(powerDevice.Id, powerDevice.Name, powerDevice.DeviceType, powerDevice.HostName, powerDevice.DeviceName, powerDevice.DeviceId, powerDevice.DeviceMac, powerDevice.DeviceModel, powerDevice.Channel);
         return Result.Ok(result);
     }
 }

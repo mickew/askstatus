@@ -50,7 +50,7 @@ public partial class Index
             if (result.Data is PowerDeviceDto)
             {
                 device = ((PowerDeviceDto)result.Data);
-                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.DeviceGen);
+                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel);
                 var res = await ApiService.PowerDeviceAPI.UpdatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {
@@ -95,7 +95,7 @@ public partial class Index
             if (result.Data is PowerDeviceDto)
             {
                 var device = ((PowerDeviceDto)result.Data);
-                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.DeviceGen);
+                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel);
                 var res = await ApiService.PowerDeviceAPI.CreatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {

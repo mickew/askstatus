@@ -56,7 +56,7 @@ public class PowerDeviceController : ControllerBase
             DeviceName = request.DeviceName,
             DeviceModel = request.DeviceModel,
             DeviceId = request.DeviceId,
-            DeviceGen = request.DeviceGen
+            Channel = request.Channel
         });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
@@ -79,7 +79,7 @@ public class PowerDeviceController : ControllerBase
             DeviceName = request.DeviceName,
             DeviceModel = request.DeviceModel,
             DeviceId = request.DeviceId,
-            DeviceGen = request.DeviceGen
+            Channel = request.Channel
         });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }

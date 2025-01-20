@@ -27,8 +27,8 @@ public class ShellyDiscoverDeviceServiceTests
 
     [Theory]
     [InlineData(_shelly1Response, PowerDeviceTypes.ShellyGen1, 0)]
-    [InlineData(_shelly2Response, PowerDeviceTypes.ShellyGen2, 2)]
-    public async Task Discover_Shelly_Should_Return_DicoverInfo(string shellyResponse, PowerDeviceTypes powerDeviceType, int deviceGen)
+    [InlineData(_shelly2Response, PowerDeviceTypes.ShellyGen2, 0)]
+    public async Task Discover_Shelly_Should_Return_DicoverInfo(string shellyResponse, PowerDeviceTypes powerDeviceType, int channel)
     {
         var content = new StringContent(shellyResponse);
         var logger = new Mock<ILogger<ShellyDiscoverDeviceService>>();
@@ -67,7 +67,7 @@ public class ShellyDiscoverDeviceServiceTests
         result.Value.DeviceId.Should().Be(ShellyId);
         result.Value.DeviceMac.Should().Be(ShellyMac);
         result.Value.DeviceModel.Should().Be(ShellyModel);
-        result.Value.DeviceGen.Should().Be(deviceGen);
+        result.Value.Channel.Should().Be(channel);
     }
 
     [Theory]
