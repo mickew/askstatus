@@ -188,12 +188,12 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             {
                 Name = "Test Device",
                 DeviceType = PowerDeviceTypes.ShellyGen2,
-                HostName = "localhost",
+                HostName = "192.168.1.85",
                 DeviceName = "Test Device",
                 DeviceId = "Test Device",
-                DeviceMac = "00:00:00:00:00:00",
+                DeviceMac = "EC626081CDF4",
                 DeviceModel = "Test Model",
-                Channel = 1
+                Channel = 0
             });
             PowerDeviceId = powdev.Entity.Id;
         }
