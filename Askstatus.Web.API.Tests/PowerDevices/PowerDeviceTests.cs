@@ -112,7 +112,7 @@ public class PowerDeviceTests
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         var powerDeviceRequest = new PowerDeviceRequest
         (
-            default,
+            0,
             "Test Device",
             PowerDeviceTypes.ShellyGen2,
             "localhost",
@@ -120,7 +120,8 @@ public class PowerDeviceTests
             "Test Device",
             "00:00:00:00:00:00",
             "Test Model",
-            1
+            1,
+            ChanelType.Generic
         );
 
         // Act
@@ -129,6 +130,17 @@ public class PowerDeviceTests
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Content.Should().NotBeNull();
+        response.Content!.Id.Should().BeGreaterThan(2);
+        response.Content!.Name.Should().Be("Test Device");
+        response.Content!.DeviceType.Should().Be(PowerDeviceTypes.ShellyGen2);
+        response.Content!.HostName.Should().Be("localhost");
+        response.Content!.DeviceName.Should().Be("Test Device");
+        response.Content!.DeviceId.Should().Be("Test Device");
+        response.Content!.DeviceMac.Should().Be("00:00:00:00:00:00");
+        response.Content!.DeviceModel.Should().Be("Test Model");
+        response.Content!.Channel.Should().Be(1);
+        response.Content!.ChanelType.Should().Be(ChanelType.Generic);
     }
 
     [Fact]
@@ -147,7 +159,8 @@ public class PowerDeviceTests
             "Test Device",
             "00:00:00:00:00:00",
             "Test Model",
-            1
+            1,
+            ChanelType.Generic
         );
 
         // Act
@@ -175,7 +188,8 @@ public class PowerDeviceTests
             "Test Device",
             "00:00:00:00:00:00",
             "Test Model",
-            1
+            1,
+            ChanelType.Generic
         );
 
         // Act
@@ -203,7 +217,8 @@ public class PowerDeviceTests
             "Test Device",
             "00:00:00:00:00:00",
             "Test Model",
-            1
+            1,
+            ChanelType.Generic
         );
 
         // Act
@@ -230,7 +245,8 @@ public class PowerDeviceTests
             "Test Device",
             "00:00:00:00:00:00",
             "Test Model",
-            1
+            1,
+            ChanelType.Generic
         );
 
         // Act
@@ -258,7 +274,8 @@ public class PowerDeviceTests
             "Test Device",
             "00:00:00:00:00:00",
             "Test Model",
-            1
+            1,
+            ChanelType.Generic
         );
 
         // Act
@@ -286,7 +303,8 @@ public class PowerDeviceTests
             "Test Device",
             "00:00:00:00:00:00",
             "Test Model",
-            1
+            1,
+            ChanelType.Generic
         );
 
         // Act

@@ -19,7 +19,7 @@ public sealed class GetPowerDevicesQueryHandler : IRequestHandler<GetPowerDevice
     {
         //throw new NotImplementedException();
         var powerDevices = await _unitOfWork.PowerDeviceRepository.ListAllAsync();
-        var result = powerDevices.Select(x => new PowerDeviceDto(x.Id, x.Name, x.DeviceType, x.HostName, x.DeviceName, x.DeviceId, x.DeviceMac, x.DeviceModel, x.Channel));
+        var result = powerDevices.Select(x => new PowerDeviceDto(x.Id, x.Name, x.DeviceType, x.HostName, x.DeviceName, x.DeviceId, x.DeviceMac, x.DeviceModel, x.Channel, x.ChanelType));
         return Result.Ok(result);
     }
 }

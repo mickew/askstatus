@@ -12,4 +12,5 @@ public class PowerDevice
     public string DeviceMac { get; set; } = null!;
     public string DeviceModel { get; set; } = null!;
     public int Channel { get; set; }
+    public ChanelType ChanelType { get; set; }
 }

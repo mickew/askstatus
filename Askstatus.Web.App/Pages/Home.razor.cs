@@ -1,4 +1,6 @@
-﻿using Askstatus.Sdk;
+﻿using Askstatus.Common.PowerDevice;
+using Askstatus.Sdk;
+using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
@@ -51,6 +53,7 @@ public partial class Home : IAsyncDisposable
             Mac = x.DeviceMac,
             Name = x.Name,
             IsOnline = true,
+            ChanelType = x.ChanelType,
         }).ToList();
         foreach (var device in Devices)
         {
@@ -117,6 +120,24 @@ public partial class Home : IAsyncDisposable
     }
 
     private string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
+
+    private string ChanelTypeToIcon(ChanelType chanelType, bool state)
+    { 
+        switch
+            (chanelType)
+        {
+            case ChanelType.Generic:
+                return state ? AskstatusIcons.GenericOn : AskstatusIcons.GenericOff;
+            case ChanelType.Relay:
+                return state ? AskstatusIcons.RelayOn : AskstatusIcons.RelayOff;
+            case ChanelType.Heat:
+                return state ? AskstatusIcons.HeatOn : AskstatusIcons.HeatOff;
+            case ChanelType.Bulb:
+                return state ? AskstatusIcons.BulbOn : AskstatusIcons.BulbOff;
+            default:
+                return state ? AskstatusIcons.GenericOn : AskstatusIcons.GenericOff;
+        }
+    }
 }
 
 public class Device
@@ -127,4 +148,5 @@ public class Device
     public bool State { get; set; }
     public bool Prosessing { get; set; }
     public bool IsOnline { get; set; }
+    public ChanelType ChanelType { get; set; }
 }

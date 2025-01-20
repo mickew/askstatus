@@ -1,5 +1,6 @@
 ﻿using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
+using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -50,7 +51,7 @@ public partial class Index
             if (result.Data is PowerDeviceDto)
             {
                 device = ((PowerDeviceDto)result.Data);
-                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel);
+                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel, device.ChanelType);
                 var res = await ApiService.PowerDeviceAPI.UpdatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {
@@ -95,7 +96,7 @@ public partial class Index
             if (result.Data is PowerDeviceDto)
             {
                 var device = ((PowerDeviceDto)result.Data);
-                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel);
+                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel, device.ChanelType);
                 var res = await ApiService.PowerDeviceAPI.CreatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {
@@ -109,4 +110,21 @@ public partial class Index
         }
     }
 
+    private string ChanelTypeToIcon(ChanelType chanelType)
+    {
+        switch
+            (chanelType)
+        {
+            case ChanelType.Generic:
+                return AskstatusIcons.GenericOn;
+            case ChanelType.Relay:
+                return AskstatusIcons.RelayOn;
+            case ChanelType.Heat:
+                return AskstatusIcons.HeatOn;
+            case ChanelType.Bulb:
+                return AskstatusIcons.BulbOn;
+            default:
+                return AskstatusIcons.GenericOn;
+        }
+    }
 }

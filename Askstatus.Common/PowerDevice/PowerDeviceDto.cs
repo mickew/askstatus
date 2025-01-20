@@ -1,9 +1,9 @@
 ﻿namespace Askstatus.Common.PowerDevice;
 public class PowerDeviceDto
 {
-    public PowerDeviceDto() : this(0, string.Empty, PowerDeviceTypes.Generic, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, 0) { }
+    public PowerDeviceDto() : this(0, string.Empty, PowerDeviceTypes.Generic, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, 0, 0) { }
 
-    public PowerDeviceDto(int id, string name, PowerDeviceTypes deviceType, string hostName, string deviceName, string deviceId, string deviceMac, string deviceModel, int deviceGen)
+    public PowerDeviceDto(int id, string name, PowerDeviceTypes deviceType, string hostName, string deviceName, string deviceId, string deviceMac, string deviceModel, int deviceGen, ChanelType chanelType)
     {
         Id = id;
         Name = name;
@@ -14,6 +14,7 @@ public class PowerDeviceDto
         DeviceMac = deviceMac;
         DeviceModel = deviceModel;
         Channel = deviceGen;
+        ChanelType = chanelType;
     }
     public int Id { get; set; }
     public string Name { get; set; }
@@ -24,4 +25,5 @@ public class PowerDeviceDto
     public string DeviceMac { get; set; }
     public string DeviceModel { get; set; }
     public int Channel { get; set; }
+    public ChanelType ChanelType { get; set; }
 }

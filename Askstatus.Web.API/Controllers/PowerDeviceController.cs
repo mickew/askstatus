@@ -79,7 +79,8 @@ public class PowerDeviceController : ControllerBase
             DeviceName = request.DeviceName,
             DeviceModel = request.DeviceModel,
             DeviceId = request.DeviceId,
-            Channel = request.Channel
+            Channel = request.Channel,
+            ChanelType = request.ChanelType
         });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }

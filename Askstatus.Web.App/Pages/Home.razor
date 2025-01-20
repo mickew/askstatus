@@ -41,7 +41,7 @@
                                 <MudPaper Elevation="2" Class="pa-4" >
                                     @{
                                         Color stateColor = device.IsOnline ? device.State ? Color.Success : Color.Error : Color.Warning;
-                                        string stateIcon = device.State ? AskstatusIcons.HeatOn : AskstatusIcons.HeatOff;
+                                        string stateIcon = ChanelTypeToIcon(device.ChanelType, device.State);
                                         bool prossesing = device.Prosessing;
                                     }
                                     <MudIconButton Disabled="@(prossesing || !(device.IsOnline))" Icon="@stateIcon" Color="@stateColor" aria-label="delete" Size="Size.Medium" @onclick="() => ToggleDevice(device.Id)" title="@(device.State ? "On" : "Off")" />
