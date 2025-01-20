@@ -9,13 +9,66 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Askstatus.Infrastructure.Data.Migrations
 {
-    [DbContext(typeof(ApplicationBaseDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationBaseDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.12");
+
+            modelBuilder.Entity("Askstatus.Domain.Entities.PowerDevice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ChanelType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeviceMac")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeviceModel")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeviceName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DeviceType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("HostName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId", "Channel")
+                        .IsUnique();
+
+                    b.HasIndex("DeviceMac", "Channel")
+                        .IsUnique();
+
+                    b.HasIndex("HostName", "Channel")
+                        .IsUnique();
+
+                    b.ToTable("PowerDevices");
+                });
 
             modelBuilder.Entity("Askstatus.Infrastructure.Identity.ApplicationRole", b =>
                 {

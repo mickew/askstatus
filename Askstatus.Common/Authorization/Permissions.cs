@@ -10,8 +10,9 @@ public enum Permissions
     ManageUsers = 8,
     ConfigureAccessControl = 16,
     ViewAccessControl = 32,
-    //ConfigurePowerDevices = 64,
-    //ViewPowerDevices = 128,
+    ConfigurePowerDevices = 64,
+    ViewPowerDevices = 128,
+    DiscoverDevices = 256,
     //ConfigureClimateDevices = 256,
     //ViewClimateDevices = 512,
     All = ~None

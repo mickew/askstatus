@@ -31,7 +31,10 @@
     },
     "Run EF Migrations": {
       "commandName": "Project",
-      "commandLineArgs": "--seed"
+      "commandLineArgs": "--seed",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
       //"commandLineArgs": "SeedPassword=\"Password123\" --seed"
     },
     "IIS Express": {

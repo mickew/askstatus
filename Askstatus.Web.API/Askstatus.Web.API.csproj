@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
+  <PropertyGroup>
+    <UserSecretsId>6fc03a52-cfda-4b2e-8206-001ca06b36c3</UserSecretsId>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="FluentResults.Extensions.AspNetCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
