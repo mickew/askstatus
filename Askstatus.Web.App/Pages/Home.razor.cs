@@ -1,4 +1,5 @@
-﻿using Askstatus.Common.PowerDevice;
+﻿using System.Diagnostics;
+using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
 using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
@@ -31,15 +32,17 @@ public partial class Home : IAsyncDisposable
 
     private HubConnection? _hubConnection;
 
-    public bool HubIsConnected =>
-    _hubConnection?.State == HubConnectionState.Connected;
+    public bool HubIsConnected;
 
     public Color HubIsConnectedColor => _hubConnection?.State == HubConnectionState.Connected ? Color.Success : Color.Error;
 
 
     protected override async Task OnInitializedAsync()
     {
-        _hubConnection = new HubConnectionBuilder().WithUrl(Settings.Value.AskStatusSignalRUrl!).Build();
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Settings.Value.AskStatusSignalRUrl!)
+            .WithAutomaticReconnect()
+            .Build();
 
         var response = await ApiService.PowerDeviceAPI.GetPowerDevices();
         if (!response.IsSuccessStatusCode)
@@ -66,6 +69,33 @@ public partial class Home : IAsyncDisposable
             }
             device.State = stateResponse.Content!;
         }
+
+        _hubConnection.Reconnecting += error =>
+        {
+            HubIsConnected = false;
+            Logger.LogWarning("Trying to reconnect to AskStatus Hub");
+            Snackbar.Add("Reconnecting to AskStatus Hub", Severity.Warning);
+            StateHasChanged();
+            return Task.CompletedTask;
+        };
+
+        _hubConnection.Closed += error =>
+        {            
+            HubIsConnected = false;
+            Logger.LogWarning("Closed connection to AskStatus Hub");
+            //Snackbar.Add("Closed connection to AskStatus SignalR Hub", Severity.Warning);
+            return Task.CompletedTask;
+        };
+
+        _hubConnection.Reconnected += connectionId =>
+        {
+            HubIsConnected = true;
+            Logger.LogInformation("Reconnected to AskStatus Hub");
+            Snackbar.Add("Reconnected to AskStatus SignalR Hub", Severity.Success);
+            StateHasChanged();
+            return Task.CompletedTask;
+        };
+
         _hubConnection.On<int, bool>("UpdateDeviceStatus", (id, onoff) =>
         {
             Logger.LogInformation("UpdateDeviceStatus received");
@@ -80,7 +110,7 @@ public partial class Home : IAsyncDisposable
         });
         try
         {
-            await _hubConnection.StartAsync();
+            HubIsConnected = await ConnectWithRetryAsync(_hubConnection, CancellationToken.None);
         }
         catch (Exception ex)
         {
@@ -89,6 +119,32 @@ public partial class Home : IAsyncDisposable
             return;
         }
         Logger.LogInformation("_hubConnection started");
+    }
+
+    public async Task<bool> ConnectWithRetryAsync(HubConnection connection, CancellationToken token)
+    {
+        // Keep trying to until we can start or the token is canceled.
+        while (true)
+        {
+            try
+            {
+                
+                await connection.StartAsync(token);
+                Logger.LogInformation("Connected to AskStatus SignalR Hub");
+                return true;
+            }
+            catch when (token.IsCancellationRequested)
+            {
+                return false;
+            }
+            catch
+            {
+                // Failed to connect, trying again in 5000 ms.
+                Logger.LogWarning("Failed to connect to AskStatus SignalR Hub, retrying in 5000 ms");
+                Snackbar.Add("Failed to connect to AskStatus SignalR Hub, retrying in 5000 ms", Severity.Warning);
+                await Task.Delay(5000);
+            }
+        }
     }
 
     private async Task ToggleDevice(int id)
