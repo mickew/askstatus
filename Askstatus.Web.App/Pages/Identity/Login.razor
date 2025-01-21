@@ -39,9 +39,9 @@
                                 </CardHeaderContent>
                             </MudCardHeader>
                             <MudCardContent>
-                                <MudTextField Label="User name" Variant="Variant.Outlined"
+                                <MudTextField Label="User name" HelperText="Enter user name" Variant="Variant.Filled"
                                               @bind-Value="_model.Username" For="@(() => _model.Username)" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Person" />
-                                <MudTextField Label="Password" Class="mt-3" Variant="Variant.Outlined"
+                                <MudTextField Label="Password" HelperText="Enter password" Class="mt-3" Variant="Variant.Filled"
                                               @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Password" />
                             </MudCardContent>
                             <MudCardActions>
