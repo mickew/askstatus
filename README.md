@@ -21,5 +21,27 @@ sudo systemctl stop askstatusbackend.service
 sudo journalctl -t askstatus-control --since today
 ```
 
+### to install
+
+```bash
+cd srs/askstatus/Tools/
+sudo sh install.sh 
+```
+
+### to update
+
+```bash
+cd srs/askstatus/Tools/
+sudo sh update.sh
+```
+
+### to unistall
+
+```bash
+cd srs/askstatus/Tools/
+sudo sh uninstall.sh
+```
+
 ## Setup Raspbery PI
 [Setup Raspbery PI for Askholmen Status System](Tools/RPISetup.md)
+```
