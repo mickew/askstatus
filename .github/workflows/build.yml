@@ -28,14 +28,14 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=../TestResults/test-results.xml" --collect:"XPlat Code Coverage"  --results-directory coverage
+      run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"  --results-directory coverage
 
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: always()
       with:
         name: test-results
-        path: "TestResults/test-results.xml"
+        path: "coverage/*.trx"
         reporter: dotnet-trx
 
     - name: Code Coverage Summary Report
