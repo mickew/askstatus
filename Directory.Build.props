@@ -22,4 +22,9 @@
     <Company>Promarmic AB</Company>
     <Copyright>Copyright @ Promarmic AB 2024-</Copyright>
   </PropertyGroup>
+
+<PropertyGroup>
+  <VSTestLogger>trx%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>
+  <VSTestResultsDirectory>$(MSBuildThisFileDirectory)/TestResults/$(TargetFramework)</VSTestResultsDirectory>
+</PropertyGroup>
 </Project>
