@@ -35,7 +35,7 @@ jobs:
       if: always()
       with:
         name: test-results
-        path: "TestResults/*.xml"
+        path: "coverage/*/*.xml"
         reporter: java-junit
 
     - name: Code Coverage Summary Report
