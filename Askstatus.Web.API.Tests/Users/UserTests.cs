@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Askstatus.Common.Authorization;
 using Askstatus.Common.Identity;
 using Askstatus.Common.Users;
@@ -11,7 +6,6 @@ using Askstatus.Sdk;
 using Askstatus.Sdk.Identity;
 using Askstatus.Sdk.Users;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace Askstatus.Web.API.Tests.Users;
 
@@ -415,6 +409,102 @@ public class UserTests
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
+    [Fact(Skip = "cant get token from server")]
+    public async Task ConfirmEmail_Should_Return_Success()
+    {
+        //Aranage
+        _factory.ReSeedData();
+
+        //Act
+        var response = await _userAPI.ConfirmEmail(new ConfirmEmailRequest(_factory.UserId!, "token"));
+
+        //Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
 
 
+    [Fact]
+    public async Task ConfirmEmail_Should_Return_NotFoundFailiur()
+    {
+        //Aranage
+        _factory.ReSeedData();
+
+        //Act
+        var response = await _userAPI.ConfirmEmail(new ConfirmEmailRequest("nouserid", "token"));
+
+        //Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_Should_Return_Success()
+    {
+        //Aranage
+        _factory.ReSeedData();
+
+        //Act
+        var response = await _userAPI.ForgotPassword(new ForgotPasswordRquest("user@localhost.local"));
+
+        //Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_Should_Return_NotFoundFailiur()
+    {
+        //Aranage
+        _factory.ReSeedData();
+
+        //Act
+        var response = await _userAPI.ForgotPassword(new ForgotPasswordRquest("nouser@localhost.local"));
+
+        //Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact(Skip = "cant get token from server")]
+    public async Task ResetUserPassword_Should_Return_Success()
+    {
+        //Aranage
+        _factory.ReSeedData();
+
+        //Act
+        var response = await _userAPI.ResetUserPassword(new ResetPasswordRequest(_factory.UserId!, "token", "!Password1"));
+
+        //Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task ResetUserPassword_Should_Return_NotFoundFailiur()
+    {
+        //Aranage
+        _factory.ReSeedData();
+
+        //Act
+        var response = await _userAPI.ResetUserPassword(new ResetPasswordRequest("nouserid", "token", "!Password1"));
+
+        //Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task ResetUserPassword_Should_Return_BadRequestFailiur()
+    {
+        //Aranage
+        _factory.ReSeedData();
+
+        //Act
+        var response = await _userAPI.ResetUserPassword(new ResetPasswordRequest(_factory.UserId!, "token", "!Password1"));
+
+        //Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }

@@ -7,11 +7,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Testcontainers.Papercut;
 
 namespace Askstatus.Web.API.Tests;
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    public PapercutContainer PapercutContainer { get; private set; }
+
     public const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
     public const string UserRole = "Users";
@@ -29,15 +33,19 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public int PowerDeviceId { get; private set; }
 
-    public Task InitializeAsync()
+    public IntegrationTestWebAppFactory()
+    {
+        PapercutContainer = new PapercutBuilder().Build();
+    }
+    public async Task InitializeAsync()
     {
         Program.IsIntegrationTestRun = true;
-        return Task.CompletedTask;
+        await PapercutContainer.StartAsync();
     }
 
-    public new Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
-        return Task.CompletedTask;
+        await PapercutContainer.DisposeAsync().AsTask();
     }
 
     public Task SetUsersPermission(Permissions permission)
@@ -60,14 +68,6 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         {
             // Remove the existing service registration for the DbContext
             RemoveAllDbContextsFromServices(services);
-            //var descriptor = services.SingleOrDefault(
-            //    d => d.ServiceType ==
-            //        typeof(DbContextOptions<ApplicationDbContext>));
-
-            //if (descriptor != null)
-            //{
-            //    services.Remove(descriptor);
-            //}
 
             // Add a database context using an in-memory database for testing.
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -85,9 +85,18 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 //db.Database.EnsureCreated();
                 SeedData(db);
+                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                if (config is IConfigurationRoot root)
+                {
+                    root["MailSettings:Host"] = PapercutContainer.Hostname;
+                    root["MailSettings:Port"] = PapercutContainer.GetMappedPublicPort(25).ToString();
+                    root.Reload();
+                }
             };
         });
+
     }
+
 
     public void ReSeedData()
     {
@@ -152,7 +161,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             NormalizedUserName = adminUserName.ToUpper(),
             NormalizedEmail = "admin@localhost.local".ToUpper(),
             FirstName = "Admin",
-            LastName = "User"
+            LastName = "User",
+            EmailConfirmed = true,
+            LockoutEnabled = false
         };
         PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
         var pw = passwordHasher.HashPassword(adminUser, DefaultPassword);
@@ -167,7 +178,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             NormalizedUserName = userUserName.ToUpper(),
             NormalizedEmail = "user@localhost.local".ToUpper(),
             FirstName = "User",
-            LastName = "User"
+            LastName = "User",
+            EmailConfirmed = true,
+            LockoutEnabled = false
         };
         pw = passwordHasher.HashPassword(userUser, DefaultPassword);
         userUser.PasswordHash = pw;

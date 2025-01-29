@@ -1,5 +1,6 @@
 ﻿using Askstatus.Application.Identity;
 using Askstatus.Application.Interfaces;
+using Askstatus.Application.Users;
 using Askstatus.Common.Identity;
 using FluentAssertions;
 using FluentResults;

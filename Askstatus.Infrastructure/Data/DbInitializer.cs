@@ -53,7 +53,9 @@ public sealed class DbInitializer
             NormalizedUserName = adminUserName.ToUpper(),
             NormalizedEmail = "admin@localhost.local".ToUpper(),
             FirstName = "Admin",
-            LastName = "User"
+            LastName = "User",
+            EmailConfirmed = true,
+            LockoutEnabled = false
         };
         PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
         var pw = passwordHasher.HashPassword(adminUser, DefaultPassword);
@@ -68,7 +70,9 @@ public sealed class DbInitializer
             NormalizedUserName = userUserName.ToUpper(),
             NormalizedEmail = "user@localhost.local".ToUpper(),
             FirstName = "User",
-            LastName = "User"
+            LastName = "User",
+            EmailConfirmed = true,
+            LockoutEnabled = false
         };
         pw = passwordHasher.HashPassword(userUser, DefaultPassword);
         userUser.PasswordHash = pw;

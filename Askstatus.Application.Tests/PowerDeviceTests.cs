@@ -541,6 +541,26 @@ public class PowerDeviceTests
     }
 
     [Fact]
+    public async Task PowerDeviceWebhook_ShouldPublishCreateUserEvent_WhenProcessedSuccessfully()
+    {
+        // Arrange
+        var powerDevices = MockTestdata();
+        var logger = new Mock<ILogger<PowerDeviceWebhookQueryHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var iPublisher = new Mock<IPublisher>();
+        unitOfWork.Setup(x => x.PowerDeviceRepository.GetBy(It.IsAny<Expression<Func<Askstatus.Domain.Entities.PowerDevice, bool>>>())).ReturnsAsync(powerDevices.First());
+        var handler = new PowerDeviceWebhookQueryHandler(unitOfWork.Object, logger.Object, iPublisher.Object);
+        var command = new PowerDeviceWebhookQuery(powerDevices.First().DeviceMac, true);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        iPublisher.Verify(x => x.Publish(It.IsAny<DeviceStateChangedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
     public async Task PowerDeviceWebhook_Should_Return_NotFound()
     {
         // Arrange

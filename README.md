@@ -4,6 +4,7 @@
 [![](https://img.shields.io/github/v/release/mickew/askstatus)](https://github.com/mickew/askstatus/releases/latest)
 [![](https://img.shields.io/github/issues/mickew/askstatus)](https://github.com/mickew/askstatus/issues)
 [![](https://img.shields.io/github/issues-closed/mickew/askstatus)](https://github.com/mickew/askstatus/issues?q=is%3Aissue+is%3Aclosed)
+[![](https://img.shields.io/github/milestones/progress-percent/mickew/askstatus/2)](https://github.com/mickew/askstatus/milestone/2)
 ## Askholmen Status System
 
 ### Databese migrations

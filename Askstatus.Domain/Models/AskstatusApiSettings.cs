@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Askstatus.Web.API;
+namespace Askstatus.Domain;
 
 public class AskstatusApiSettings
 {

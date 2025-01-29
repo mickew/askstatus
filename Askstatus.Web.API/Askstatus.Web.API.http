@@ -3,11 +3,6 @@
 @id=3
 @onoff=False
 
-GET {{Askstatus.Web.API_HostAddress}}/api/weatherforecast/
-Accept: application/json
-
-###
-
 POST {{Askstatus.Web.API_HostAddress}}/api/identity/login
 Content-Type: application/json
 
@@ -84,5 +79,14 @@ GET {{Askstatus.Web.API_HostAddress}}/api/powerdevice/{{id}}/switch/{{onoff}}
 ###
 
 GET {{Askstatus.Web.API_HostAddress}}/api/powerdevice/{{id}}/toggle
+
+###
+
+POST {{Askstatus.Web.API_HostAddress}}/api/user/confirm-email
+Content-Type: application/json
+
+{
+  //ConfirmEmailRequest
+}
 
 ###

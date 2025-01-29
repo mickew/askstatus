@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Askstatus.Common.Authorization;
 using Askstatus.Common.Users;
+using Askstatus.Domain;
 using Askstatus.Domain.Constants;
 using Askstatus.Infrastructure.Identity;
 using Askstatus.Infrastructure.Services;
@@ -20,10 +21,10 @@ public class UsersTests
     public async Task GetUsers_Should_Return_Success()
     {
         // Arrange
-        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock <UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.GetUsers();
@@ -43,7 +44,7 @@ public class UsersTests
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
         userManagerMock.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(new List<string> { "Admin" });
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.GetUserById("1");
@@ -61,7 +62,7 @@ public class UsersTests
         Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.GetUserById("3");
@@ -95,7 +96,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .RemoveFromRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>()))
             .ReturnsAsync(IdentityResult.Success);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.UpdateUser(new UserRequest("1", "adminb", "adminb@localhost.local", "Adminb", "User", roles));
@@ -114,7 +115,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(() => null);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
         var roles = new List<string> { "Admin" };
 
         // Act
@@ -147,7 +148,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .AddToRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.UpdateUser(new UserRequest("3", "adminb", "adminb@localhost.local", "Adminb", "User", roles));
@@ -196,7 +197,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .RemoveFromRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.UpdateUser(new UserRequest("3", "adminb", "adminb@localhost.local", "Adminb", "User", roles));
@@ -236,7 +237,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .UpdateAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.UpdateUser(new UserRequest("3", "adminb", "adminb@localhost.local", "Adminb", "User", roles));
@@ -270,7 +271,7 @@ public class UsersTests
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
         userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
         userManagerMock.Setup(userManager => userManager.AddToRolesAsync(It.IsAny<ApplicationUser>(), It.IsAny<IEnumerable<string>>())).ReturnsAsync(IdentityResult.Success);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.CreateUser(new UserRequest(string.Empty, "adminb", "adminb@localhost.local", "Adminb", "User", null!));
@@ -290,7 +291,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.CreateUser(new UserRequest(string.Empty, "adminb", "adminb@localhost.local", "Adminb", "User", null!));
@@ -327,7 +328,7 @@ public class UsersTests
             .FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(new ApplicationUser { Id = "1", UserName = "adminb", Email = "adminb@localhost.local", FirstName = "Adminb", LastName = "User" });
         userManagerMock.Setup(userManager => userManager.DeleteAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.DeleteUser("1");
@@ -344,7 +345,7 @@ public class UsersTests
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
         userManagerMock.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(() => null);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.DeleteUser("3");
@@ -365,7 +366,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(new ApplicationUser { Id = "1", UserName = "admin", Email = "admin@localhost.local", FirstName = "Admin", LastName = "User" });
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.DeleteUser("1");
@@ -390,7 +391,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .DeleteAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.DeleteUser("1");
@@ -431,7 +432,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager.
             ResetPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.ResetPassword("1");
@@ -448,7 +449,7 @@ public class UsersTests
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
         userManagerMock.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(() => null);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.ResetPassword("1");
@@ -476,7 +477,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager.
             ResetPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.ResetPassword("1");
@@ -514,7 +515,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .ChangePasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword", "NewPassword"));
@@ -528,7 +529,7 @@ public class UsersTests
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
         userManagerMock.Setup(userManager => userManager.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(() => null);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword", "NewPassword"));
@@ -553,7 +554,7 @@ public class UsersTests
         userManagerMock.Setup(userManager => userManager
             .ChangePasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.ChangePassword(new ChangePasswordRequest("OldPassword", "NewPassword", "NewPassword"));
@@ -585,7 +586,7 @@ public class UsersTests
         Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.GetAccessControlConfiguration();
@@ -604,7 +605,7 @@ public class UsersTests
         Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
         roleManagerMock.Setup(roleManager => roleManager.
             FindByIdAsync(It.IsAny<string>())).
             ReturnsAsync(new ApplicationRole { Id = "1", Name = "Admin", Permissions = Permissions.All });
@@ -624,7 +625,7 @@ public class UsersTests
         Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
         roleManagerMock.Setup(roleManager => roleManager
             .FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(() => null);
@@ -646,7 +647,7 @@ public class UsersTests
         Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
         roleManagerMock.Setup(roleManager => roleManager
             .FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(new ApplicationRole { Id = "1", Name = "Admin", Permissions = Permissions.All });
@@ -682,7 +683,7 @@ public class UsersTests
         Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.GetRoles();
@@ -703,7 +704,7 @@ public class UsersTests
         roleManagerMock.Setup(roleManager => roleManager
             .CreateAsync(It.IsAny<ApplicationRole>()))
             .ReturnsAsync(IdentityResult.Success);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.CreateRole(new RoleRequest(string.Empty, "Admin", Permissions.All));
@@ -725,7 +726,7 @@ public class UsersTests
         roleManagerMock.Setup(roleManager => roleManager
             .CreateAsync(It.IsAny<ApplicationRole>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.CreateRole(new RoleRequest(string.Empty, "Admin", Permissions.All));
@@ -763,7 +764,7 @@ public class UsersTests
         roleManagerMock.Setup(roleManager => roleManager
             .UpdateAsync(It.IsAny<ApplicationRole>()))
             .ReturnsAsync(IdentityResult.Success);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.UpdateRole(new RoleRequest("1", "Admin", Permissions.All));
@@ -786,7 +787,7 @@ public class UsersTests
         roleManagerMock.Setup(roleManager => roleManager
             .UpdateAsync(It.IsAny<ApplicationRole>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.UpdateRole(new RoleRequest("1", "Admin", Permissions.All));
@@ -821,7 +822,7 @@ public class UsersTests
         roleManagerMock.Setup(roleManager => roleManager
             .FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(() => null);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.UpdateRole(new RoleRequest("1", "Admin", Permissions.All));
@@ -845,7 +846,7 @@ public class UsersTests
         roleManagerMock.Setup(roleManager => roleManager
             .DeleteAsync(It.IsAny<ApplicationRole>()))
             .ReturnsAsync(IdentityResult.Success);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.DeleteRole("1");
@@ -868,7 +869,7 @@ public class UsersTests
         roleManagerMock.Setup(roleManager => roleManager
             .DeleteAsync(It.IsAny<ApplicationRole>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "Error", Description = "Error" }));
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
 
         // Act
         var result = await usersService.DeleteRole("1");
@@ -903,7 +904,7 @@ public class UsersTests
         roleManagerMock.Setup(roleManager => roleManager
             .FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(() => null);
-        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
 
         // Act
         var result = await usersService.DeleteRole("1");
@@ -912,6 +913,194 @@ public class UsersTests
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().NotBeEmpty();
         result.Errors.First().Message.Should().Be("Role not found");
+    }
+
+    [Fact]
+    public async Task ConfirmEmal_Should_Return_Success()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        userManagerMock.Setup(userManager => userManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new ApplicationUser
+            {
+                Id = "1",
+                UserName = "Notadmin",
+            });
+        userManagerMock.Setup(userManager => userManager
+            .ConfirmEmailAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
+
+        // Act
+        var result = await usersService.ConfirmEmail("1", "token");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ConfirmEmal_Should_ReturnNotFound_Failiure()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        userManagerMock.Setup(userManager => userManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => null);
+
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
+
+        // Act
+        var result = await usersService.ConfirmEmail("1", "token");
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("User not found");
+    }
+
+    [Fact]
+    public async Task ConfirmEmal_Should_Return_CantConfirmAdmin_Failiure()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        userManagerMock.Setup(userManager => userManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new ApplicationUser
+            {
+                Id = "1",
+                UserName = "admin",
+            });
+        userManagerMock.Setup(userManager => userManager
+            .ConfirmEmailAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
+
+        // Act
+        var result = await usersService.ConfirmEmail("1", "token");
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("Cannot confirm email for admin user");
+        loggerMock.Verify(l =>
+        l.Log(LogLevel.Warning,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Cannot confirm email for administrator admin user")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_Should_Return_Success()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        userManagerMock.Setup(userManager => userManager
+            .FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(new ApplicationUser
+            {
+                Id = "1",
+                UserName = "Notadmin",
+            });
+        userManagerMock.Setup(userManager => userManager
+            .GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync("token");
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
+
+        // Act
+        var result = await usersService.ForgotPassword("user@user.com");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+
+    }
+
+    [Fact]
+    public async Task ForgotPassword_Should_ReturnNotFound_Failiure()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        userManagerMock.Setup(userManager => userManager
+            .FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => null);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
+
+        // Act
+        var result = await usersService.ForgotPassword("user@user.com");
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("User not found");
+    }
+
+
+    [Fact]
+    public async Task ResetUserPassword_Should_Return_Success()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        userManagerMock.Setup(userManager => userManager
+            .FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new ApplicationUser
+            {
+                Id = "1",
+                UserName = "Notadmin",
+            });
+        userManagerMock.Setup(userManager => userManager
+            .ResetPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
+
+        // Act
+        var result = await usersService.ResetUserPassword("1", "token", "!Password1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ResetUserPassword_Should_ReturnNotFound_Failiure()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<UserService>>();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
+        Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
+        userManagerMock.Setup(userManager => userManager
+            .FindByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => null);
+        var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, loggerMock.Object, ApiOptions());
+
+        // Act
+        var result = await usersService.ResetUserPassword("1", "token", "!Password1");
+
+        // Assert
+        result.IsFailed.Should().BeTrue();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Message.Should().Be("User not found");
     }
 
     private Mock<RoleManager<ApplicationRole>> MockRoleManager()
@@ -982,5 +1171,12 @@ public class UsersTests
             new Mock<IAuthenticationSchemeProvider>().Object,
             new Mock<IUserConfirmation<ApplicationUser>>().Object);
         return signInManagerMock;
+    }
+
+    private static IOptions<AskstatusApiSettings> ApiOptions()
+    {
+        var apiSettings = new AskstatusApiSettings { BackendUrl = "http://localhost", FrontendUrl = "https://localhost" };
+        IOptions<AskstatusApiSettings> options = Options.Create(apiSettings);
+        return options;
     }
 }

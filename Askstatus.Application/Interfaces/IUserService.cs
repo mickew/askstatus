@@ -1,4 +1,5 @@
-﻿using Askstatus.Common.Users;
+﻿using Askstatus.Application.Users;
+using Askstatus.Common.Users;
 using FluentResults;
 
 namespace Askstatus.Application.Interfaces;
@@ -10,7 +11,7 @@ public interface IUserService
 
     Task<Result> UpdateUser(UserRequest userRequest);
 
-    Task<Result<UserVM>> CreateUser(UserRequest userRequest);
+    Task<Result<UserVMWithLink>> CreateUser(UserRequest userRequest);
 
     Task<Result> DeleteUser(string Id);
 
@@ -29,4 +30,10 @@ public interface IUserService
     Task<Result> UpdateRole(RoleRequest roleRequest);
 
     Task<Result> DeleteRole(string Id);
+
+    Task<Result> ConfirmEmail(string Id, string code);
+
+    Task<Result<UserVMWithLink>> ForgotPassword(string email);
+
+    Task<Result> ResetUserPassword(string Id, string Token, string NewPassword);
 }
