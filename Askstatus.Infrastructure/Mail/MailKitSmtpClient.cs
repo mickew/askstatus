@@ -2,6 +2,9 @@
 using System.Reflection;
 using Askstatus.Application.Interfaces;
 using Askstatus.Common.Models;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Util.Store;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
@@ -45,7 +48,16 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
         {
             try
             {
-                client.Connect(_options.Value.Host, _options.Value.Port, _options.Value.EnableSsl);
+                SaslMechanismOAuth2 oauth2 = null!;
+                if (_options.Value.Host!.EndsWith(".gmail.com"))
+                {
+                     oauth2 = await GmailOauth2Async();
+                }
+                await client.ConnectAsync(_options.Value.Host, _options.Value.Port, _options.Value.EnableSsl);
+                if (_options.Value.Host!.EndsWith(".gmail.com"))
+                {
+                    await client.AuthenticateAsync(oauth2);
+                }
             }
             catch (SmtpCommandException ex)
             {
@@ -60,29 +72,29 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
             }
 
             // Note: Not all SMTP servers support authentication, but GMail does.
-            if (client.Capabilities.HasFlag(SmtpCapabilities.Authentication))
-            {
-                try
-                {
-                    client.Authenticate("username", "password");
-                }
-                catch (AuthenticationException)
-                {
-                    _logger.LogError("Invalid user name or password.");
-                    return false;
-                }
-                catch (SmtpCommandException ex)
-                {
-                    _logger.LogError("Error trying to authenticate: {Message}", ex.Message);
-                    _logger.LogError("\tStatusCode: {StatusCode}", ex.StatusCode);
-                    return false;
-                }
-                catch (SmtpProtocolException ex)
-                {
-                    _logger.LogError("Protocol error while trying to authenticate: {Message}", ex.Message);
-                    return false;
-                }
-            }
+            //if (client.Capabilities.HasFlag(SmtpCapabilities.Authentication))
+            //{
+            //    try
+            //    {
+            //        client.Authenticate("username", "password");
+            //    }
+            //    catch (AuthenticationException)
+            //    {
+            //        _logger.LogError("Invalid user name or password.");
+            //        return false;
+            //    }
+            //    catch (SmtpCommandException ex)
+            //    {
+            //        _logger.LogError("Error trying to authenticate: {Message}", ex.Message);
+            //        _logger.LogError("\tStatusCode: {StatusCode}", ex.StatusCode);
+            //        return false;
+            //    }
+            //    catch (SmtpProtocolException ex)
+            //    {
+            //        _logger.LogError("Protocol error while trying to authenticate: {Message}", ex.Message);
+            //        return false;
+            //    }
+            //}
 
             try
             {
@@ -135,4 +147,29 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
 
     private static Assembly[] AllAssembliesOfCurrentAppDomain
         => AppDomain.CurrentDomain.GetAssemblies();
+
+    private async Task<SaslMechanismOAuth2> GmailOauth2Async()
+    {
+        var clientSecrets = new ClientSecrets
+        {
+            ClientId = _options.Value.ClientId,
+            ClientSecret = _options.Value.ClientSecret
+        };
+        var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+        {
+            // Cache tokens in ~/.local/share/google-filedatastore/CredentialCacheFolder on Linux/Mac
+            DataStore = new FileDataStore("CredentialCacheFolder", false),
+            Scopes = new[] { "https://mail.google.com/" },
+            ClientSecrets = clientSecrets
+        });
+        var codeReceiver = new LocalServerCodeReceiver();
+        var authCode = new AuthorizationCodeInstalledApp(codeFlow, codeReceiver);
+        var credential = await authCode.AuthorizeAsync(_options.Value.Account, CancellationToken.None);
+
+        if (authCode.ShouldRequestAuthorizationCode(credential.Token))
+            await credential.RefreshTokenAsync(CancellationToken.None);
+
+        SaslMechanismOAuth2 oauth2 = new SaslMechanismOAuth2(credential.UserId, credential.Token.AccessToken);
+        return oauth2;
+    }
 }

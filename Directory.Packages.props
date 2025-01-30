@@ -12,6 +12,7 @@
     <PackageVersion Include="FluentResults" Version="3.16.0" />
     <PackageVersion Include="FluentResults.Extensions.AspNetCore" Version="0.1.0" />
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="Google.Apis.Auth" Version="1.69.0" />
     <PackageVersion Include="JunitXml.TestLogger" Version="4.1.0" />
     <PackageVersion Include="MailKit" Version="4.9.0" />
     <PackageVersion Include="MediatR" Version="12.4.1" />
