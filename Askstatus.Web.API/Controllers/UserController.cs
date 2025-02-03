@@ -1,6 +1,4 @@
-﻿using System.Net;
-using Askstatus.Application.Authorization;
-using Askstatus.Application.Interfaces;
+﻿using Askstatus.Application.Authorization;
 using Askstatus.Application.Users;
 using Askstatus.Common.Authorization;
 using Askstatus.Common.Users;
@@ -11,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Askstatus.Web.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class UserController : ControllerBase
 {
     private readonly ISender _sender;
@@ -99,6 +96,39 @@ public class UserController : ControllerBase
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
         var result = await _sender.Send(new ChangePasswordCommand { OldPassword = request.OldPassword, NewPassword = request.NewPassword, ConfirmPassword = request.ConfirmPassword });
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
+    [HttpPost]
+    [Route("confirm-email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
+    {
+        var result = await _sender.Send(new ConfirmEmailCommand(request.UserId, request.Token));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
+    [HttpPost]
+    [Route("forgot-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRquest request)
+    {
+        var result = await _sender.Send(new ForgotPasswordCommand(request.Email));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
+    [HttpPost]
+    [Route("reset-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ResetUserPassword([FromBody] ResetPasswordRequest request)
+    {
+        var result = await _sender.Send(new ResetUserPasswordCommand(request.UserId!, request.Token!, request.NewPassword!));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 }

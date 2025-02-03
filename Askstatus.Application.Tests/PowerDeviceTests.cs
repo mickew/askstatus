@@ -1,11 +1,11 @@
 ﻿using System.Linq.Expressions;
 using Askstatus.Application.Errors;
+using Askstatus.Application.Events;
 using Askstatus.Application.Interfaces;
 using Askstatus.Application.PowerDevice;
 using Askstatus.Common.PowerDevice;
 using FluentAssertions;
 using FluentResults;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -527,9 +527,9 @@ public class PowerDeviceTests
         var powerDevices = MockTestdata();
         var logger = new Mock<ILogger<PowerDeviceWebhookQueryHandler>>();
         var unitOfWork = new Mock<IUnitOfWork>();
-        var iPublisher = new Mock<IPublisher>();
+        var evenBusMock = new Mock<IEventBus>();
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetBy(It.IsAny<Expression<Func<Askstatus.Domain.Entities.PowerDevice, bool>>>())).ReturnsAsync(powerDevices.First());
-        var handler = new PowerDeviceWebhookQueryHandler(unitOfWork.Object, logger.Object, iPublisher.Object);
+        var handler = new PowerDeviceWebhookQueryHandler(unitOfWork.Object, logger.Object, evenBusMock.Object);
         var command = new PowerDeviceWebhookQuery(powerDevices.First().DeviceMac, true);
 
         // Act
@@ -541,15 +541,35 @@ public class PowerDeviceTests
     }
 
     [Fact]
+    public async Task PowerDeviceWebhook_ShouldPublishCreateUserEvent_WhenProcessedSuccessfully()
+    {
+        // Arrange
+        var powerDevices = MockTestdata();
+        var logger = new Mock<ILogger<PowerDeviceWebhookQueryHandler>>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var evenBusMock = new Mock<IEventBus>();
+        unitOfWork.Setup(x => x.PowerDeviceRepository.GetBy(It.IsAny<Expression<Func<Askstatus.Domain.Entities.PowerDevice, bool>>>())).ReturnsAsync(powerDevices.First());
+        var handler = new PowerDeviceWebhookQueryHandler(unitOfWork.Object, logger.Object, evenBusMock.Object);
+        var command = new PowerDeviceWebhookQuery(powerDevices.First().DeviceMac, true);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        evenBusMock.Verify(x => x.PublishAsync(It.IsAny<DeviceStateChangedIntegrationEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
     public async Task PowerDeviceWebhook_Should_Return_NotFound()
     {
         // Arrange
         Askstatus.Domain.Entities.PowerDevice powerDevice = null!;
         var logger = new Mock<ILogger<PowerDeviceWebhookQueryHandler>>();
         var unitOfWork = new Mock<IUnitOfWork>();
-        var iPublisher = new Mock<IPublisher>();
+        var evenBusMock = new Mock<IEventBus>();
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetBy(It.IsAny<Expression<Func<Askstatus.Domain.Entities.PowerDevice, bool>>>())).ReturnsAsync(powerDevice);
-        var handler = new PowerDeviceWebhookQueryHandler(unitOfWork.Object, logger.Object, iPublisher.Object);
+        var handler = new PowerDeviceWebhookQueryHandler(unitOfWork.Object, logger.Object, evenBusMock.Object);
         var command = new PowerDeviceWebhookQuery("NOMAC", true);
 
         // Act

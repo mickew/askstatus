@@ -1,5 +1,6 @@
 using Askstatus.Application;
 using Askstatus.Application.Interfaces;
+using Askstatus.Domain;
 using Askstatus.Infrastructure;
 using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Hubs;
@@ -102,11 +103,6 @@ public class Program
                 .WriteTo.Console(outputTemplate: SerilogOutputTemplate)
 ;
         });
-
-        builder.Services.AddOptions<AskstatusApiSettings>()
-            .Bind(builder.Configuration.GetSection(AskstatusApiSettings.Section))
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
 
         var askstatusApiSettings = builder.Configuration.GetSection(AskstatusApiSettings.Section).Get<AskstatusApiSettings>();
 

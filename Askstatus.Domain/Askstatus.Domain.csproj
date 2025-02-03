@@ -6,6 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="images\logo-32x32.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Annotations" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Askstatus.Common\Askstatus.Common.csproj" />
   </ItemGroup>
 

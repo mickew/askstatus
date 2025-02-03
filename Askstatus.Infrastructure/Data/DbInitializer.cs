@@ -53,7 +53,9 @@ public sealed class DbInitializer
             NormalizedUserName = adminUserName.ToUpper(),
             NormalizedEmail = "admin@localhost.local".ToUpper(),
             FirstName = "Admin",
-            LastName = "User"
+            LastName = "User",
+            EmailConfirmed = true,
+            LockoutEnabled = false
         };
         PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
         var pw = passwordHasher.HashPassword(adminUser, DefaultPassword);
@@ -68,7 +70,9 @@ public sealed class DbInitializer
             NormalizedUserName = userUserName.ToUpper(),
             NormalizedEmail = "user@localhost.local".ToUpper(),
             FirstName = "User",
-            LastName = "User"
+            LastName = "User",
+            EmailConfirmed = true,
+            LockoutEnabled = false
         };
         pw = passwordHasher.HashPassword(userUser, DefaultPassword);
         userUser.PasswordHash = pw;
@@ -91,6 +95,20 @@ public sealed class DbInitializer
                 adminUser.PasswordHash = pw;
                 _context.Users.Update(adminUser);
             }
+        }
+        adminUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == adminUserName);
+        if (adminUser is not null)
+        {
+            adminUser.EmailConfirmed = true;
+            adminUser.LockoutEnabled = false;
+            _context.Users.Update(adminUser);
+        }
+        userUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userUserName);
+        if (userUser is not null)
+        {
+            userUser.EmailConfirmed = true;
+            userUser.LockoutEnabled = false;
+            _context.Users.Update(userUser);
         }
         await _context.SaveChangesAsync();
     }

@@ -1,9 +1,11 @@
-﻿using Askstatus.Application.Interfaces;
+﻿using Askstatus.Application.Events;
+using Askstatus.Application.Interfaces;
 using Askstatus.Application.Users;
 using Askstatus.Common.Authorization;
 using Askstatus.Common.Users;
 using FluentAssertions;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Askstatus.Application.Tests;
@@ -125,11 +127,13 @@ public class UsersTests
     public async Task CreateUser_Should_Return_Success()
     {
         // Arrange
+        var logger = new Mock<ILogger<CreateUserCommandHandler>>();
+        var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
-        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Ok(user));
-        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object);
+        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, evenBusMock.Object);
         var createUserCommand = new CreateUserCommand
         {
             UserName = "testuser1",
@@ -151,10 +155,12 @@ public class UsersTests
     public async Task CreateUser_Should_Return_Failiure()
     {
         // Arrange
+        var logger = new Mock<ILogger<CreateUserCommandHandler>>();
+        var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Fail("Could not create user"));
-        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object);
+        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, evenBusMock.Object);
         var createUserCommand = new CreateUserCommand
         {
             UserName = "testuser1",
@@ -171,6 +177,34 @@ public class UsersTests
         result.Errors.Should().NotBeEmpty();
         result.Errors.Should().HaveCount(1);
         result.Errors.First().Message.Should().Be("Could not create user");
+    }
+
+    [Fact]
+    public async Task CreateUser_ShouldPublishUserChangedEvent_WhenUserIsCreatedSuccessfully()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<CreateUserCommandHandler>>();
+        var evenBusMock = new Mock<IEventBus>();
+        Mock<IUserService> mock = new Mock<IUserService>();
+        var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
+        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
+        mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Ok(user));
+        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, evenBusMock.Object);
+        var createUserCommand = new CreateUserCommand
+        {
+            UserName = "testuser1",
+            Email = "testuser1@local",
+            FirstName = "testuser1",
+            LastName = "testuser1"
+        };
+
+        // Act
+        var result = await createUserCommandHandler.Handle(createUserCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        evenBusMock.Verify(x => x.PublishAsync(It.IsAny<UserChangedIntegrationEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -500,5 +534,114 @@ public class UsersTests
         result.Errors.Should().NotBeEmpty();
         result.Errors.Should().HaveCount(1);
         result.Errors.First().Message.Should().Be("Role not found");
+    }
+
+    [Fact]
+    public async Task ConfirmEmal_Should_Return_Success()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.ConfirmEmail(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(Result.Ok());
+        ConfirmEmailCommandHandler confirmEmailCommandHandler = new ConfirmEmailCommandHandler(mock.Object);
+        var confirmEmailCommand = new ConfirmEmailCommand("1", "token");
+
+        // Act
+        var result = await confirmEmailCommandHandler.Handle(confirmEmailCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+
+    [Fact]
+    public async Task ForgotPassword_Should_Return_Success()
+    {
+        // Arrange
+        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
+        var evenBusMock = new Mock<IEventBus>();
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.ForgotPassword(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
+        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, evenBusMock.Object);
+        ForgotPasswordCommand forgotPasswordCommand = new ForgotPasswordCommand("user@test.com");
+
+        // Act
+        var result = await forgotPasswordCommandHandler.Handle(forgotPasswordCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ForgotPassword_Should_Return_NotFoundFailiur()
+    {
+        // Arrange
+        var evenBusMock = new Mock<IEventBus>();
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.ForgotPassword(It.IsAny<string>())).ReturnsAsync(Result.Fail("User not found"));
+        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, evenBusMock.Object);
+        ForgotPasswordCommand forgotPasswordCommand = new ForgotPasswordCommand("user@test.com");
+
+        // Act
+        var result = await forgotPasswordCommandHandler.Handle(forgotPasswordCommand, CancellationToken.None);
+
+        // Assert
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().HaveCount(1);
+        result.Errors.First().Message.Should().Be("User not found");
+        result.IsFailed.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ForgotPassword_ShouldPublishUserChangedEvent_WhenForgotPasswordSuccessfully()
+    {
+        // Arrange
+        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
+        var evenBusMock = new Mock<IEventBus>();
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.ForgotPassword(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
+        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, evenBusMock.Object);
+        ForgotPasswordCommand forgotPasswordCommand = new ForgotPasswordCommand("user@test.com");
+
+        // Act
+        var result = await forgotPasswordCommandHandler.Handle(forgotPasswordCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        evenBusMock.Verify(x => x.PublishAsync(It.IsAny<UserChangedIntegrationEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ResetUserPassword_Should_Return_Success()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.ResetUserPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(Result.Ok());
+        ResetUserPasswordCommandHandler resetPasswordCommandHandler = new ResetUserPasswordCommandHandler(mock.Object);
+        ResetUserPasswordCommand resetPasswordCommand = new ResetUserPasswordCommand("1", "token", "!Password1");
+
+        // Act
+        var result = await resetPasswordCommandHandler.Handle(resetPasswordCommand, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ResetPassword_Should_Return_NotFoundFailiur()
+    {
+        // Arrange
+        Mock<IUserService> mock = new Mock<IUserService>();
+        mock.Setup(x => x.ResetUserPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(Result.Fail("User not found"));
+        ResetUserPasswordCommandHandler resetPasswordCommandHandler = new ResetUserPasswordCommandHandler(mock.Object);
+        ResetUserPasswordCommand resetPasswordCommand = new ResetUserPasswordCommand("1", "token", "!Password1");
+
+        // Act
+        var result = await resetPasswordCommandHandler.Handle(resetPasswordCommand, CancellationToken.None);
+
+        // Assert
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().HaveCount(1);
+        result.Errors.First().Message.Should().Be("User not found");
+        result.IsFailed.Should().BeTrue();
     }
 }

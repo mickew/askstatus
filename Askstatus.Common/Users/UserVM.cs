@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 
 namespace Askstatus.Common.Users;
-public sealed class UserVM
+public class UserVM
 {
     public UserVM() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty) { }
 

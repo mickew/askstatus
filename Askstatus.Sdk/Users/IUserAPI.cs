@@ -24,4 +24,13 @@ public interface IUserAPI
 
     [Put("/api/user/change-password")]
     Task<IApiResponse> ChangePassword(ChangePasswordRequest request);
+
+    [Post("/api/user/confirm-email")]
+    Task<IApiResponse> ConfirmEmail(ConfirmEmailRequest request);
+
+    [Post("/api/user/forgot-password")]
+    Task<IApiResponse> ForgotPassword(ForgotPasswordRquest request);
+
+    [Post("/api/user/reset-password")]
+    Task<IApiResponse> ResetUserPassword(ResetPasswordRequest request);
 }

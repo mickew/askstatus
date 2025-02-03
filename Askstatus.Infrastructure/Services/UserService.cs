@@ -1,12 +1,16 @@
 ﻿using System.Security.Claims;
 using Askstatus.Application.Interfaces;
+using Askstatus.Application.Users;
 using Askstatus.Common.Users;
+using Askstatus.Domain;
 using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Identity;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Askstatus.Infrastructure.Services;
 public partial class UserService : IUserService
@@ -14,12 +18,14 @@ public partial class UserService : IUserService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ILogger<UserService> _logger;
+    private readonly IOptions<AskstatusApiSettings> _apiOptons;
 
-    public UserService(SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, ILogger<UserService> logger)
+    public UserService(SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, ILogger<UserService> logger, IOptions<AskstatusApiSettings> apiOptons)
     {
         _signInManager = signInManager;
         _roleManager = roleManager;
         _logger = logger;
+        _apiOptons = apiOptons;
     }
 
     public async Task<Result> ChangePassword(ChangePasswordRequest changePasswordRequest)
@@ -50,6 +56,35 @@ public partial class UserService : IUserService
         return Result.Fail(new IdentityBadRequestError("Could not change password", result.Errors));
     }
 
+    public async Task<Result> ConfirmEmail(string Id, string Token)
+    {
+        var user = await _signInManager.UserManager.FindByIdAsync(Id);
+        if (user is null)
+        {
+            _logger.LogWarning("User with Id {Id} not found", Id);
+            return Result.Fail(new IdentityNotFoundError("User not found"));
+        }
+        if (user.UserName == DbInitializer.DefaultAdminUserName)
+        {
+            _logger.LogWarning("Cannot confirm email for administrator {UserName} user", user.UserName);
+            return Result.Fail(new IdentityBadRequestError("Cannot confirm email for admin user"));
+        }
+        var result = await _signInManager.UserManager.ConfirmEmailAsync(user, Token);
+        if (result.Succeeded)
+        {
+            return Result.Ok();
+        }
+        else
+        {
+            _logger.LogWarning("Could not confirm email for user {User}", user.UserName);
+            foreach (var error in result.Errors)
+            {
+                _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
+            }
+            return Result.Fail(new IdentityBadRequestError("Could not confirm email", result.Errors));
+        }
+    }
+
     public async Task<Result<RoleDto>> CreateRole(RoleRequest roleRequest)
     {
         var role = new ApplicationRole
@@ -70,7 +105,7 @@ public partial class UserService : IUserService
         return Result.Fail<RoleDto>(new IdentityBadRequestError("Could not create role", result.Errors));
     }
 
-    public async Task<Result<UserVM>> CreateUser(UserRequest userRequest)
+    public async Task<Result<UserVMWithLink>> CreateUser(UserRequest userRequest)
     {
         var user = new ApplicationUser
         {
@@ -82,6 +117,13 @@ public partial class UserService : IUserService
         var result = await _signInManager.UserManager.CreateAsync(user, $"!1{char.ToUpper(userRequest.UserName![0])}{userRequest.UserName.Substring(1)}1!");
         if (result.Succeeded)
         {
+            var token = await _signInManager.UserManager.GenerateEmailConfirmationTokenAsync(user);
+            var param = new Dictionary<string, string?>
+            {
+                { "userId", user.Id },
+                { "token", token }
+            };
+            var callback = QueryHelpers.AddQueryString($"{_apiOptons.Value.FrontendUrl}/confirm-email", param);
             result = await _signInManager.UserManager.AddToRolesAsync(user, userRequest.Roles);
             if (!result.Succeeded)
             {
@@ -90,16 +132,16 @@ public partial class UserService : IUserService
                 {
                     _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
                 }
-                return Result.Fail<UserVM>(new IdentityBadRequestError("Could not add roles to user", result.Errors));
+                return Result.Fail<UserVMWithLink>(new IdentityBadRequestError("Could not add roles to user", result.Errors));
             }
-            return Result.Ok(new UserVM(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!));
+            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback));
         }
         _logger.LogWarning("Could not create user {User}", userRequest.UserName);
         foreach (var error in result.Errors)
         {
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
-        return Result.Fail<UserVM>(new IdentityBadRequestError("Culd not create user", result.Errors));
+        return Result.Fail<UserVMWithLink>(new IdentityBadRequestError("Culd not create user", result.Errors));
     }
 
     public async Task<Result> DeleteRole(string Id)
@@ -153,6 +195,25 @@ public partial class UserService : IUserService
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
         return Result.Fail(new IdentityBadRequestError("Could not delete user", deleteResult.Errors));
+    }
+
+    public async Task<Result<UserVMWithLink>> ForgotPassword(string email)
+    {
+        var user = await _signInManager.UserManager.FindByEmailAsync(email).ConfigureAwait(false);
+        if (user is not null)
+        {
+            var token = await _signInManager.UserManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
+            var param = new Dictionary<string, string?>
+            {
+                { "userId", user.Id },
+                { "token", token }
+            };
+            var callback = QueryHelpers.AddQueryString($"{_apiOptons.Value.FrontendUrl}/reset-password", param);
+            _logger.LogInformation("Password reset token generated for user {User}", email);
+            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback));
+        }
+        _logger.LogWarning("User with email {Email} not found", email);
+        return Result.Fail<UserVMWithLink>(new IdentityNotFoundError("User not found"));
     }
 
     public async Task<Result<AccessControlVm>> GetAccessControlConfiguration()
@@ -218,6 +279,9 @@ public partial class UserService : IUserService
         var resetResult = await _signInManager.UserManager.ResetPasswordAsync(result, token, $"!1{char.ToUpper(result.UserName![0])}{result.UserName.Substring(1)}1!");
         if (resetResult.Succeeded)
         {
+            //result.AccessFailedCount = 0;
+            //result.LockoutEnd = null;
+            //await _signInManager.UserManager.UpdateAsync(result);
             return Result.Ok();
         }
         _logger.LogWarning("Could not reset password for user {User}", result.UserName);
@@ -226,6 +290,27 @@ public partial class UserService : IUserService
             _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
         }
         return Result.Fail(new IdentityBadRequestError("Could not reset password", resetResult.Errors));
+    }
+
+    public async Task<Result> ResetUserPassword(string Id, string Token, string NewPassword)
+    {
+        var user = await _signInManager.UserManager.FindByIdAsync(Id);
+        if (user is null)
+        {
+            _logger.LogWarning("User with email {Id} not found", Id);
+            return Result.Fail(new IdentityNotFoundError("User not found"));
+        }
+        var result = await _signInManager.UserManager.ResetPasswordAsync(user, Token, NewPassword);
+        if (result.Succeeded)
+        {
+            return Result.Ok();
+        }
+        _logger.LogWarning("Could not reset password for user {User}", user.UserName);
+        foreach (var error in result.Errors)
+        {
+            _logger.LogWarning("Error: {Error} | Code: {Code}", error.Description, error.Code);
+        }
+        return Result.Fail(new IdentityBadRequestError("Could not reset password", result.Errors));
     }
 
     public async Task<Result> UpdateAccessControlConfiguration(RoleRequest roleRequest)
