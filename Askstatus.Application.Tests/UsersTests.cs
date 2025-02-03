@@ -1,11 +1,10 @@
-﻿using Askstatus.Application.Interfaces;
-using Askstatus.Application.PowerDevice;
+﻿using Askstatus.Application.Events;
+using Askstatus.Application.Interfaces;
 using Askstatus.Application.Users;
 using Askstatus.Common.Authorization;
 using Askstatus.Common.Users;
 using FluentAssertions;
 using FluentResults;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -129,12 +128,12 @@ public class UsersTests
     {
         // Arrange
         var logger = new Mock<ILogger<CreateUserCommandHandler>>();
-        var publisher = new Mock<IPublisher>();
+        var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
         var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Ok(user));
-        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, publisher.Object);
+        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, evenBusMock.Object);
         var createUserCommand = new CreateUserCommand
         {
             UserName = "testuser1",
@@ -157,11 +156,11 @@ public class UsersTests
     {
         // Arrange
         var logger = new Mock<ILogger<CreateUserCommandHandler>>();
-        var publisher = new Mock<IPublisher>();
+        var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Fail("Could not create user"));
-        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, publisher.Object);
+        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, evenBusMock.Object);
         var createUserCommand = new CreateUserCommand
         {
             UserName = "testuser1",
@@ -185,12 +184,12 @@ public class UsersTests
     {
         // Arrange
         var logger = new Mock<ILogger<CreateUserCommandHandler>>();
-        var publisher = new Mock<IPublisher>();
+        var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
         var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Ok(user));
-        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, publisher.Object);
+        CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, evenBusMock.Object);
         var createUserCommand = new CreateUserCommand
         {
             UserName = "testuser1",
@@ -205,7 +204,7 @@ public class UsersTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
-        publisher.Verify(x => x.Publish(It.IsAny<UserChangedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+        evenBusMock.Verify(x => x.PublishAsync(It.IsAny<UserChangedIntegrationEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -559,10 +558,10 @@ public class UsersTests
     {
         // Arrange
         var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
-        var publisher = new Mock<IPublisher>();
+        var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         mock.Setup(x => x.ForgotPassword(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
-        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, publisher.Object);
+        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, evenBusMock.Object);
         ForgotPasswordCommand forgotPasswordCommand = new ForgotPasswordCommand("user@test.com");
 
         // Act
@@ -576,10 +575,10 @@ public class UsersTests
     public async Task ForgotPassword_Should_Return_NotFoundFailiur()
     {
         // Arrange
-        var publisher = new Mock<IPublisher>();
+        var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         mock.Setup(x => x.ForgotPassword(It.IsAny<string>())).ReturnsAsync(Result.Fail("User not found"));
-        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, publisher.Object);
+        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, evenBusMock.Object);
         ForgotPasswordCommand forgotPasswordCommand = new ForgotPasswordCommand("user@test.com");
 
         // Act
@@ -597,10 +596,10 @@ public class UsersTests
     {
         // Arrange
         var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
-        var publisher = new Mock<IPublisher>();
+        var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         mock.Setup(x => x.ForgotPassword(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
-        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, publisher.Object);
+        ForgotPasswordCommandHandler forgotPasswordCommandHandler = new ForgotPasswordCommandHandler(mock.Object, evenBusMock.Object);
         ForgotPasswordCommand forgotPasswordCommand = new ForgotPasswordCommand("user@test.com");
 
         // Act
@@ -608,7 +607,7 @@ public class UsersTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        publisher.Verify(x => x.Publish(It.IsAny<UserChangedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+        evenBusMock.Verify(x => x.PublishAsync(It.IsAny<UserChangedIntegrationEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

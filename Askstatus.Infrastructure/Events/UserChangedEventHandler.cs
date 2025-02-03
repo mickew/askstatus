@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace Askstatus.Infrastructure.Events;
-internal sealed class UserChangedEventHandler : INotificationHandler<UserChangedEvent>
+internal sealed class UserChangedEventHandler : INotificationHandler<UserChangedIntegrationEvent>
 {
     private readonly IEmailService _emailService;
     private readonly IOptions<AskstatusApiSettings> _apiOptions;
@@ -17,7 +17,7 @@ internal sealed class UserChangedEventHandler : INotificationHandler<UserChanged
         _emailService = emailService;
         _apiOptions = apiOptions;
     }
-    public async Task Handle(UserChangedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(UserChangedIntegrationEvent notification, CancellationToken cancellationToken)
     {
         switch (notification.EventType)
         {
@@ -33,7 +33,7 @@ internal sealed class UserChangedEventHandler : INotificationHandler<UserChanged
         }
     }
 
-    private async Task SendRegistrationConfirmationEmail(UserChangedEvent notification)
+    private async Task SendRegistrationConfirmationEmail(UserChangedIntegrationEvent notification)
     {
         var uri = new Uri(_apiOptions.Value.FrontendUrl!);
         var from = $"info@{uri.Host}";
@@ -51,7 +51,7 @@ internal sealed class UserChangedEventHandler : INotificationHandler<UserChanged
         await _emailService.SendEmailAsync(mailMessage);
     }
 
-    private async Task SendResetPasswordEmail(UserChangedEvent notification)
+    private async Task SendResetPasswordEmail(UserChangedIntegrationEvent notification)
     {
         var uri = new Uri(_apiOptions.Value.FrontendUrl!);
         var from = $"info@{uri.Host}";

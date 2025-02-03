@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
+using Askstatus.Application.Events;
 using Askstatus.Application.Interfaces;
 using Askstatus.Domain;
 using Askstatus.Infrastructure.Authorization;
 using Askstatus.Infrastructure.Data;
+using Askstatus.Infrastructure.Events;
 using Askstatus.Infrastructure.Identity;
 using Askstatus.Infrastructure.Mail;
 using Askstatus.Infrastructure.Services;
@@ -96,6 +98,10 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAskStatusSmtpClient, MailKitSmtpClient>();
         services.AddScoped<IEmailService, EmailService>();
+
+        services.AddSingleton<InMemoryMessageQueue>();
+        services.AddSingleton<IEventBus, EventBus>();
+        services.AddHostedService<IntegrationEventProcessorJob>();
 
         services.AddSingleton<IApplicationHostAddressService, ApplicationHostAddressService>();
 

@@ -1,7 +1,4 @@
-﻿using Askstatus.Common.Models;
-using MediatR;
+﻿using Askstatus.Application.Events;
 
 namespace Askstatus.Application.Users;
-public sealed record UserChangedEvent(UserVMWithLink User, UserEventType EventType) : INotification
-{
-}
+public sealed record UserChangedIntegrationEvent(Guid Id, UserVMWithLink User, UserEventType EventType) : IntegrationEvent(Id);
