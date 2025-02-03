@@ -96,6 +96,20 @@ public sealed class DbInitializer
                 _context.Users.Update(adminUser);
             }
         }
+        adminUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == adminUserName);
+        if (adminUser is not null)
+        {
+            adminUser.EmailConfirmed = true;
+            adminUser.LockoutEnabled = false;
+            _context.Users.Update(adminUser);
+        }
+        userUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userUserName);
+        if (userUser is not null)
+        {
+            userUser.EmailConfirmed = true;
+            userUser.LockoutEnabled = false;
+            _context.Users.Update(userUser);
+        }
         await _context.SaveChangesAsync();
     }
 }
