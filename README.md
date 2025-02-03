@@ -18,9 +18,19 @@ Update-Database
 ```bash
 sudo systemctl status askstatusbackend.service
 sudo systemctl stop askstatusbackend.service
-sudo systemctl stop askstatusbackend.service
+sudo systemctl start askstatusbackend.service
+sudo journalctl -t askstatus-control -f
 sudo journalctl -t askstatus-control --since today
 ```
+
+### Install, update and uninstall Askholmen Status System (gui)
+
+```bash
+cd srs/askstatus/Tools/
+sudo sh askstatus.sh 
+```
+
+
 
 ### to install
 
