@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Askstatus.Application.Events;
 
 namespace Askstatus.Application.PowerDevice;
-public record DeviceStateChangedEvent(int Id, bool State) : INotification;
+public record DeviceStateChangedIntegrationEvent(Guid Id, int DeviceId, bool State) : IntegrationEvent(Id);

@@ -1,4 +1,5 @@
 ﻿using Askstatus.Application.Errors;
+using Askstatus.Application.Events;
 using Askstatus.Application.Interfaces;
 using FluentResults;
 using MediatR;
@@ -12,24 +13,24 @@ public sealed class PowerDeviceWebhookQueryHandler : IRequestHandler<PowerDevice
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<PowerDeviceWebhookQueryHandler> _logger;
-    private readonly IPublisher _publisher;
+    private readonly IEventBus _eventBus;
 
-    public PowerDeviceWebhookQueryHandler(IUnitOfWork unitOfWork, ILogger<PowerDeviceWebhookQueryHandler> logger, IPublisher publisher)
+    public PowerDeviceWebhookQueryHandler(IUnitOfWork unitOfWork, ILogger<PowerDeviceWebhookQueryHandler> logger, IEventBus eventBus)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
-        _publisher = publisher;
+        _eventBus = eventBus;
     }
     public async Task<Result> Handle(PowerDeviceWebhookQuery request, CancellationToken cancellationToken)
     {
-        var powerDevice = await _unitOfWork.PowerDeviceRepository.GetBy(x=> x.DeviceMac == request.Mac);
+        var powerDevice = await _unitOfWork.PowerDeviceRepository.GetBy(x => x.DeviceMac == request.Mac);
         if (powerDevice == null)
         {
             _logger.LogWarning("PowerDevice with mac {Mac} not found", request.Mac);
             return Result.Fail(new NotFoundError($"PowerDevice not found"));
         }
 
-        await _publisher.Publish(new DeviceStateChangedEvent(powerDevice.Id, request.state), cancellationToken);
+        await _eventBus.PublishAsync(new DeviceStateChangedIntegrationEvent(Guid.NewGuid(), powerDevice.Id, request.state), cancellationToken);
         return Result.Ok();
     }
 }
