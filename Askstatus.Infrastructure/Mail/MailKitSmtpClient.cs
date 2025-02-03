@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Reflection;
+﻿using System.Reflection;
 using Askstatus.Application.Interfaces;
 using Askstatus.Common.Models;
 using Google.Apis.Auth.OAuth2;
@@ -51,7 +50,7 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
                 SaslMechanismOAuth2 oauth2 = null!;
                 if (_options.Value.Host!.EndsWith(".gmail.com"))
                 {
-                     oauth2 = await GmailOauth2Async();
+                    oauth2 = await GmailOauth2Async();
                 }
                 await client.ConnectAsync(_options.Value.Host, _options.Value.Port, _options.Value.EnableSsl);
                 if (_options.Value.Host!.EndsWith(".gmail.com"))
@@ -122,6 +121,10 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
             {
                 _logger.LogError("Protocol error while sending message: {Message}", ex.Message);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError("Protocol error while sending message: {Message}", ex.Message);
+            }
 
             client.Disconnect(true);
         }
@@ -158,7 +161,7 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
         var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
         {
             // Cache tokens in ~/.local/share/google-filedatastore/CredentialCacheFolder on Linux/Mac
-            DataStore = new FileDataStore("CredentialCacheFolder", false),
+            DataStore = new FileDataStore(_options.Value.CredentialCacheFolder, true),
             Scopes = new[] { "https://mail.google.com/" },
             ClientSecrets = clientSecrets
         });
@@ -166,8 +169,11 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
         var authCode = new AuthorizationCodeInstalledApp(codeFlow, codeReceiver);
         var credential = await authCode.AuthorizeAsync(_options.Value.Account, CancellationToken.None);
 
-        if (authCode.ShouldRequestAuthorizationCode(credential.Token))
+        // Refresh the token if it has expired
+        if (credential.Token.IsStale)
+        {
             await credential.RefreshTokenAsync(CancellationToken.None);
+        }
 
         SaslMechanismOAuth2 oauth2 = new SaslMechanismOAuth2(credential.UserId, credential.Token.AccessToken);
         return oauth2;

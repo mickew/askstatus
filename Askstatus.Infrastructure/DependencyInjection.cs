@@ -65,6 +65,7 @@ public static class DependencyInjection
         // Add identity and opt-in to endpoints
         services.AddIdentityCore<ApplicationUser>(opt =>
             {
+                //opt.Tokens.EmailConfirmationTokenProvider = "Email";
                 opt.SignIn.RequireConfirmedEmail = true;
                 opt.User.RequireUniqueEmail = true;
                 opt.Password.RequireDigit = true;

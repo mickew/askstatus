@@ -1,7 +1,7 @@
 @Askstatus.Web.API_HostAddress = https://localhost:7298
 @ip=192.168.1.85
-@id=3
 @onoff=False
+@id=3
 
 POST {{Askstatus.Web.API_HostAddress}}/api/identity/login
 Content-Type: application/json
@@ -86,7 +86,47 @@ POST {{Askstatus.Web.API_HostAddress}}/api/user/confirm-email
 Content-Type: application/json
 
 {
-  //ConfirmEmailRequest
+  "userId": "42d37d5c-307a-4913-b912-1d3eb9331221",
+  "token": "CfDJ8MVi1NhcEYFBvQJ6YfPn4W3XOvzOtNJCMEGYN4l2RWJ79meNpbDNUYNqt5DX4IttS+tAtpTsFGBRXtZFcO98xY9ktSd3MvOkv1u9JxbjZHLt1pAZx6RQrjkuQR2Ed2PwpNw7SsU42iVmbDpsrVirzRVyZsZb8ezQv7JQ+4X5LRr1RRYLiZWYhJJZZWj0Xx4Sippoba3ECCjgdzRzCR4KcV5NesBpLxgWY2TNDP/b3Wusu75Hn7CSynYRVMWdqJkJoA=="
+}
+###
+
+POST {{Askstatus.Web.API_HostAddress}}/api/user
+Content-Type: application/json
+
+{
+  "id": "",
+  "userName": "kallek",
+  "email": "mikael.wagberg@promarmis.se",
+  "firstName": "Kalle",
+  "lastName": "Kula",
+  "roles": [
+    "Users"
+  ]
+}
+###
+
+@userid=f04b89ca-a95f-4ff9-b81b-9ad1f2480afd
+DELETE {{Askstatus.Web.API_HostAddress}}/api/user/{{userid}}
+
+###
+
+POST {{Askstatus.Web.API_HostAddress}}/api/user/forgot-password
+Content-Type: application/json
+
+{
+  "email": "mikael.wagberg@promarmis.se"
+}
+
+###
+
+POST {{Askstatus.Web.API_HostAddress}}/api/user/reset-password
+Content-Type: application/json
+
+{
+  "userId": "f04b89ca-a95f-4ff9-b81b-9ad1f2480afd",
+  "token": "CfDJ8MVi1NhcEYFBvQJ6YfPn4W1zg7FUWOw8M1+9UrmFemkE/PXWyrcOW/Jd/eQiGb5SOv76wD8R0VKr+G5084CSr4dYme3C4q4Z613kmgz9cWblGSYklhssa+5ysWwIFeBU5OqeyMT9TSUyZD8H8SFH5c2AmQSkte6cwikTTw/3yXqnWtVoOC/6gmgo8DjW74mZClffMRQdOs8oIWbKySCibWAG6oUuIWDewLE9AvPVy99G",
+  "newPassword": "Password123!"
 }
 
 ###

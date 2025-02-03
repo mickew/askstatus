@@ -128,7 +128,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ResetUserPassword([FromBody] ResetPasswordRequest request)
     {
-        var result = await _sender.Send(new ResetUserPasswordCommand(request.UserId, request.Token, request.NewPassword));
+        var result = await _sender.Send(new ResetUserPasswordCommand(request.UserId!, request.Token!, request.NewPassword!));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 }

@@ -7,6 +7,7 @@ using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Identity;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -55,7 +56,7 @@ public partial class UserService : IUserService
         return Result.Fail(new IdentityBadRequestError("Could not change password", result.Errors));
     }
 
-    public async Task<Result> ConfirmEmail(string Id, string code)
+    public async Task<Result> ConfirmEmail(string Id, string Token)
     {
         var user = await _signInManager.UserManager.FindByIdAsync(Id);
         if (user is null)
@@ -68,7 +69,7 @@ public partial class UserService : IUserService
             _logger.LogWarning("Cannot confirm email for administrator {UserName} user", user.UserName);
             return Result.Fail(new IdentityBadRequestError("Cannot confirm email for admin user"));
         }
-        var result = await _signInManager.UserManager.ConfirmEmailAsync(user, code);
+        var result = await _signInManager.UserManager.ConfirmEmailAsync(user, Token);
         if (result.Succeeded)
         {
             return Result.Ok();
@@ -116,8 +117,13 @@ public partial class UserService : IUserService
         var result = await _signInManager.UserManager.CreateAsync(user, $"!1{char.ToUpper(userRequest.UserName![0])}{userRequest.UserName.Substring(1)}1!");
         if (result.Succeeded)
         {
-            var code = await _signInManager.UserManager.GenerateEmailConfirmationTokenAsync(user);
-            var link = $"{_apiOptons.Value.FrontendUrl}/confirm-email?userId={user.Id}&code={code}";
+            var token = await _signInManager.UserManager.GenerateEmailConfirmationTokenAsync(user);
+            var param = new Dictionary<string, string?>
+            {
+                { "userId", user.Id },
+                { "token", token }
+            };
+            var callback = QueryHelpers.AddQueryString($"{_apiOptons.Value.FrontendUrl}/confirm-email", param);
             result = await _signInManager.UserManager.AddToRolesAsync(user, userRequest.Roles);
             if (!result.Succeeded)
             {
@@ -128,7 +134,7 @@ public partial class UserService : IUserService
                 }
                 return Result.Fail<UserVMWithLink>(new IdentityBadRequestError("Could not add roles to user", result.Errors));
             }
-            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, link));
+            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback));
         }
         _logger.LogWarning("Could not create user {User}", userRequest.UserName);
         foreach (var error in result.Errors)
@@ -197,11 +203,16 @@ public partial class UserService : IUserService
         if (user is not null)
         {
             var token = await _signInManager.UserManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
-            var link = $"{_apiOptons.Value.FrontendUrl}/reset-email?userId={user.Id}&code={token}";
+            var param = new Dictionary<string, string?>
+            {
+                { "userId", user.Id },
+                { "token", token }
+            };
+            var callback = QueryHelpers.AddQueryString($"{_apiOptons.Value.FrontendUrl}/reset-password", param);
             _logger.LogInformation("Password reset token generated for user {User}", email);
-            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, link));
+            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback));
         }
-        _logger.LogWarning("User with {Email} not found", email);
+        _logger.LogWarning("User with email {Email} not found", email);
         return Result.Fail<UserVMWithLink>(new IdentityNotFoundError("User not found"));
     }
 

@@ -1,0 +1,44 @@
+﻿@page "/confirm-email"
+@layout LoginLayout
+
+<PageTitle>Confirm Email</PageTitle>
+
+@if(IsConfirmed)
+{
+    <div style="height: 75vh; padding-top: 25vh">
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12" sm="3">
+                <MudCard style="background-color: transparent; box-shadow: none;">
+                    <MudCardHeader Style="z-index: 1">
+                        <CardHeaderContent>
+                            <MudText Align="Align.Right" Typo="Typo.h6">You're email has ben confirmed!</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardActions>
+                        <MudButton Href="/" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Goto start page</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </div>
+}
+else
+{
+    <div style="height: 75vh; padding-top: 25vh">
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12" sm="3">
+                <MudCard style="background-color: transparent; box-shadow: none;">
+                    <MudCardHeader Style="z-index: 1">
+                        <CardHeaderContent>
+                            <MudText Align="Align.Right" Typo="Typo.h6">You're email has not ben confirmed!</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardActions>
+                        <MudButton Href="/" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Goto start page</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </div>
+
+}

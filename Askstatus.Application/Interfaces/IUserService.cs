@@ -31,7 +31,7 @@ public interface IUserService
 
     Task<Result> DeleteRole(string Id);
 
-    Task<Result> ConfirmEmail(string Id, string code);
+    Task<Result> ConfirmEmail(string Id, string Token);
 
     Task<Result<UserVMWithLink>> ForgotPassword(string email);
 

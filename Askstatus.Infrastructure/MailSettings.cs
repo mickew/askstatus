@@ -7,7 +7,7 @@ public class MailSettings
 
     [Required]
     public bool Enabled { get; set; }
-    [Required ()]
+    [Required()]
     public string? Host { get; set; }
     [Required]
     public int Port { get; set; }
@@ -21,4 +21,6 @@ public class MailSettings
     public string? ClientSecret { get; set; }
     [Required]
     public bool EnableSsl { get; set; }
+    [Required]
+    public string? CredentialCacheFolder { get; set; }
 }
