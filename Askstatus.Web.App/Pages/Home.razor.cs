@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Askstatus.Common.PowerDevice;
+﻿using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
 using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
@@ -55,20 +54,11 @@ public partial class Home : IAsyncDisposable
             Id = x.Id,
             Mac = x.DeviceMac,
             Name = x.Name,
-            IsOnline = true,
+            IsOnline = false,
             ChanelType = x.ChanelType,
         }).ToList();
-        foreach (var device in Devices)
-        {
-            var stateResponse = await ApiService.PowerDeviceAPI.GetPowerDeviceStatus(device.Id);
-            if (!stateResponse.IsSuccessStatusCode)
-            {
-                device.IsOnline = false;
-                Logger.LogError(stateResponse.Error, stateResponse.Error.Content);
-                Snackbar.Add($"{device.Name} is offline", Severity.Warning);
-            }
-            device.State = stateResponse.Content!;
-        }
+
+        StateHasChanged();
 
         _hubConnection.Reconnecting += error =>
         {
@@ -80,7 +70,7 @@ public partial class Home : IAsyncDisposable
         };
 
         _hubConnection.Closed += error =>
-        {            
+        {
             HubIsConnected = false;
             Logger.LogWarning("Closed connection to AskStatus Hub");
             //Snackbar.Add("Closed connection to AskStatus SignalR Hub", Severity.Warning);
@@ -119,6 +109,16 @@ public partial class Home : IAsyncDisposable
             return;
         }
         Logger.LogInformation("_hubConnection started");
+        var onlineTasks = new List<Task>();
+        foreach (var device in Devices)
+        {
+            onlineTasks.Add(Task.Run(async () =>
+            {
+                await GetIsOnline(device);
+            }));
+        }
+        await Task.WhenAll(onlineTasks);
+        StateHasChanged();
     }
 
     public async Task<bool> ConnectWithRetryAsync(HubConnection connection, CancellationToken token)
@@ -128,7 +128,7 @@ public partial class Home : IAsyncDisposable
         {
             try
             {
-                
+
                 await connection.StartAsync(token);
                 Logger.LogInformation("Connected to AskStatus SignalR Hub");
                 return true;
@@ -175,10 +175,10 @@ public partial class Home : IAsyncDisposable
         }
     }
 
-    private string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
+    private static string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
 
-    private string ChanelTypeToIcon(ChanelType chanelType, bool state)
-    { 
+    private static string ChanelTypeToIcon(ChanelType chanelType, bool state)
+    {
         switch
             (chanelType)
         {
@@ -193,6 +193,20 @@ public partial class Home : IAsyncDisposable
             default:
                 return state ? AskstatusIcons.GenericOn : AskstatusIcons.GenericOff;
         }
+    }
+
+    private async Task GetIsOnline(Device device)
+    {
+        var response = await ApiService.PowerDeviceAPI.GetPowerDeviceStatus(device.Id);
+        if (!response.IsSuccessStatusCode)
+        {
+            Logger.LogError(response.Error, response.Error.Content);
+            Snackbar.Add($"{device.Name} is offline", Severity.Error);
+            device.IsOnline = false;
+            return;
+        }
+        device.IsOnline = true;
+        device.State = response.Content!;
     }
 }
 

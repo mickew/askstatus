@@ -51,6 +51,7 @@ public class Shelly2DeviceService : IDeviceService
     {
         var request = new HttpRequestMessage(HttpMethod.Get, $"http://{host}/rpc/Switch.GetStatus?id={channel}");
         var client = _clientFactory.CreateClient();
+        client.Timeout = TimeSpan.FromSeconds(2);
         try
         {
             HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
