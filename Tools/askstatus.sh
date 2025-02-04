@@ -38,5 +38,5 @@ case $CHOICE in
         ;;
 esac
 
-whiptail --title "Askstatus - Complete" --msgbox "Askstatus System $result complete." 8 78
+# whiptail --title "Askstatus - Complete" --msgbox "Askstatus System $result complete." 8 78
 exit
