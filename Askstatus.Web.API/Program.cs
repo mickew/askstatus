@@ -1,3 +1,4 @@
+using System.Reflection;
 using Askstatus.Application;
 using Askstatus.Application.Interfaces;
 using Askstatus.Domain;
@@ -16,6 +17,7 @@ public class Program
     public static bool IsIntegrationTestRun = false;
 
     private const string SeedArgs = "--seed";
+    private const string VersionArgs = "--version";
     private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] {Message}{NewLine}{Exception}";
     //private const string SerilogOutputTemplate = "[{Timestamp:HH:mm:ss} {SourceContext} [{Level}] CLient IP: {ClientIp} {Message}{NewLine}{Exception}";
 
@@ -47,6 +49,13 @@ public class Program
         }
         try
         {
+            var printVersion = args.Any(x => x == VersionArgs);
+            if (printVersion)
+            {
+                Console.WriteLine(GetVersion());
+                return 0;
+            }
+
             var applyDbMigrationWithDataSeedFromProgramArguments = args.Any(x => x == SeedArgs);
             if (applyDbMigrationWithDataSeedFromProgramArguments)
             {
@@ -64,6 +73,7 @@ public class Program
                 return 0;
             }
 
+            Log.ForContext<Program>().Information("Askstatus API {Version}", GetVersion());
             Log.ForContext<Program>().Information("Starting web host");
 
             WebApplicationBuilder builder = CreateBuilder(args);
@@ -201,5 +211,16 @@ public class Program
             && path.IndexOfAny(System.IO.Path.GetInvalidPathChars().ToArray()) == -1
             && Path.IsPathRooted(path)
             && !Path.GetPathRoot(path)?.Equals(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal) == true;
+    }
+
+    private static string GetVersion()
+    {
+        Assembly currentAssembly = typeof(Program).Assembly;
+        if (currentAssembly == null)
+        {
+            currentAssembly = Assembly.GetCallingAssembly();
+        }
+        var version = $"{currentAssembly.GetName().Version!.Major}.{currentAssembly.GetName().Version!.Minor}.{currentAssembly.GetName().Version!.Build}";
+        return version ?? "?.?.?";
     }
 }

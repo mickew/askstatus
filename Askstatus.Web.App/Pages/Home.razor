@@ -40,7 +40,7 @@
                             <MudItem Style="width: 100%">
                                 <MudPaper Elevation="2" Class="pa-4" >
                                     @{
-                                        Color stateColor = device.IsOnline ? device.State ? Color.Success : Color.Error : Color.Warning;
+                                        Color stateColor = device.IsOnline ? device.State ? Color.Success : Color.Warning : Color.Error;
                                         string stateIcon = ChanelTypeToIcon(device.ChanelType, device.State);
                                         bool prossesing = device.Prosessing;
                                     }
