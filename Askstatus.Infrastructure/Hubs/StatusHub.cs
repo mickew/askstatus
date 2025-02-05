@@ -1,5 +1,4 @@
-﻿using Askstatus.Application.Authorization;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
 namespace Askstatus.Infrastructure.Hubs;
