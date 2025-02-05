@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="MockQueryable.Moq" />
     <PackageReference Include="Moq" />
+    <PackageReference Include="SignalR.UnitTestingSupport.xUnit" />
     <PackageReference Include="Testcontainers.Papercut" />
     <PackageReference Include="Testcontainers.Xunit" />
     <PackageReference Include="xunit" />

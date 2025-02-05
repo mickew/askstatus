@@ -53,10 +53,12 @@ jobs:
         type: 'zip'
         filename: release.zip
     - name: Upload Release
-      uses: ncipollo/release-action@v1.14.0
+      uses: ncipollo/release-action@v1.15.0
       with:
         artifacts: "release.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         tag: "${{ github.event.inputs.environment_tag }}"
+        name: "Release of Askstatus ${{ github.event.inputs.environment_tag }}"
+        generateReleaseNotes: true
           

@@ -17,6 +17,29 @@ public class PowerDeviceTests
     private readonly IIdentityApi _identityApi;
     private readonly IPowerDeviceAPI _powerDeviceAPI;
 
+    //private static readonly HttpConnectionFactory ConnectionFactory = new(Options.Create(
+    //new HttpConnectionOptions
+    //{
+    //    DefaultTransferFormat = TransferFormat.Text,
+    //    SkipNegotiation = false,
+    //    //Transports = HttpTransportType.WebSockets,
+    //    Headers =
+    //    {
+    //            ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+    //                            "AppleWebKit/537.36 (KHTML, like Gecko) " +
+    //                            "Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.57"
+    //    }
+    //}),
+    //NullLoggerFactory.Instance);
+
+    //private static readonly JsonHubProtocol HubProtocol = new(
+    //    Options.Create(new JsonHubProtocolOptions()
+    //    {
+    //        PayloadSerializerOptions = System.Text.Json.JsonSerializerOptions.Default
+    //    }));
+
+    //private static readonly UriEndPoint HubEndpoint = new(new Uri("https://localhost:7298/statushub"));
+
     public PowerDeviceTests(IntegrationTestWebAppFactory factory)
     {
         _client = factory.CreateClient();
@@ -25,6 +48,30 @@ public class PowerDeviceTests
         _powerDeviceAPI = askstatusApiService.PowerDeviceAPI;
         _factory = factory;
     }
+
+    //[Fact]
+    //public async Task Test_Hub()
+    //{
+    //    // Arrange
+    //    int deviceId = 0;
+    //    bool deviceOnOff = false;
+    //    var connection = new HubConnection(ConnectionFactory, HubProtocol, HubEndpoint, new ServiceCollection().BuildServiceProvider(), NullLoggerFactory.Instance);
+
+    //    connection.On<int, bool>("UpdateDeviceStatus", (id, onoff) =>
+    //    {
+    //        deviceId = id;
+    //        deviceOnOff = onoff;
+
+    //    });
+    //    await connection.StartAsync();
+
+    //    // Act
+    //    var res =await _powerDeviceAPI.Webhook("EC626081CDF4", true);
+
+    //    // Assert
+    //    deviceId.Should().Be(1);
+    //    deviceOnOff.Should().BeTrue();
+    //}
 
     [Fact]
     public async Task GetPowerDevices_Should_Return_Success()

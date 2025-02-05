@@ -1,5 +1,4 @@
-﻿using System.Data.SqlTypes;
-using Askstatus.Common.PowerDevice;
+﻿using Askstatus.Common.PowerDevice;
 using Refit;
 
 namespace Askstatus.Sdk.PowerDevices;
@@ -31,5 +30,8 @@ public interface IPowerDeviceAPI
 
     [Get($"/api/powerdevice/{{id}}/false")]
     Task<IApiResponse> TurnOffPowerDevice(int id);
+
+    [Get("/api/powerdevice/webhook?mac={mac}&state={state}")]
+    Task<IApiResponse<bool>> Webhook(string mac, bool state);
 }
 
