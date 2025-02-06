@@ -54,7 +54,12 @@ public sealed class UpdatePowerDeviceCommandHandler : IRequestHandler<UpdatePowe
             _logger.LogError("Error updating PowerDevice with id {Id}", request.Id);
             return Result.Fail(new BadRequestError("Error updating PowerDevice"));
         }
-        await _unitOfWork.SaveChangesAsync();
+        var ret = await _unitOfWork.SaveChangesAsync();
+        if (ret == -1)
+        {
+            _logger.LogError("Error saving changes");
+            return Result.Fail(new BadRequestError("Error saving changes"));
+        }
         return Result.Ok();
     }
 }
