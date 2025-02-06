@@ -46,7 +46,12 @@ public sealed class CreatePowerDeviceCommandHandler : IRequestHandler<CreatePowe
             _logger.LogError("Error creating PowerDevice");
             return Result.Fail<PowerDeviceDto>(new BadRequestError("Error creating PowerDevice"));
         }
-        await _unitOfWork.SaveChangesAsync();
+        var ret = await _unitOfWork.SaveChangesAsync();
+        if (ret == -1)
+        {
+            _logger.LogError("Error saving changes");
+            return Result.Fail<PowerDeviceDto>(new BadRequestError("Error saving changes"));
+        }
         return Result.Ok(new PowerDeviceDto(result.Id, result.Name, result.DeviceType, result.HostName, result.DeviceName, result.DeviceId, result.DeviceMac, result.DeviceModel, result.Channel, result.ChanelType));
     }
 }

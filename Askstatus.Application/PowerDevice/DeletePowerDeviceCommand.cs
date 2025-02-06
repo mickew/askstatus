@@ -32,7 +32,12 @@ public sealed class DeletePowerDeviceCommandHandler : IRequestHandler<DeletePowe
             return Result.Fail(new BadRequestError("Error deleting PowerDevice"));
         }
 
-        await _unitOfWork.SaveChangesAsync();
+        var ret = await _unitOfWork.SaveChangesAsync();
+        if (ret == -1)
+        {
+            _logger.LogError("Error saving changes");
+            return Result.Fail(new BadRequestError("Error saving changes"));
+        }
         return Result.Ok();
     }
 }

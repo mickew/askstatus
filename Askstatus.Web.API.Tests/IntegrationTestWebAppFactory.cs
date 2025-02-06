@@ -6,6 +6,7 @@ using Askstatus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public const string DefaultUserUserName = "user";
 
     public const string DefaultPassword = "!PassW0rd!";
+    private readonly SqliteConnection _connection;
 
     public string? AdminId { get; private set; }
 
@@ -36,6 +38,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public IntegrationTestWebAppFactory()
     {
         PapercutContainer = new PapercutBuilder().Build();
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
     }
     public async Task InitializeAsync()
     {
@@ -45,6 +49,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public new async Task DisposeAsync()
     {
+        _connection.Close();
         await PapercutContainer.DisposeAsync().AsTask();
     }
 
@@ -69,21 +74,24 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             // Remove the existing service registration for the DbContext
             RemoveAllDbContextsFromServices(services);
 
+            // Create a new service provider.
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkSqlite()
+                .BuildServiceProvider();
+
             // Add a database context using an in-memory database for testing.
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                //var connectionString = new SqliteConnectionStringBuilder { DataSource = ":memory:" }.ToString();
-                //var connection = new SqliteConnection(connectionString);
-                //options.UseSqlite(connection);
-                //options.UseInMemoryDatabase(Guid.NewGuid().ToString());
-                options.UseInMemoryDatabase("TestDb");
+                options.UseSqlite(_connection);
+                options.UseInternalServiceProvider(serviceProvider);
+                //options.UseInMemoryDatabase("TestDb");
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
             });
             using (var scope = services.BuildServiceProvider().CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                //db.Database.EnsureCreated();
+                db.Database.EnsureCreated();
                 SeedData(db);
                 var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
                 if (config is IConfigurationRoot root)
@@ -147,9 +155,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         if (!context.Roles.Any())
         {
             context.Roles.Add(adminRole);
-            AdministratorsRoleId = adminRole.Id;
             context.Roles.Add(userRole);
-            UserRoleId = userRole.Id;
         }
 
         // Create default admin user
@@ -187,29 +193,34 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
         if (!context.Users.Any())
         {
-            var admn = context.Users.Add(adminUser);
-            AdminId = admn.Entity.Id;
+            context.Users.Add(adminUser);
             context.Users.Add(userUser);
-            UserId = userUser.Id;
             context.Add(new IdentityUserRole<string>() { RoleId = adminRole.Id, UserId = adminUser.Id });
             context.Add(new IdentityUserRole<string>() { RoleId = userRole.Id, UserId = userUser.Id });
         }
 
+        // Create default PowerDevice to test against
+        var testPowerDevice = new PowerDevice()
+        {
+            Name = "Test Device",
+            DeviceType = PowerDeviceTypes.ShellyGen2,
+            HostName = "192.168.1.85",
+            DeviceName = "Test Device",
+            DeviceId = "Test Device",
+            DeviceMac = "EC626081CDF4",
+            DeviceModel = "Test Model",
+            Channel = 0
+        };
         if (!context.PowerDevices.Any())
         {
-            var powdev = context.PowerDevices.Add(new PowerDevice()
-            {
-                Name = "Test Device",
-                DeviceType = PowerDeviceTypes.ShellyGen2,
-                HostName = "192.168.1.85",
-                DeviceName = "Test Device",
-                DeviceId = "Test Device",
-                DeviceMac = "EC626081CDF4",
-                DeviceModel = "Test Model",
-                Channel = 0
-            });
-            PowerDeviceId = powdev.Entity.Id;
+            var p = context.PowerDevices.Add(testPowerDevice);
         }
         context.SaveChanges();
+        AdministratorsRoleId = adminRole.Id;
+        UserRoleId = userRole.Id;
+        AdminId = adminUser.Id;
+        UserId = userUser.Id;
+
+        PowerDeviceId = testPowerDevice.Id;
     }
 }

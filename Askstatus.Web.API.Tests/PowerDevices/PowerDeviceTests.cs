@@ -218,7 +218,7 @@ public class PowerDeviceTests
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
-    [Fact(Skip = "in-memory database cant test indexes")]
+    [Fact]
     public async Task CreatePowerDevice_Should_Return_BadRequest()
     {
         // Arrange
@@ -230,12 +230,12 @@ public class PowerDeviceTests
             default,
             "Test Device",
             PowerDeviceTypes.ShellyGen2,
-            "localhost",
+            "192.168.1.85",
             "Test Device",
             "Test Device",
-            "00:00:00:00:00:00",
+            "EC626081CDF4",
             "Test Model",
-            1,
+            0,
             ChanelType.Generic
         );
 
@@ -333,7 +333,7 @@ public class PowerDeviceTests
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact(Skip = "in-memory database cant test indexes")]
+    [Fact]
     public async Task UpdatePowerDevice_Should_Return_BadRequest()
     {
         // Arrange
@@ -342,7 +342,35 @@ public class PowerDeviceTests
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         var powerDeviceRequest = new PowerDeviceRequest
         (
-            -1,
+            default,
+            "Test Device",
+            PowerDeviceTypes.ShellyGen2,
+            "localhost",
+            "Test Device",
+            "Test Device",
+            "00:00:00:00:00:00",
+            "Test Model",
+            1,
+            ChanelType.Generic
+        );
+        var powerDeviceRequestToChange = new PowerDeviceRequest
+        (
+            default,
+            "Test Device",
+            PowerDeviceTypes.ShellyGen2,
+            "localhost",
+            "Test Device",
+            "Test Device",
+            "00:00:00:00:00:00",
+            "Test Model",
+            2,
+            ChanelType.Generic
+        );
+        var createdResponse = await _powerDeviceAPI.CreatePowerDevice(powerDeviceRequest);
+        var createdResponseToChange = await _powerDeviceAPI.CreatePowerDevice(powerDeviceRequestToChange);
+        powerDeviceRequestToChange = new PowerDeviceRequest
+        (
+            createdResponseToChange.Content!.Id,
             "Test Device",
             PowerDeviceTypes.ShellyGen2,
             "localhost",
@@ -355,7 +383,7 @@ public class PowerDeviceTests
         );
 
         // Act
-        var response = await _powerDeviceAPI.UpdatePowerDevice(powerDeviceRequest);
+        var response = await _powerDeviceAPI.UpdatePowerDevice(powerDeviceRequestToChange);
 
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();

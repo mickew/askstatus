@@ -1,5 +1,4 @@
 ﻿using Askstatus.Application.Interfaces;
-using Askstatus.Application.PowerDevice;
 using Askstatus.Common.PowerDevice;
 using Askstatus.Domain.Entities;
 using Askstatus.Infrastructure.Data;
@@ -16,12 +15,13 @@ public class RepositoryPowerDeviceTests
     public async Task PowerDeviceRepository_AddAsync_ShouldAddPowerDevice()
     {
         // Arrange
+        var loggerMock = new Mock<ILogger<UnitOfWork>>();
         var serviceProvider = new ServiceCollection()
             .AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()))
             .AddLogging()
             .AddScoped<IRepository<PowerDevice>, Repository<PowerDevice>>()
             .BuildServiceProvider();
-        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider);
+        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider, loggerMock.Object);
         var powerDeviceRepository = unitOfWork.PowerDeviceRepository;
         var powerDevice = new PowerDevice
         {
@@ -52,12 +52,13 @@ public class RepositoryPowerDeviceTests
     public async Task PowerDeviceRepository_GetByIdAsync_ShouldReturnPowerDevice()
     {
         // Arrange
+        var loggerMock = new Mock<ILogger<UnitOfWork>>();
         var serviceProvider = new ServiceCollection()
             .AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()))
             .AddLogging()
             .AddScoped<IRepository<PowerDevice>, Repository<PowerDevice>>()
             .BuildServiceProvider();
-        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider);
+        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider, loggerMock.Object);
         var powerDeviceRepository = unitOfWork.PowerDeviceRepository;
         var powerDevice = new PowerDevice
         {
@@ -91,12 +92,13 @@ public class RepositoryPowerDeviceTests
     public async Task PowerDeviceRepository_GetAllAsync_ShouldReturnAllPowerDevices()
     {
         // Arrange
+        var logger = new Mock<ILogger<UnitOfWork>>();
         var serviceProvider = new ServiceCollection()
             .AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()))
             .AddLogging()
             .AddScoped<IRepository<PowerDevice>, Repository<PowerDevice>>()
             .BuildServiceProvider();
-        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider);
+        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider, logger.Object);
         var powerDeviceRepository = unitOfWork.PowerDeviceRepository;
         var powerDevice1 = new PowerDevice
         {
@@ -136,12 +138,13 @@ public class RepositoryPowerDeviceTests
     public async Task PowerDeviceRepository_Update_ShouldUpdatePowerDevice()
     {
         // Arrange
+        var logger = new Mock<ILogger<UnitOfWork>>();
         var serviceProvider = new ServiceCollection()
             .AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()))
             .AddLogging()
             .AddScoped<IRepository<PowerDevice>, Repository<PowerDevice>>()
             .BuildServiceProvider();
-        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider);
+        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider, logger.Object);
         var powerDeviceRepository = unitOfWork.PowerDeviceRepository;
         var powerDevice = new PowerDevice
         {
@@ -176,12 +179,13 @@ public class RepositoryPowerDeviceTests
     public async Task PowerDeviceRepository_Delete_ShouldDeletePowerDevice()
     {
         // Arrange
+        var logger = new Mock<ILogger<UnitOfWork>>();
         var serviceProvider = new ServiceCollection()
             .AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()))
             .AddLogging()
             .AddScoped<IRepository<PowerDevice>, Repository<PowerDevice>>()
             .BuildServiceProvider();
-        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider);
+        var unitOfWork = new UnitOfWork(serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider, logger.Object);
         var powerDeviceRepository = unitOfWork.PowerDeviceRepository;
         var powerDevice = new PowerDevice
         {
