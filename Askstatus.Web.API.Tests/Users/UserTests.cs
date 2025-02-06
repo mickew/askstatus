@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Askstatus.Application.Interfaces;
 using Askstatus.Common.Authorization;
 using Askstatus.Common.Identity;
 using Askstatus.Common.Users;
@@ -6,6 +7,8 @@ using Askstatus.Sdk;
 using Askstatus.Sdk.Identity;
 using Askstatus.Sdk.Users;
 using FluentAssertions;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Askstatus.Web.API.Tests.Users;
 
@@ -409,14 +412,18 @@ public class UserTests
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
-    [Fact(Skip = "cant get token from server")]
+    [Fact]
     public async Task ConfirmEmail_Should_Return_Success()
     {
         //Aranage
         _factory.ReSeedData();
+        var userService = _factory.Services.CreateScope().ServiceProvider.GetRequiredService<IUserService>();
+        var ret = await userService.CreateUser(new UserRequest("", "testuser", "k@k.se", "TestUser", "User", new List<string>()));
+        var s = QueryHelpers.ParseQuery(ret.Value.Link!);
+        var token = s["token"];
 
         //Act
-        var response = await _userAPI.ConfirmEmail(new ConfirmEmailRequest(_factory.UserId!, "token"));
+        var response = await _userAPI.ConfirmEmail(new ConfirmEmailRequest(ret.Value.Id, token!));
 
         //Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -466,14 +473,21 @@ public class UserTests
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact(Skip = "cant get token from server")]
+    [Fact]
     public async Task ResetUserPassword_Should_Return_Success()
     {
         //Aranage
         _factory.ReSeedData();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultAdminUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        var user = await _userAPI.GetUserById(_factory.UserId!);
+        await _identityApi.Logout();
+        var userService = _factory.Services.CreateScope().ServiceProvider.GetRequiredService<IUserService>();
+        var ret = await userService.ForgotPassword(user.Content!.Email);
+        var s = QueryHelpers.ParseQuery(ret.Value.Link!);
+        var token = s["token"];
 
         //Act
-        var response = await _userAPI.ResetUserPassword(new ResetPasswordRequest(_factory.UserId!, "token", "!Password1"));
+        var response = await _userAPI.ResetUserPassword(new ResetPasswordRequest(_factory.UserId!, token!, "!Password1"));
 
         //Assert
         response.IsSuccessStatusCode.Should().BeTrue();
