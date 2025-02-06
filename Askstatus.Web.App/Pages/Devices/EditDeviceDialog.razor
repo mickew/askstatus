@@ -6,15 +6,18 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField @bind-Value="@device.Name" Label="Name" />
-        <MudTextField @bind-Value="@device.DeviceId" Label="Id" />
-@*         <MudTextField @bind-Value="@device.DeviceMac" Label="Mac address" />
- *@        <MudSelect T="Askstatus.Common.PowerDevice.ChanelType" @bind-Value="device.ChanelType" Label="Channel type">
-            @foreach (Askstatus.Common.PowerDevice.ChanelType item in Enum.GetValues(typeof(Askstatus.Common.PowerDevice.ChanelType)))
-            {
-                <MudSelectItem T="Askstatus.Common.PowerDevice.ChanelType" Value="@item"></MudSelectItem>
-            }
-        </MudSelect>
+        <MudFocusTrap DefaultFocus="DefaultFocus">
+            <MudTextField @bind-Value="@device.Name" Label="Name" />
+            <MudTextField @bind-Value="@device.DeviceId" Label="Id" />
+            <MudSelect T="Askstatus.Common.PowerDevice.ChanelType" @bind-Value="device.ChanelType" Label="Channel type">
+                @foreach (Askstatus.Common.PowerDevice.ChanelType item in Enum.GetValues(typeof(Askstatus.Common.PowerDevice.ChanelType)))
+                {
+                    <MudSelectItem T="Askstatus.Common.PowerDevice.ChanelType" Value="@item">
+                        <MudIcon Icon="@ChanelTypeToIcon(item)"></MudIcon> @item.ToString()
+                    </MudSelectItem>
+                }
+            </MudSelect>
+        </MudFocusTrap>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>

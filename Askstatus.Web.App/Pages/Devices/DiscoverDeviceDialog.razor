@@ -29,11 +29,13 @@
                 </MudText>
             </TitleContent>
             <DialogContent>
-                <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="HandleIntervalElapsed" Variant="Variant.Filled" @bind-Value="@Url" Label="host/ip" />
+                <MudFocusTrap DefaultFocus="DefaultFocus">
+                    <MudTextField T="string" AutoFocus="true" DebounceInterval="100" OnDebounceIntervalElapsed="HandleIntervalElapsed" Variant="Variant.Filled" @bind-Value="@Url" Label="host/ip" />
+                </MudFocusTrap>
             </DialogContent>
             <DialogActions>
                 <MudButton OnClick="CancelNested">Cancel</MudButton>
-                <MudButton Disabled=@CloseNestedDisabled Color="Color.Primary" OnClick="CloseNested">Ok</MudButton>
+                <MudButton Disabled=@CloseNestedDisabled Color="Color.Success" OnClick="CloseNested">Ok</MudButton>
             </DialogActions>
         </MudDialog>
     </DialogContent>

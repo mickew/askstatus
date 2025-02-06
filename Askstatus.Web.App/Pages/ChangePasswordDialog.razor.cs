@@ -15,6 +15,8 @@ public partial class ChangePasswordDialog
 
     public MudForm? Form;
 
+    private DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
     private void Cancel()
     {
         MudDialog!.Cancel();

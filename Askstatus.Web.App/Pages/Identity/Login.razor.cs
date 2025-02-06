@@ -29,6 +29,9 @@ public partial class Login
 
     protected RegisterAccountForm _model = new RegisterAccountForm();
 
+    private DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
+
     public class RegisterAccountForm
     {
         [Required]

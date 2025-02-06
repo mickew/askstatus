@@ -44,7 +44,9 @@
                                         string stateIcon = ChanelTypeToIcon(device.ChanelType, device.State);
                                         bool prossesing = device.Prosessing;
                                     }
-                                    <MudIconButton Disabled="@(prossesing || !(device.IsOnline))" Icon="@stateIcon" Color="@stateColor" aria-label="delete" Size="Size.Medium" @onclick="() => ToggleDevice(device.Id)" title="@(device.State ? "On" : "Off")" />
+                                    <MudTooltip Text="@(device.IsOnline ? device.State ? "Click to turn off" : "Click to turn on" : "Offline")">
+                                        <MudIconButton Variant="Variant.Outlined" Disabled="@(prossesing || !(device.IsOnline))" Icon="@stateIcon" Color="@stateColor" aria-label="delete" Size="Size.Medium" @onclick="() => ToggleDevice(device.Id)" />
+                                    </MudTooltip>
                                     <MudChip T="string" Variant="Variant.Outlined" Color="@stateColor"><span>@device.Name is @(device.IsOnline ? device.State ? "On" : "Off" : "offline")</span></MudChip>
                                     
                                 </MudPaper>

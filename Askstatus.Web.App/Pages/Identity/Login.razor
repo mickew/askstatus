@@ -39,11 +39,13 @@
                                 </CardHeaderContent>
                             </MudCardHeader>
                             <MudCardContent Style="z-index: 1">
-                                <MudTextField Label="User name" HelperText="Enter user name" Variant="Variant.Filled"
-                                              @bind-Value="_model.Username" For="@(() => _model.Username)" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Person" />
-                                <MudTextField Label="Password" HelperText="Enter password" Class="mt-3" Variant="Variant.Filled"
-                                              @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Password" />
-                                <MudLink Underline="Underline.None" OnClick="ForgotPassword">Forgot password</MudLink>
+                                <MudFocusTrap DefaultFocus="DefaultFocus">
+                                    <MudTextField Label="User name" HelperText="Enter user name" Variant="Variant.Filled"
+                                                  @bind-Value="_model.Username" For="@(() => _model.Username)" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Person" />
+                                    <MudTextField Label="Password" HelperText="Enter password" Class="mt-3" Variant="Variant.Filled"
+                                                  @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Password" />
+                                    <MudLink Underline="Underline.None" OnClick="ForgotPassword">Forgot password</MudLink>
+                                </MudFocusTrap>
                             </MudCardContent>
                             <MudCardActions>
                                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Log in</MudButton>

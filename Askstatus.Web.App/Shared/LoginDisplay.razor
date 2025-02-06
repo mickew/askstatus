@@ -1,11 +1,13 @@
 ﻿<AuthorizeView>
     <Authorized>
         <MudText Class="mr-12" Typo="Typo.h6" GutterBottom="true">Hello, @GetFullName(context.User)</MudText>
-        <MudIconButton title="Log out" Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => BeginLogOut())" />
+        <MudTooltip Text="Log out">
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => BeginLogOut())" />
+        </MudTooltip>
     </Authorized>
     <NotAuthorized>
-
-        <MudIconButton Icon="@Icons.Material.Filled.Login" Color="Color.Inherit"
-                       Href="/login" />
+        <MudTooltip Text="Log In">
+            <MudIconButton Icon="@Icons.Material.Filled.Login" Color="Color.Inherit" Href="/login" />
+        </MudTooltip>
     </NotAuthorized>
 </AuthorizeView>

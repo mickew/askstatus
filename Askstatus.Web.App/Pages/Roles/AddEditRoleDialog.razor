@@ -6,7 +6,9 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField @bind-Value="@role.Name" Label="Role Name" />
+        <MudFocusTrap DefaultFocus="DefaultFocus">
+            <MudTextField @bind-Value="@role.Name" Label="Role Name" />
+        </MudFocusTrap>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>

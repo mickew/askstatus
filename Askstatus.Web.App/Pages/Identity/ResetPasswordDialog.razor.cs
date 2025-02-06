@@ -14,6 +14,8 @@ public partial class ResetPasswordDialog
 
     public MudForm? Form;
 
+    private DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
     private void Cancel()
     {
         MudDialog!.Cancel();
