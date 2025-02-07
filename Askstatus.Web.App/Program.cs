@@ -1,6 +1,7 @@
 using Askstatus.Application.Authorization;
 using Askstatus.Sdk;
 using Askstatus.Web.App.Identity;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,6 +21,8 @@ public class Program
             .ValidateOnStart();
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
+
+        builder.Services.AddBlazoredLocalStorage();
 
         var app = builder.Build();
         var askstatusSettings = app.Services.GetRequiredService<IOptions<AskstatusSettings>>().Value;
