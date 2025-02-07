@@ -37,6 +37,7 @@ public partial class DiscoverDeviceDialog
         Loading = true;
         saveDisabled = true;
         nestedVisible = true;
+        CloseNestedDisabled = true;
     }
 
     private async Task DiscoverHost(string host)

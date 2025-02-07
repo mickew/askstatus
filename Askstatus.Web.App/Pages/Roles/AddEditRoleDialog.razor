@@ -1,4 +1,4 @@
-﻿<MudDialog>
+﻿<MudDialog DefaultFocus="DefaultFocus">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.AddLocation" Class="mr-3 mb-n1" />
@@ -6,9 +6,7 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudFocusTrap DefaultFocus="DefaultFocus">
-            <MudTextField @bind-Value="@role.Name" Label="Role Name" />
-        </MudFocusTrap>
+        <MudTextField @bind-Value="@role.Name" Label="Role Name" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>

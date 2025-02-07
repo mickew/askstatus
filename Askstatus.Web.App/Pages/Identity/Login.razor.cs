@@ -31,6 +31,8 @@ public partial class Login
 
     private DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
 
+    private bool _loggingIn = false;
+
 
     public class RegisterAccountForm
     {
@@ -44,6 +46,8 @@ public partial class Login
 
     private async Task OnValidSubmit(EditContext context)
     {
+        _loggingIn = true;
+        StateHasChanged();
         var result = await Acct!.LoginAsync(_model.Username!, _model.Password!);
         if (result.Succeeded)
         {
@@ -51,6 +55,7 @@ public partial class Login
         }
         else
         {
+            _loggingIn = false;
             var s = result.ErrorList[0];
             await DialogService!.ShowMessageBox(
                 "Warning",

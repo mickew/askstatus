@@ -1,4 +1,4 @@
-﻿<MudDialog>
+﻿<MudDialog DefaultFocus="DefaultFocus">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Person" Class="mr-3 mb-n1" />
@@ -7,29 +7,27 @@
     </TitleContent>
     <DialogContent>
         <MudForm Model="@User" @ref="@form" Validation="@UserDtoValidator.ValidateValue" ValidationDelay="0">
-            <MudFocusTrap DefaultFocus="DefaultFocus">
-                <MudTextField @bind-Value="@User.UserName" Label="User Name" For="@(() => User.UserName)" />
-                <MudTextField @bind-Value="@User.Email" Label="Email" For="@(() => User.Email)" />
-                <MudTextField @bind-Value="@User.FirstName" Label="First Name" For="@(() => User.FirstName)" />
-                <MudTextField @bind-Value="@User.LastName" Label="Last Name" For="@(() => User.LastName)" />
-                <MudSimpleTable Style="overflow-x: auto;">
-                    <thead>
+            <MudTextField @bind-Value="@User.UserName" Label="User Name" For="@(() => User.UserName)" />
+            <MudTextField @bind-Value="@User.Email" Label="Email" For="@(() => User.Email)" />
+            <MudTextField @bind-Value="@User.FirstName" Label="First Name" For="@(() => User.FirstName)" />
+            <MudTextField @bind-Value="@User.LastName" Label="Last Name" For="@(() => User.LastName)" />
+            <MudSimpleTable Style="overflow-x: auto;">
+                <thead>
+                    <tr>
+                        <th>Roles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in Roles)
+                    {
                         <tr>
-                            <th>Roles</th>
+                            <div class="d-flex align-center justify-space-between">
+                                <MudCheckBox T="bool" Label="@role.Name" Value="@User.Roles.Contains(role.Name)" ValueChanged="((e) => ToggleSelectedRole(role.Name))" />
+                            </div>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var role in Roles)
-                        {
-                            <tr>
-                                <div class="d-flex align-center justify-space-between">
-                                    <MudCheckBox T="bool" Label="@role.Name" Value="@User.Roles.Contains(role.Name)" ValueChanged="((e) => ToggleSelectedRole(role.Name))" />
-                                </div>
-                            </tr>
-                        }
-                    </tbody>
-                </MudSimpleTable>
-            </MudFocusTrap>
+                    }
+                </tbody>
+            </MudSimpleTable>
         </MudForm>
     </DialogContent>
     <DialogActions>

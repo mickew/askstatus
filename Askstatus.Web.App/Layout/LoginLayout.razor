@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits LayoutBase
 @using Askstatus.Web.App.Themes
 <MudThemeProvider Theme="AskStatusThemes.Flatlytheme" />
 <MudPopoverProvider />
@@ -19,7 +19,7 @@
     </MudMainContent>
     <MudAppBar Elevation="1" Style="top: auto; bottom: 0" Dense="true" Fixed="true">
         <MudGrid Justify="Justify.Center" Style="margin-top:0; margin-left: 0;">
-            <MudText>© 2024 - <a style="color: white" href="http://promarmic.se" rel="nofollow" target="_blank">Askstatus</a> Version @Version @AspDotnetVersion</MudText>
+            <MudText>© @Year - <a style="color: white" href="http://promarmic.se" rel="nofollow" target="_blank">Askstatus</a> Version @Version @AspDotnetVersion</MudText>
         </MudGrid>
     </MudAppBar>
 </MudLayout>
