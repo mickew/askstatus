@@ -1,4 +1,4 @@
-﻿<MudDialog>
+﻿<MudDialog DefaultFocus="DefaultFocus">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.DeviceUnknown" Class="mr-3 mb-n1" />
@@ -8,11 +8,12 @@
     <DialogContent>
         <MudTextField @bind-Value="@device.Name" Label="Name" />
         <MudTextField @bind-Value="@device.DeviceId" Label="Id" />
-@*         <MudTextField @bind-Value="@device.DeviceMac" Label="Mac address" />
- *@        <MudSelect T="Askstatus.Common.PowerDevice.ChanelType" @bind-Value="device.ChanelType" Label="Channel type">
+        <MudSelect T="Askstatus.Common.PowerDevice.ChanelType" @bind-Value="device.ChanelType" Label="Channel type">
             @foreach (Askstatus.Common.PowerDevice.ChanelType item in Enum.GetValues(typeof(Askstatus.Common.PowerDevice.ChanelType)))
             {
-                <MudSelectItem T="Askstatus.Common.PowerDevice.ChanelType" Value="@item"></MudSelectItem>
+                <MudSelectItem T="Askstatus.Common.PowerDevice.ChanelType" Value="@item">
+                    <MudIcon Icon="@ChanelTypeToIcon(item)"></MudIcon> @item.ToString()
+                </MudSelectItem>
             }
         </MudSelect>
     </DialogContent>

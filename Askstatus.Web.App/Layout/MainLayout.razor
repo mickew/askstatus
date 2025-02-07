@@ -1,9 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits LayoutBase
 @using Askstatus.Web.App.Themes
-<MudThemeProvider Theme="AskStatusThemes.Flatlytheme" />
+<MudThemeProvider @ref="@_mudThemeProvider" IsDarkMode="@_isDarkMode" Theme="AskStatusThemes.Flatlytheme" />
 
 <MudPopoverProvider />
-<MudDialogProvider BackdropClick="false" />
+<MudDialogProvider BackdropClick="false" CloseOnEscapeKey="true"/>
 <MudSnackbarProvider />
 
 <MudLayout>
@@ -12,6 +12,9 @@
         <MudLink Typo="Typo.h5" Underline="Underline.None" Href="/" Color="Color.Inherit" Class="d-none d-sm-flex ml-3">Askstatus</MudLink>
         <MudSpacer />
         <LoginDisplay />
+        <MudTooltip Text="Toggle Dark/Light Mode ">
+            <MudIconButton Icon="@_modeIcons[_index]" Color="Color.Inherit" OnClick="@DarkModeToggle" />
+        </MudTooltip>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
@@ -25,7 +28,7 @@
     </MudMainContent>
     <MudAppBar Elevation="1" Style="top: auto; bottom: 0; margin-left: 0px; width: 100%" Dense="true" Fixed="true">
         <MudGrid Justify="Justify.Center" Style="margin-top:0; margin-left: 0;">
-            <MudText>© 2024 - <a style="color: white" href="http://promarmic.se" rel="nofollow" target="_blank">Askstatus</a> Version @Version @AspDotnetVersion</MudText>
+            <MudText>© @Year - <a style="color: white" href="http://promarmic.se" rel="nofollow" target="_blank">Askstatus</a> Version @Version @AspDotnetVersion</MudText>
         </MudGrid>
     </MudAppBar>
 </MudLayout>

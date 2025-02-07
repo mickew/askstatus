@@ -22,18 +22,18 @@
             <MudText>@Device.Channel</MudText>
         }
         @*Nested dialog*@
-        <MudDialog @bind-Visible="nestedVisible">
+        <MudDialog @bind-Visible="nestedVisible" DefaultFocus="DefaultFocus">
             <TitleContent>
                 <MudText Typo="Typo.h6">
                     Enter device host/ip address!
                 </MudText>
             </TitleContent>
             <DialogContent>
-                <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="HandleIntervalElapsed" Variant="Variant.Filled" @bind-Value="@Url" Label="host/ip" />
+                <MudTextField T="string" AutoFocus="true" DebounceInterval="100" OnDebounceIntervalElapsed="HandleIntervalElapsed" Variant="Variant.Filled" @bind-Value="@Url" Label="host/ip" />
             </DialogContent>
             <DialogActions>
                 <MudButton OnClick="CancelNested">Cancel</MudButton>
-                <MudButton Disabled=@CloseNestedDisabled Color="Color.Primary" OnClick="CloseNested">Ok</MudButton>
+                <MudButton Disabled=@CloseNestedDisabled Color="Color.Success" OnClick="CloseNested">Ok</MudButton>
             </DialogActions>
         </MudDialog>
     </DialogContent>

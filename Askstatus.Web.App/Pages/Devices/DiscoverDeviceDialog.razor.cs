@@ -1,8 +1,6 @@
-﻿using System;
-using Askstatus.Common.PowerDevice;
+﻿using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
 using MudBlazor;
 
 namespace Askstatus.Web.App.Pages.Devices;
@@ -32,12 +30,14 @@ public partial class DiscoverDeviceDialog
 
     private string? Url { get; set; }
 
+    private DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
     protected override void OnInitialized()
     {
-        base.OnInitialized();
         Loading = true;
         saveDisabled = true;
         nestedVisible = true;
+        CloseNestedDisabled = true;
     }
 
     private async Task DiscoverHost(string host)
@@ -70,6 +70,7 @@ public partial class DiscoverDeviceDialog
         }
     }
 
+
     private void Cancel()
     {
         MudDialog!.Cancel();
@@ -78,7 +79,7 @@ public partial class DiscoverDeviceDialog
     private void CancelNested()
     {
         nestedVisible = false;
-        Cancel();
+        MudDialog!.CancelAll();
     }
 
     private void SaveDevice()

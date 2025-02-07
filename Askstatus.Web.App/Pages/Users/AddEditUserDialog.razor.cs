@@ -16,6 +16,8 @@ public partial class AddEditUserDialog
 
     public MudForm? form;
 
+    private DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
     private void Cancel()
     {
         MudDialog!.Cancel();

@@ -10,6 +10,8 @@ public partial class AddEditRoleDialog
 
     [Parameter] public RoleDto role { get; set; } = new RoleDto();
 
+    private DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
     private void Cancel()
     {
         MudDialog!.Cancel();

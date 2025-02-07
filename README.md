@@ -7,11 +7,11 @@
 [![](https://img.shields.io/github/milestones/progress-percent/mickew/askstatus/2)](https://github.com/mickew/askstatus/milestone/2)
 ## Askholmen Status System
 
-### Databese migrations
+### Install, update and uninstall Askholmen Status System
 
-Add-Migration InitialCreate -OutputDir Data\Migrations
-
-Update-Database
+```bash
+sudo bash <(curl -s https://raw.githubusercontent.com/mickew/askstatus/main/Tools/askstatus.sh) 
+```
 
 ### linux commands
 
@@ -19,40 +19,15 @@ Update-Database
 sudo systemctl status askstatusbackend.service
 sudo systemctl stop askstatusbackend.service
 sudo systemctl start askstatusbackend.service
-sudo journalctl -t askstatus-control -f
-sudo journalctl -t askstatus-control --since today
+journalctl -t askstatus-control -f
+journalctl -t askstatus-control --since today
 ```
 
-### Install, update and uninstall Askholmen Status System (gui)
+### Databese migrations
 
-```bash
-cd srs/askstatus/Tools/
-sudo sh askstatus.sh 
-```
+Add-Migration InitialCreate -OutputDir Data\Migrations
 
-
-
-### to install
-
-```bash
-cd srs/askstatus/Tools/
-sudo sh install.sh 
-```
-
-### to update
-
-```bash
-cd srs/askstatus/Tools/
-sudo sh update.sh
-```
-
-### to unistall
-
-```bash
-cd srs/askstatus/Tools/
-sudo sh uninstall.sh
-```
+Update-Database
 
 ## Setup Raspbery PI
 [Setup Raspbery PI for Askholmen Status System](Tools/RPISetup.md)
-```
