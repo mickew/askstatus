@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Options;
 using MudBlazor.Services;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace Askstatus.Web.App;
 public class Program
@@ -23,6 +24,7 @@ public class Program
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         builder.Services.AddBlazoredLocalStorage();
+        builder.Services.AddHotKeys2();
 
         var app = builder.Build();
         var askstatusSettings = app.Services.GetRequiredService<IOptions<AskstatusSettings>>().Value;
