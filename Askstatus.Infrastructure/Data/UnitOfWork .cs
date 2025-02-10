@@ -20,6 +20,8 @@ public class UnitOfWork : IUnitOfWork
 
     public IRepository<PowerDevice> PowerDeviceRepository => _serviceProvider.GetRequiredService<IRepository<PowerDevice>>();
 
+    public IRepository<SystemLog> SystemLogRepository => _serviceProvider.GetRequiredService<IRepository<SystemLog>>();
+
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)
