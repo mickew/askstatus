@@ -4,6 +4,7 @@ using Askstatus.Web.App.Pages;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Refit;
+using Toolbelt.Blazor.HotKeys2;
 
 namespace Askstatus.Web.App.Layout;
 
@@ -20,6 +21,14 @@ public partial class NavMenu
 
     [Inject]
     private ILogger<NavMenu> Logger { get; set; } = null!;
+
+    [Inject]
+    HotKeys _hotKeys { get; set; } = null!;
+
+    [Inject]
+    NavigationManager _navigationManager { get; set; } = null!;
+
+    private HotKeysContext? _hotKeysContext;
 
     private async Task ChangePassword()
     {
@@ -54,4 +63,16 @@ public partial class NavMenu
             }
         }
     }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _hotKeysContext = _hotKeys.CreateContext()
+                .Add(ModCode.Ctrl, Code.P, () => ChangePassword(), "Change password");
+        }
+        return Task.CompletedTask;
+    }
+
+
 }

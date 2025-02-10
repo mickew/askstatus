@@ -69,11 +69,6 @@ public partial class MainLayout : LayoutBase, IAsyncDisposable
         }
     }
 
-    //private void GoHome()
-    //{
-    //    _navigationManager.NavigateTo("/");
-    //}
-
     private ValueTask GoTo(string url)
     {
         var urlToNavigate = _navigationManager.BaseUri.TrimEnd('/') + "/" + url.TrimStart('/');

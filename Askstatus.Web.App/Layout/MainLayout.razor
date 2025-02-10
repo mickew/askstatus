@@ -8,7 +8,9 @@
 
 <MudLayout>
     <MudAppBar Style="margin-left: 0px; width: 100%">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudTooltip Text="Ctrl+,">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        </MudTooltip>
         <MudLink Typo="Typo.h5" Underline="Underline.None" Href="/" Color="Color.Inherit" Class="d-none d-sm-flex ml-3">Askstatus</MudLink>
         <MudSpacer />
         <LoginDisplay />
