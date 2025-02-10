@@ -15,4 +15,4 @@ curl -o Tools/askstatus.sh $askstatusurl
 
 
 cd Tools/
-sh askstatus.sh
+sudo sh askstatus.sh

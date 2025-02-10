@@ -1,18 +1,30 @@
 ﻿<MudNavMenu>
-    <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+    <MudTooltip Text="Ctrl+H" RootStyle="width:100%">
+        <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+    </MudTooltip>
     <MudNavGroup Icon="@Icons.Material.Filled.AdminPanelSettings" Title="Settings" Expanded="true">
-        <MudNavLink Icon="@Icons.Material.Filled.Security" OnClick="ChangePassword">Change password</MudNavLink>
+        <MudTooltip Text="Ctrl+P" RootStyle="width:100%">
+            <MudNavLink Icon="@Icons.Material.Filled.Security" OnClick="ChangePassword">Change password</MudNavLink>
+        </MudTooltip>
         <FlexibleAuthorizeView Permissions="@(Permissions.ViewUsers | Permissions.ManageUsers)">
-            <MudNavLink Icon="@Icons.Material.Filled.People" Href="/admin/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
+            <MudTooltip Text="Ctrl+U" RootStyle="width:100%">
+                <MudNavLink Icon="@Icons.Material.Filled.People" Href="/admin/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
+            </MudTooltip>
         </FlexibleAuthorizeView>
         <FlexibleAuthorizeView Permissions="@(Permissions.ViewAccessControl | Permissions.ConfigureAccessControl)">
-            <MudNavLink Icon="@Icons.Material.Filled.Lock" Href="admin/access-control" Match="NavLinkMatch.Prefix">Access Control</MudNavLink>
+            <MudTooltip Text="Ctrl+A" RootStyle="width:100%">
+                <MudNavLink Icon="@Icons.Material.Filled.Lock" Href="admin/access-control" Match="NavLinkMatch.Prefix">Access Control</MudNavLink>
+            </MudTooltip>
         </FlexibleAuthorizeView>
         <FlexibleAuthorizeView Permissions="@(Permissions.ViewRoles | Permissions.ManageRoles)">
-            <MudNavLink Icon="@Icons.Material.Filled.FeaturedPlayList" Href="/admin/roles" Match="NavLinkMatch.Prefix">Roles</MudNavLink>
+            <MudTooltip Text="Ctrl+R" RootStyle="width:100%">
+                <MudNavLink Icon="@Icons.Material.Filled.FeaturedPlayList" Href="/admin/roles" Match="NavLinkMatch.Prefix">Roles</MudNavLink>
+            </MudTooltip>
         </FlexibleAuthorizeView>
         <FlexibleAuthorizeView Permissions="@(Permissions.ViewPowerDevices | Permissions.ConfigurePowerDevices)">
-            <MudNavLink Icon="@Icons.Material.Filled.Devices" Href="admin/devices" Match="NavLinkMatch.Prefix">Devices</MudNavLink>
-        </FlexibleAuthorizeView>
+            <MudTooltip Text="Ctrl+D" Inline="false" RootStyle="width:100%">
+                <MudNavLink Icon="@Icons.Material.Filled.Devices" Href="admin/devices" Match="NavLinkMatch.Prefix">Devices</MudNavLink>
+            </MudTooltip>
+        </FlexibleAuthorizeView>        
     </MudNavGroup>
  </MudNavMenu>
