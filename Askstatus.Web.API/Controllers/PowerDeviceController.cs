@@ -118,7 +118,8 @@ public class PowerDeviceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Toggle(int id)
     {
-        var result = await _sender.Send(new TogglePowerDeviceCommand(id));
+        var userName = HttpContext.User.Identity!.Name;
+        var result = await _sender.Send(new TogglePowerDeviceCommand(id, userName!));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
@@ -130,7 +131,8 @@ public class PowerDeviceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Switch(int id, bool onoff)
     {
-        var result = await _sender.Send(new SwitchPowerDeviceCommand(id, onoff));
+        var userName = HttpContext.User.Identity!.Name;
+        var result = await _sender.Send(new SwitchPowerDeviceCommand(id, onoff, userName!));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 

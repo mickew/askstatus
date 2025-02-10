@@ -1,12 +1,13 @@
 ﻿using Askstatus.Application.Errors;
 using Askstatus.Application.Interfaces;
+using Askstatus.Common.Models;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Askstatus.Application.PowerDevice;
 
-public sealed record SwitchPowerDeviceCommand(int id, bool onOff) : IRequest<Result>;
+public sealed record SwitchPowerDeviceCommand(int id, bool onOff, string User) : IRequest<Result>;
 
 public sealed class SwitchPowerDeviceCommandHandler : IRequestHandler<SwitchPowerDeviceCommand, Result>
 {
@@ -29,6 +30,22 @@ public sealed class SwitchPowerDeviceCommandHandler : IRequestHandler<SwitchPowe
         }
         else
         {
+            try
+            {
+                await _unitOfWork.SystemLogRepository.AddAsync(new Askstatus.Domain.Entities.SystemLog
+                {
+                    EventTime = DateTime.UtcNow,
+                    EventType = SystemLogEventType.SetDeviceState,
+                    User = request.User,
+                    Message = $"Switching PowerDevice {powerDevice.Name} to {request.onOff}"
+                });
+                await _unitOfWork.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving SystemLog");
+            }
             var result = await _deviceService.Switch(powerDevice.HostName, 0, request.onOff);
             return result;
         }
