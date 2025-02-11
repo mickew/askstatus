@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 
 namespace Askstatus.Application.Interfaces;
 public interface IRepository<TEntity> where TEntity : class
@@ -15,4 +10,5 @@ public interface IRepository<TEntity> where TEntity : class
     Task<bool> DeleteAsync(TEntity entity);
 
     Task<TEntity> GetBy(Expression<Func<TEntity, bool>> predicate);
+    Task<IPagedList<TEntity>> GetListBy(Expression<Func<TEntity, bool>>? predicate, Expression<Func<TEntity, object>>? keySelector, int page, int pageSize, bool desc = false);
 }
