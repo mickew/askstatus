@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Askstatus.Application.Errors;
@@ -28,7 +27,7 @@ public sealed class ShellyDiscoverDeviceService : IDiscoverDeviceService
         try
         {
             HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 var apiString = await response.Content.ReadAsStringAsync();
                 var info = JsonSerializer.Deserialize<DiscoverResponse>(apiString!);
@@ -36,7 +35,7 @@ public sealed class ShellyDiscoverDeviceService : IDiscoverDeviceService
                 if (info!.Gen == 2)
                 {
                     return Result.Ok<DicoverInfo>(new(
-                        ip, 
+                        ip,
                         PowerDeviceTypes.ShellyGen2,
                         info.Name,
                         info.Id,
@@ -61,9 +60,9 @@ public sealed class ShellyDiscoverDeviceService : IDiscoverDeviceService
         {
             _logger.LogError(ex, ex.Message);
         }
-        return Result.Fail<DicoverInfo>( new BadRequestError("Failed to discover device"));
+        return Result.Fail<DicoverInfo>(new BadRequestError("Failed to discover device"));
     }
-    
+
     private record DiscoverResponse(
         [property: JsonPropertyName("name")] string Name,
         [property: JsonPropertyName("id")] string Id,

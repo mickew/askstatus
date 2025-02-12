@@ -20,6 +20,8 @@ public class ApplicationBaseDbContext<TPowerDevice> : IdentityDbContext<Applicat
 
     public DbSet<TPowerDevice> PowerDevices { get; set; }
 
+    public DbSet<SystemLog> SystemLogs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

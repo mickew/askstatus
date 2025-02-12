@@ -363,9 +363,11 @@ public class PowerDeviceTests
         var deviceService = new Mock<IDeviceService>();
 
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevices.First());
+        unitOfWork.Setup(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()));
+        unitOfWork.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
         deviceService.Setup(x => x.Toggle(It.IsAny<string>(), 0)).ReturnsAsync(Result.Ok());
         var handler = new TogglePowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
-        var command = new TogglePowerDeviceCommand(1);
+        var command = new TogglePowerDeviceCommand(1, "TestUser");
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -373,6 +375,8 @@ public class PowerDeviceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
+        unitOfWork.Verify(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()), Times.Once);
+        unitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         deviceService.Verify(x => x.Toggle(powerDevices.First().HostName, 0), Times.Once);
     }
 
@@ -388,7 +392,7 @@ public class PowerDeviceTests
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
         deviceService.Setup(x => x.Toggle(It.IsAny<string>(), 0)).ReturnsAsync(Result.Ok());
         var handler = new TogglePowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
-        var command = new TogglePowerDeviceCommand(1);
+        var command = new TogglePowerDeviceCommand(1, "TestUser");
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -419,9 +423,11 @@ public class PowerDeviceTests
         var deviceService = new Mock<IDeviceService>();
 
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevices.First());
+        unitOfWork.Setup(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()));
+        unitOfWork.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
         deviceService.Setup(x => x.Switch(It.IsAny<string>(), 0, true)).ReturnsAsync(Result.Ok());
         var handler = new SwitchPowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
-        var command = new SwitchPowerDeviceCommand(1, true);
+        var command = new SwitchPowerDeviceCommand(1, true, "TestUser");
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -429,6 +435,8 @@ public class PowerDeviceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
+        unitOfWork.Verify(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()), Times.Once);
+        unitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         deviceService.Verify(x => x.Switch(powerDevices.First().HostName, 0, true), Times.Once);
     }
 
@@ -443,7 +451,7 @@ public class PowerDeviceTests
 
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
         var handler = new SwitchPowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
-        var command = new SwitchPowerDeviceCommand(1, true);
+        var command = new SwitchPowerDeviceCommand(1, true, "TestUser");
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);

@@ -540,9 +540,15 @@ public class UsersTests
     public async Task ConfirmEmal_Should_Return_Success()
     {
         // Arrange
+        var logger = new Mock<ILogger<ConfirmEmailCommandHandler>>();
         Mock<IUserService> mock = new Mock<IUserService>();
+        var unitOfWorkMock = new Mock<IUnitOfWork>();
+        unitOfWorkMock.Setup(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()));
+        unitOfWorkMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        mock.Setup(x => x.GetUserById(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
         mock.Setup(x => x.ConfirmEmail(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(Result.Ok());
-        ConfirmEmailCommandHandler confirmEmailCommandHandler = new ConfirmEmailCommandHandler(mock.Object);
+        ConfirmEmailCommandHandler confirmEmailCommandHandler = new ConfirmEmailCommandHandler(mock.Object, unitOfWorkMock.Object, logger.Object);
         var confirmEmailCommand = new ConfirmEmailCommand("1", "token");
 
         // Act
@@ -550,6 +556,8 @@ public class UsersTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
+        unitOfWorkMock.Verify(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()), Times.Once);
+        unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
     }
 
 
@@ -614,9 +622,15 @@ public class UsersTests
     public async Task ResetUserPassword_Should_Return_Success()
     {
         // Arrange
+        var logger = new Mock<ILogger<ResetUserPasswordCommandHandler>>();
         Mock<IUserService> mock = new Mock<IUserService>();
         mock.Setup(x => x.ResetUserPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(Result.Ok());
-        ResetUserPasswordCommandHandler resetPasswordCommandHandler = new ResetUserPasswordCommandHandler(mock.Object);
+        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        mock.Setup(x => x.GetUserById(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
+        var unitOfWorkMock = new Mock<IUnitOfWork>();
+        unitOfWorkMock.Setup(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()));
+        unitOfWorkMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+        ResetUserPasswordCommandHandler resetPasswordCommandHandler = new ResetUserPasswordCommandHandler(mock.Object, unitOfWorkMock.Object, logger.Object);
         ResetUserPasswordCommand resetPasswordCommand = new ResetUserPasswordCommand("1", "token", "!Password1");
 
         // Act
@@ -624,15 +638,19 @@ public class UsersTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
+        unitOfWorkMock.Verify(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()), Times.Once);
+        unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
     }
 
     [Fact]
     public async Task ResetPassword_Should_Return_NotFoundFailiur()
     {
         // Arrange
+        var logger = new Mock<ILogger<ResetUserPasswordCommandHandler>>();
+        var unitOfWorkMock = new Mock<IUnitOfWork>();
         Mock<IUserService> mock = new Mock<IUserService>();
         mock.Setup(x => x.ResetUserPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(Result.Fail("User not found"));
-        ResetUserPasswordCommandHandler resetPasswordCommandHandler = new ResetUserPasswordCommandHandler(mock.Object);
+        ResetUserPasswordCommandHandler resetPasswordCommandHandler = new ResetUserPasswordCommandHandler(mock.Object, unitOfWorkMock.Object, logger.Object);
         ResetUserPasswordCommand resetPasswordCommand = new ResetUserPasswordCommand("1", "token", "!Password1");
 
         // Act

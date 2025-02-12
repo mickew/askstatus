@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Askstatus.Application;
 using Askstatus.Application.Interfaces;
 using Askstatus.Domain;
@@ -135,7 +136,10 @@ public class Program
                     .AllowCredentials()));
 
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

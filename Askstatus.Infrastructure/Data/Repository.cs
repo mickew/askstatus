@@ -107,4 +107,34 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         }
         return result!;
     }
+
+    public async Task<IPagedList<TEntity>> GetListBy(Expression<Func<TEntity, bool>>? predicate, Expression<Func<TEntity, object>>? keySelector, int page, int pageSize, bool desc = false)
+    {
+        IPagedList<TEntity> result = null!;
+        try
+        {
+            var query = _context.Set<TEntity>().AsQueryable();
+            if (predicate is not null)
+            {
+                query = query.Where(predicate);
+            }
+            if (keySelector is not null)
+            {
+                if (desc)
+                {
+                    query = query.OrderByDescending(keySelector);
+                }
+                else
+                {
+                    query = query.OrderBy(keySelector);
+                }
+            }
+            result = await PagedList<TEntity>.CreateAsync(query, page, pageSize);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetListBy error");
+        }
+        return result!;
+    }
 }
