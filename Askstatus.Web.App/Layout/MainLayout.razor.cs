@@ -65,6 +65,7 @@ public partial class MainLayout : LayoutBase, IAsyncDisposable
                 .Add(ModCode.Ctrl, Code.A, () => GoTo("/admin/access-control"), "Go to Access control.")
                 .Add(ModCode.Ctrl, Code.R, () => GoTo("/admin/roles"), "Go to Roles.")
                 .Add(ModCode.Ctrl, Code.D, () => GoTo("/admin/devices"), "Go to Devics.")
+                .Add(ModCode.Ctrl, Code.L, () => GoTo("/admin/system/system-log"), "Go to Event log.")
                 .Add(ModCode.Ctrl, Code.Comma, () => DrawerToggle());
         }
     }

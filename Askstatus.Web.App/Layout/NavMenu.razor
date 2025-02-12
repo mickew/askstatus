@@ -27,4 +27,11 @@
             </MudTooltip>
         </FlexibleAuthorizeView>        
     </MudNavGroup>
+    <FlexibleAuthorizeView Permissions="@(Permissions.System)">
+        <MudNavGroup Icon="@Icons.Material.Filled.Build">
+            <MudTooltip Text="Ctrl+L" RootStyle="width:100%">
+                <MudNavLink Icon="@Icons.Material.Filled.ViewList" Href="/admin/system/system-log" Match="NavLinkMatch.Prefix">Event log</MudNavLink>
+            </MudTooltip>
+        </MudNavGroup>
+    </FlexibleAuthorizeView>
  </MudNavMenu>
