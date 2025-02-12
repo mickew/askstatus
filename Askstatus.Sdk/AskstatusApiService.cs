@@ -1,5 +1,6 @@
 ﻿using Askstatus.Sdk.Identity;
 using Askstatus.Sdk.PowerDevices;
+using Askstatus.Sdk.System;
 using Askstatus.Sdk.Users;
 using Refit;
 
@@ -33,6 +34,11 @@ public sealed class AskstatusApiService
         {
             ContentSerializer = contentSerializer
         });
+
+        SystemAPI = RestService.For<ISystemAPI>(httpClient, new RefitSettings
+        {
+            ContentSerializer = contentSerializer
+        });
     }
 
     public IIdentityApi IdentityApi { get; private set; }
@@ -44,4 +50,6 @@ public sealed class AskstatusApiService
     public IPowerDeviceAPI PowerDeviceAPI { get; private set; }
 
     public IDeviceDiscoverAPI DeviceDiscoverAPI { get; private set; }
+
+    public ISystemAPI SystemAPI { get; private set; }
 }
