@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Askstatus.Application.Errors;
 using Askstatus.Application.Interfaces;
+using Askstatus.Common.Models;
 using Askstatus.Common.System;
 using Askstatus.Domain.Entities;
 using FluentResults;
@@ -8,7 +9,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Askstatus.Application.System;
-public sealed record GetSystemLogsQuery(string SearchTerm, string SortColumn, int Page, int PageSize, bool Desc = false) : IRequest<Result<SystemLogPagedList>>;
+public sealed record GetSystemLogsQuery(string? SearchTerm, string? SortColumn, int Page = 1, int PageSize = 10, bool Desc = false) : IRequest<Result<SystemLogPagedList>>;
 
 public sealed class GetSystemLogsQueryHandler : IRequestHandler<GetSystemLogsQuery, Result<SystemLogPagedList>>
 {
@@ -26,7 +27,15 @@ public sealed class GetSystemLogsQueryHandler : IRequestHandler<GetSystemLogsQue
         Expression<Func<SystemLog, bool>> expression = null!;
         if (!string.IsNullOrEmpty(request.SearchTerm))
         {
-            expression = l => l.User!.Contains(request.SearchTerm) || l.EventType.ToString().Contains(request.SearchTerm);
+            SystemLogEventType eventType;
+            if (Enum.TryParse<SystemLogEventType>(request.SearchTerm, out eventType))
+            {
+                expression = l => l.User!.Contains(request.SearchTerm) || l.EventType.Equals(eventType);
+            }
+            else
+            {
+                expression = l => l.User!.Contains(request.SearchTerm);
+            }
         }
 
         Expression<Func<SystemLog, object>> keySelector = request.SortColumn?.ToLower() switch

@@ -13,6 +13,7 @@ public enum Permissions
     ConfigurePowerDevices = 64,
     ViewPowerDevices = 128,
     DiscoverDevices = 256,
+    ViewSystemLogs = 512,
     //ConfigureClimateDevices = 256,
     //ViewClimateDevices = 512,
     All = ~None
