@@ -11,7 +11,7 @@ public partial class EventLog
     private AskstatusApiService ApiService { get; set; } = null!;
 
     [Inject]
-    private ILogger<Index> Logger { get; set; } = null!;
+    private ILogger<EventLog> Logger { get; set; } = null!;
 
     [Inject]
     private ISnackbar Snackbar { get; set; } = null!;
