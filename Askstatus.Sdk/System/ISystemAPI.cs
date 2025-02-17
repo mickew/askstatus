@@ -10,4 +10,8 @@ public interface ISystemAPI
     [Multipart]
     [Post("/api/system/uploadgoogletokenresponsefile")]
     Task<IApiResponse> UploadGoogleTokenResponseFile(StreamPart file);
+
+    [Multipart]
+    [Post("/api/system/uploadproductionappsettingsfile")]
+    Task<IApiResponse> UploadProductionAppSettingsFile(StreamPart file);
 }
