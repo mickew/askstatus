@@ -46,4 +46,20 @@ public class SystemController : ControllerBase
             return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
         }
     }
+
+    [HttpPost]
+    [Route("uploadproductionappsettingsfile")]
+    //[Authorize(Permissions.System)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UploadProductionAppSettingsFile(IFormFile file)
+    {
+        using (var fileStream = file.OpenReadStream())
+        {
+            var command = new UploadProductionAppSettingsFileCommand(file.FileName, fileStream);
+            var result = await _sender.Send(command);
+            return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+        }
+    }
 }
