@@ -59,5 +59,12 @@ public class UploadGoogleTokenResponseFileCommandHandlerTests
         result.Errors.First().Should().BeOfType<BadRequestError>();
         result.Errors.First().Message.Should().Be("Failed to save file");
         _fileServiceMock.Verify(fs => fs.SaveFileAsync(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()), Times.Once);
+        _loggerMock.Verify(l =>
+        l.Log(LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Failed to save file with file name ")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
     }
 }
