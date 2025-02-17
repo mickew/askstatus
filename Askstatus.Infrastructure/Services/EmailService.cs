@@ -1,5 +1,6 @@
 ﻿using Askstatus.Application.Interfaces;
 using Askstatus.Common.Models;
+using Askstatus.Domain;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
