@@ -1,4 +1,5 @@
 ﻿using Askstatus.Common.Authorization;
+using Askstatus.Common.Models;
 using Askstatus.Common.PowerDevice;
 using Askstatus.Domain.Entities;
 using Askstatus.Infrastructure.Data;
@@ -35,20 +36,34 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public int PowerDeviceId { get; private set; }
 
+    public int SystemLogId { get; private set; }
+
+    public string? TemporaryDirectory { get; private set; }
+
     public IntegrationTestWebAppFactory()
     {
+        TemporaryDirectory = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
         PapercutContainer = new PapercutBuilder().Build();
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
     }
     public async Task InitializeAsync()
     {
+        if (Directory.Exists(TemporaryDirectory!))
+        {
+            Directory.Delete(TemporaryDirectory!, true);
+        }
+        Directory.CreateDirectory(TemporaryDirectory!);
         Program.IsIntegrationTestRun = true;
         await PapercutContainer.StartAsync();
     }
 
     public new async Task DisposeAsync()
     {
+        if (Directory.Exists(TemporaryDirectory!))
+        {
+            Directory.Delete(TemporaryDirectory!, true);
+        }
         _connection.Close();
         await PapercutContainer.DisposeAsync().AsTask();
     }
@@ -98,6 +113,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                 {
                     root["MailSettings:Host"] = PapercutContainer.Hostname;
                     root["MailSettings:Port"] = PapercutContainer.GetMappedPublicPort(25).ToString();
+                    root["MailSettings:CredentialCacheFolder"] = TemporaryDirectory;
                     root.Reload();
                 }
             };
@@ -215,6 +231,20 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         {
             var p = context.PowerDevices.Add(testPowerDevice);
         }
+
+        var systemLog = new SystemLog()
+        {
+            Message = "Test Log",
+            EventType = SystemLogEventType.SetDeviceState,
+            EventTime = DateTime.UtcNow,
+            User = userUserName,
+        };
+
+        if (!context.SystemLogs.Any())
+        {
+            context.SystemLogs.Add(systemLog);
+        }
+
         context.SaveChanges();
         AdministratorsRoleId = adminRole.Id;
         UserRoleId = userRole.Id;
@@ -222,5 +252,6 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         UserId = userUser.Id;
 
         PowerDeviceId = testPowerDevice.Id;
+        SystemLogId = systemLog.Id;
     }
 }

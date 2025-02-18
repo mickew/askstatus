@@ -18,7 +18,6 @@ public class SystemController : ControllerBase
         _sender = sender;
     }
 
-    //TODO: Implement tests for Get
     [HttpGet]
     [Route("systemlog")]
     [Authorize(Permissions.System)]
@@ -30,7 +29,6 @@ public class SystemController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
-    //TODO: Implement tests for Post
     [HttpPost]
     [Route("uploadgoogletokenresponsefile")]
     [Authorize(Permissions.System)]
@@ -47,10 +45,9 @@ public class SystemController : ControllerBase
         }
     }
 
-    //TODO: Implement tests for Post
     [HttpPost]
     [Route("uploadproductionappsettingsfile")]
-    //[Authorize(Permissions.System)]
+    [Authorize(Permissions.System)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
