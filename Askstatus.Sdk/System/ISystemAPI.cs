@@ -14,4 +14,7 @@ public interface ISystemAPI
     [Multipart]
     [Post("/api/system/uploadproductionappsettingsfile")]
     Task<IApiResponse> UploadProductionAppSettingsFile(StreamPart file);
+
+    [Get("/api/system/systeminfo")]
+    Task<IApiResponse<SystemInfoDto>> GetSystemInfo();
 }

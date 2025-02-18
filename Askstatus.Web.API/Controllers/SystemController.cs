@@ -60,4 +60,15 @@ public class SystemController : ControllerBase
             return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
         }
     }
+
+    [HttpGet]
+    [Route("systeminfo")]
+    [Authorize(Permissions.System)]
+    [ProducesResponseType(typeof(SystemInfoDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetSystemInfo()
+    {
+        var result = await _sender.Send(new GetSystemInfoQuery());
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
 }
