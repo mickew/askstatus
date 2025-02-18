@@ -1,14 +1,12 @@
 ﻿using Askstatus.Common.Models;
+using Askstatus.Domain;
+using Askstatus.Domain.Constants;
+using Askstatus.Infrastructure.Mail;
+using Askstatus.Infrastructure.Tests.Common;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using Testcontainers.Xunit;
-using Testcontainers.Papercut;
-using Askstatus.Domain.Constants;
-using Docker.DotNet.Models;
-using Askstatus.Infrastructure.Mail;
-using Askstatus.Infrastructure.Tests.Common;
 
 namespace Askstatus.Infrastructure.Tests;
 
@@ -30,7 +28,7 @@ public class PapercutMailKitSmtpClientTests : IClassFixture<SMTPServerFixture>
         //var host = "localhost";
 
         // Arrange
-        var mailMessage = new MailMessage("info@askstatus.com", "Anders.Anderson@test.com", "andersa", "Anders" ,"Askstatus reset password request" , MailMessageBody.ResetPasswordMailBody("https://localhost/api/ResetPassword", "Anders"));
+        var mailMessage = new MailMessage("info@askstatus.com", "Anders.Anderson@test.com", "andersa", "Anders", "Askstatus reset password request", MailMessageBody.ResetPasswordMailBody("https://localhost/api/ResetPassword", "Anders"));
         var mailSettings = new MailSettings { Port = port, Host = host, EnableSsl = false };
         IOptions<MailSettings> options = Options.Create(mailSettings);
         var logger = new Mock<ILogger<MailKitSmtpClient>>();
