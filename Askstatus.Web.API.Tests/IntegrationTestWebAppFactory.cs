@@ -136,6 +136,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         context.Users.RemoveRange(context.Users);
         context.Roles.RemoveRange(context.Roles);
         context.PowerDevices.RemoveRange(context.PowerDevices);
+        context.SystemLogs.RemoveRange(context.SystemLogs);
         context.SaveChanges();
     }
 
