@@ -28,7 +28,10 @@
         </FlexibleAuthorizeView>        
     </MudNavGroup>
     <FlexibleAuthorizeView Permissions="@(Permissions.System)">
-        <MudNavGroup Icon="@Icons.Material.Filled.Build">
+        <MudNavGroup Icon="@Icons.Material.Filled.Build" Title="Tools">
+            <MudTooltip Text="Ctrl+M" RootStyle="width:100%">
+                <MudNavLink Icon="@Icons.Material.Filled.SystemSecurityUpdateGood" Href="/admin/system/system-info" Match="NavLinkMatch.Prefix">System Info</MudNavLink>
+            </MudTooltip>
             <MudTooltip Text="Ctrl+L" RootStyle="width:100%">
                 <MudNavLink Icon="@Icons.Material.Filled.ViewList" Href="/admin/system/system-log" Match="NavLinkMatch.Prefix">Event log</MudNavLink>
             </MudTooltip>

@@ -13,6 +13,13 @@ h1:focus {
     filter: blur(5px);
 }
 
+.system-info-table {
+
+}
+.system-info-table th {
+    width: 150px;
+    text-align: justify;
+}
 
 /*default below*/
 
