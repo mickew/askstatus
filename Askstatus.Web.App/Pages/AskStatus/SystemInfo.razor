@@ -1,0 +1,73 @@
+﻿@page "/admin/system/system-info"
+@using Askstatus.Common.System
+@attribute [Authorize(Permissions.System)]
+
+<PageTitle>Askstatus - System Info</PageTitle>
+@if (_systemInfo != null)
+{
+    <MudStack>
+    <MudPaper>
+        <MudText>Mail Settings</MudText>
+            <table class="system-info-table">
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Enabled</td>
+                    <td>@_systemInfo.MailSettings.Enabled</td>
+                </tr>
+                <tr>
+                    <td>Host</td>
+                    <td>@_systemInfo.MailSettings.Host</td>
+                </tr>
+                <tr>
+                    <td>Port</td>
+                    <td>@_systemInfo.MailSettings.Port</td>
+                </tr>
+                <tr>
+                    <td>Account</td>
+                    <td>@_systemInfo.MailSettings.Account</td>
+                </tr>
+                <tr>
+                    <td>Password</td>
+                    <td>@_systemInfo.MailSettings.Password</td>
+                </tr>
+                <tr>
+                    <td>ClientId</td>
+                    <td>@_systemInfo.MailSettings.ClientId</td>
+                </tr>
+                <tr>
+                    <td>ClientSecret</td>
+                    <td>@_systemInfo.MailSettings.ClientSecret</td>
+                </tr>
+                <tr>
+                    <td>EnableSsl</td>
+                    <td>@_systemInfo.MailSettings.EnableSsl</td>
+                </tr>
+                <tr>
+                    <td>CredentialCacheFolder</td>
+                    <td>@_systemInfo.MailSettings.CredentialCacheFolder</td>
+                </tr>
+            </table>
+    </MudPaper>
+    <MudPaper>
+        <MudText>API Settings</MudText>
+            <table class="system-info-table">
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>BackendUrl</td>
+                    <td>@_systemInfo.ApiSettings.BackendUrl</td>
+                </tr>
+                <tr>
+                    <td>FrontendUrl</td>
+                    <td>@_systemInfo.ApiSettings.FrontendUrl</td>
+                </tr>
+            </table>
+    </MudPaper>
+    </MudStack>
+
+}
