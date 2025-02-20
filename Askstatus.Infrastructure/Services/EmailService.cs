@@ -9,9 +9,9 @@ public class EmailService : IEmailService
 {
     private readonly ILogger<EmailService> _logger;
     private readonly IAskStatusSmtpClient _smtpClient;
-    private readonly IOptions<MailSettings> _options;
+    private readonly IOptionsSnapshot<MailSettings> _options;
 
-    public EmailService(ILogger<EmailService> logger, IAskStatusSmtpClient smtpClient, IOptions<MailSettings> options)
+    public EmailService(ILogger<EmailService> logger, IAskStatusSmtpClient smtpClient, IOptionsSnapshot<MailSettings> options)
     {
         _logger = logger;
         _smtpClient = smtpClient;

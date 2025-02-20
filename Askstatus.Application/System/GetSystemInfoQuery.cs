@@ -10,10 +10,10 @@ public sealed record GetSystemInfoQuery() : IRequest<Result<SystemInfoDto>>;
 
 public sealed class GetSystemInfoQueryHandler : IRequestHandler<GetSystemInfoQuery, Result<SystemInfoDto>>
 {
-    private readonly IOptions<MailSettings> _mailOptions;
+    private readonly IOptionsSnapshot<MailSettings> _mailOptions;
     private readonly IOptions<AskstatusApiSettings> _apiOptions;
 
-    public GetSystemInfoQueryHandler(IOptions<MailSettings> mailOptions, IOptions<AskstatusApiSettings> apiOptions)
+    public GetSystemInfoQueryHandler(IOptionsSnapshot<MailSettings> mailOptions, IOptions<AskstatusApiSettings> apiOptions)
     {
         _mailOptions = mailOptions;
         _apiOptions = apiOptions;

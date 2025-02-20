@@ -30,7 +30,7 @@ public class Program
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables()
             .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
             .AddCommandLine(args)
@@ -184,7 +184,7 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapHealthChecks("/health", new HealthCheckOptions
+        app.MapHealthChecks("/api/health", new HealthCheckOptions
         {
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });

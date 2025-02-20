@@ -13,9 +13,9 @@ public sealed class UploadGoogleTokenResponseFileCommandHandler : IRequestHandle
 {
     private readonly IFileService _fileService;
     private readonly ILogger<UploadGoogleTokenResponseFileCommandHandler> _logger;
-    private readonly IOptions<MailSettings> _options;
+    private readonly IOptionsSnapshot<MailSettings> _options;
 
-    public UploadGoogleTokenResponseFileCommandHandler(IFileService fileService, ILogger<UploadGoogleTokenResponseFileCommandHandler> logger, IOptions<MailSettings> options)
+    public UploadGoogleTokenResponseFileCommandHandler(IFileService fileService, ILogger<UploadGoogleTokenResponseFileCommandHandler> logger, IOptionsSnapshot<MailSettings> options)
     {
         _fileService = fileService;
         _logger = logger;

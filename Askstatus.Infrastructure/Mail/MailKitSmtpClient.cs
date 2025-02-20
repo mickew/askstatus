@@ -16,9 +16,9 @@ namespace Askstatus.Infrastructure.Mail;
 public sealed class MailKitSmtpClient : IAskStatusSmtpClient
 {
     private readonly ILogger<MailKitSmtpClient> _logger;
-    private readonly IOptions<MailSettings> _options;
+    private readonly IOptionsSnapshot<MailSettings> _options;
 
-    public MailKitSmtpClient(ILogger<MailKitSmtpClient> logger, IOptions<MailSettings> options)
+    public MailKitSmtpClient(ILogger<MailKitSmtpClient> logger, IOptionsSnapshot<MailSettings> options)
     {
         _logger = logger;
         _options = options;

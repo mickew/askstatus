@@ -32,7 +32,7 @@ public class GetSystemInfoQueryHandlerTests
             FrontendUrl = "https://frontend.example.com"
         };
 
-        var mailOptionsMock = new Mock<IOptions<MailSettings>>();
+        var mailOptionsMock = new Mock<IOptionsSnapshot<MailSettings>>();
         mailOptionsMock.Setup(m => m.Value).Returns(mailSettings);
 
         var apiOptionsMock = new Mock<IOptions<AskstatusApiSettings>>();

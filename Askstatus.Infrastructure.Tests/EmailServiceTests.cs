@@ -17,12 +17,13 @@ public class EmailServiceTests
         // Arrange
         var mailMessage = new MailMessage("info@askstatus.com", "Anders.Anderson@test.com", "andersa", "Anders", "Test Subject", MailMessageBody.MailBodyTest());
         var mailSettings = new MailSettings { Enabled = true, Port = 0, Host = "host", EnableSsl = false };
-        IOptions<MailSettings> options = Options.Create(mailSettings);
+        var optionsSnapshot = new Mock<IOptionsSnapshot<MailSettings>>();
+        optionsSnapshot.Setup(x => x.Value).Returns(mailSettings);
         var logger = new Mock<ILogger<EmailService>>();
         var smtpClientMock = new Mock<IAskStatusSmtpClient>();
         smtpClientMock.Setup(x => x.SendEmailAsync(mailMessage)).ReturnsAsync(true);
 
-        var emailService = new EmailService(logger.Object, smtpClientMock.Object, options);
+        var emailService = new EmailService(logger.Object, smtpClientMock.Object, optionsSnapshot.Object);
 
         // Act
         var result = await emailService.SendEmailAsync(mailMessage);
@@ -38,12 +39,13 @@ public class EmailServiceTests
         // Arrange
         var mailMessage = new MailMessage("info@askstatus.com", "Anders.Anderson@test.com", "andersa", "Anders", "Test Subject", MailMessageBody.MailBodyTest());
         var mailSettings = new MailSettings { Enabled = false, Port = 0, Host = "host", EnableSsl = false };
-        IOptions<MailSettings> options = Options.Create(mailSettings);
+        var optionsSnapshot = new Mock<IOptionsSnapshot<MailSettings>>();
+        optionsSnapshot.Setup(x => x.Value).Returns(mailSettings);
         var logger = new Mock<ILogger<EmailService>>();
         var smtpClientMock = new Mock<IAskStatusSmtpClient>();
         smtpClientMock.Setup(x => x.SendEmailAsync(mailMessage)).ReturnsAsync(false);
 
-        var emailService = new EmailService(logger.Object, smtpClientMock.Object, options);
+        var emailService = new EmailService(logger.Object, smtpClientMock.Object, optionsSnapshot.Object);
 
         // Act
         var result = await emailService.SendEmailAsync(mailMessage);
