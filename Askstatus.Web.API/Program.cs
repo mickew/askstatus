@@ -6,6 +6,9 @@ using Askstatus.Domain;
 using Askstatus.Infrastructure;
 using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Hubs;
+using HealthChecks.ApplicationStatus.DependencyInjection;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +30,7 @@ public class Program
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables()
             .AddUserSecrets("8b69e137-e330-4e6f-b0ab-9afb3de16f6f")
             .AddCommandLine(args)
@@ -117,6 +120,11 @@ public class Program
 
         var askstatusApiSettings = builder.Configuration.GetSection(AskstatusApiSettings.Section).Get<AskstatusApiSettings>();
 
+        builder.Services.AddHealthChecks()
+            .AddApplicationStatus()
+            .AddSignalRHub($"{askstatusApiSettings!.BackendUrl!}/statushub")
+            .AddSqlite(builder.Configuration.GetConnectionString("DefaultConnection")!, tags: ["database"]);
+
         builder.Services.AddInfrastructureServices(builder.Environment, builder.Configuration.GetConnectionString("DefaultConnection")!);
         builder.Services.AddApplicationServices();
 
@@ -176,7 +184,10 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-
+        app.MapHealthChecks("/api/health", new HealthCheckOptions
+        {
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
         app.MapControllers();
         app.MapHub<StatusHub>("/statushub");
         return app;

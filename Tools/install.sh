@@ -15,6 +15,14 @@ else
 
    chmod +x /var/www/backend/Askstatus.Web.API
 
+   if [ ! -f /var/www/backend/appsettings.Production.json ]
+   then
+      sudo sh -c "echo '{}' >> /var/www/backend/appsettings.Production.json"
+   fi
+
+   sudo chown www-data:www-data /var/www/backend/appsettings.Production.json
+   sudo chmod 644 /var/www/backend/appsettings.Production.json
+
    # create database folder
    mkdir -p /usr/share/askstatus
    sudo chmod 777 /usr/share/askstatus

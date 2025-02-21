@@ -13,14 +13,14 @@ public class UploadGoogleTokenResponseFileCommandHandlerTests
 {
     private readonly Mock<IFileService> _fileServiceMock;
     private readonly Mock<ILogger<UploadGoogleTokenResponseFileCommandHandler>> _loggerMock;
-    private readonly Mock<IOptions<MailSettings>> _optionsMock;
+    private readonly Mock<IOptionsSnapshot<MailSettings>> _optionsMock;
     private readonly UploadGoogleTokenResponseFileCommandHandler _handler;
 
     public UploadGoogleTokenResponseFileCommandHandlerTests()
     {
         _fileServiceMock = new Mock<IFileService>();
         _loggerMock = new Mock<ILogger<UploadGoogleTokenResponseFileCommandHandler>>();
-        _optionsMock = new Mock<IOptions<MailSettings>>();
+        _optionsMock = new Mock<IOptionsSnapshot<MailSettings>>();
         _optionsMock.Setup(o => o.Value).Returns(new MailSettings { CredentialCacheFolder = "test_folder" });
 
         _handler = new UploadGoogleTokenResponseFileCommandHandler(_fileServiceMock.Object, _loggerMock.Object, _optionsMock.Object);

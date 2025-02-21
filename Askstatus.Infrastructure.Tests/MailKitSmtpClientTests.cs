@@ -30,9 +30,10 @@ public class PapercutMailKitSmtpClientTests : IClassFixture<SMTPServerFixture>
         // Arrange
         var mailMessage = new MailMessage("info@askstatus.com", "Anders.Anderson@test.com", "andersa", "Anders", "Askstatus reset password request", MailMessageBody.ResetPasswordMailBody("https://localhost/api/ResetPassword", "Anders"));
         var mailSettings = new MailSettings { Port = port, Host = host, EnableSsl = false };
-        IOptions<MailSettings> options = Options.Create(mailSettings);
+        var optionsSnapshot = new Mock<IOptionsSnapshot<MailSettings>>();
+        optionsSnapshot.Setup(x => x.Value).Returns(mailSettings);
         var logger = new Mock<ILogger<MailKitSmtpClient>>();
-        var smtpClient = new MailKitSmtpClient(logger.Object, options);
+        var smtpClient = new MailKitSmtpClient(logger.Object, optionsSnapshot.Object);
 
         // Act
         var result = await smtpClient.SendEmailAsync(mailMessage);
@@ -52,9 +53,10 @@ public class PapercutMailKitSmtpClientTests : IClassFixture<SMTPServerFixture>
         // Arrange
         var mailMessage = new MailMessage("info@askstatus.com", "Anders.Anderson@test.com", "andersa", "Anders", "Welcome to Askstatus, Anders", MailMessageBody.RegistrationConfirmationMailBody("andersa", "https://localhost/api/ResetPassword", "Anders"));
         var mailSettings = new MailSettings { Port = port, Host = host, EnableSsl = false };
-        IOptions<MailSettings> options = Options.Create(mailSettings);
+        var optionsSnapshot = new Mock<IOptionsSnapshot<MailSettings>>();
+        optionsSnapshot.Setup(x => x.Value).Returns(mailSettings);
         var logger = new Mock<ILogger<MailKitSmtpClient>>();
-        var smtpClient = new MailKitSmtpClient(logger.Object, options);
+        var smtpClient = new MailKitSmtpClient(logger.Object, optionsSnapshot.Object);
 
         // Act
         var result = await smtpClient.SendEmailAsync(mailMessage);
