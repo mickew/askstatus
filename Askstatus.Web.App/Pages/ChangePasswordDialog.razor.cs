@@ -6,7 +6,7 @@ namespace Askstatus.Web.App.Pages;
 
 public partial class ChangePasswordDialog
 {
-    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter] public ChangePasswordRequest ChangePassword { get; set; } = new ChangePasswordRequest();
 

@@ -24,7 +24,7 @@ jobs:
     - name: Checkout and Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     - run: dotnet workload install wasm-tools
     - name: Restore dependencies
       run: dotnet restore

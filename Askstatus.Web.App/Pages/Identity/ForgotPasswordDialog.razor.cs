@@ -6,7 +6,7 @@ namespace Askstatus.Web.App.Pages.Identity;
 
 public partial class ForgotPasswordDialog
 {
-    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter] public ForgotPasswordRquest ForgotPasswordRquest { get; set; } = new ForgotPasswordRquest();
 
