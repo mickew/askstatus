@@ -16,7 +16,7 @@ public partial class DiscoverDeviceDialog
     [Inject]
     private ILogger<Index> Logger { get; set; } = null!;
 
-    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter] public PowerDeviceDto Device { get; set; } = new PowerDeviceDto();
 

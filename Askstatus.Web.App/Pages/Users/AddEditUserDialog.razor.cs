@@ -6,7 +6,7 @@ namespace Askstatus.Web.App.Pages.Users;
 
 public partial class AddEditUserDialog
 {
-    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter] public UserVM User { get; set; } = new UserVM();
 

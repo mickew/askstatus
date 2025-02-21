@@ -7,7 +7,7 @@ namespace Askstatus.Web.App.Pages.Devices;
 
 public partial class EditDeviceDialog
 {
-    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
 
     [Parameter] public PowerDeviceDto device { get; set; } = new PowerDeviceDto();
 

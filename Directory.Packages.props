@@ -9,8 +9,8 @@
     <PackageVersion Include="AspNetCore.HealthChecks.UI" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
-    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="FluentAssertions" Version="7.2.0" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -19,49 +19,49 @@
     <PackageVersion Include="FluentResults.Extensions.AspNetCore" Version="0.1.0" />
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="Google.Apis.Auth" Version="1.69.0" />
-    <PackageVersion Include="JunitXml.TestLogger" Version="4.1.0" />
-    <PackageVersion Include="MailKit" Version="4.9.0" />
+    <PackageVersion Include="JunitXml.TestLogger" Version="6.0.0" />
+    <PackageVersion Include="MailKit" Version="4.10.0" />
     <PackageVersion Include="MediatR" Version="12.4.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authorization" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authorization" Version="9.0.2" />
     <!--<PackageVersion Include="LanguageExt.Core" Version="4.4.9" />-->
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.12" PrivateAssets="all" />
-    <PackageVersion Include="Microsoft.AspNetCore.Http.Connections.Client" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.2" PrivateAssets="all" />
+    <PackageVersion Include="Microsoft.AspNetCore.Http.Connections.Client" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.2" />
     <!--<PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />-->
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.2" />
     <!--<PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="8.0.8" />-->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="MimeKit" Version="4.9.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageVersion Include="MimeKit" Version="4.10.0" />
     <PackageVersion Include="MockQueryable.Moq" Version="7.0.3" />
     <PackageVersion Include="Moq" Version="4.20.72" />
-    <PackageVersion Include="MudBlazor" Version="7.15.0" />
+    <PackageVersion Include="MudBlazor" Version="8.2.0" />
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Refit.Newtonsoft.Json" Version="8.0.0" />
-    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Serilog.Enrichers.ClientInfo" Version="2.1.2" />
-    <PackageVersion Include="SignalR.UnitTestingSupport.xUnit" Version="8.0.0" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.1.0" />
+    <PackageVersion Include="SignalR.UnitTestingSupport.xUnit" Version="9.0.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageVersion Include="System.Drawing.Common" Version="6.0.0" />
-    <PackageVersion Include="System.Text.Encodings.Web" Version="8.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="8.0.5" />
-    <PackageVersion Include="Testcontainers.Papercut" Version="4.1.0" />
-    <PackageVersion Include="Testcontainers.Xunit" Version="4.1.0" />
+    <PackageVersion Include="System.Drawing.Common" Version="9.0.2" />
+    <PackageVersion Include="System.Text.Encodings.Web" Version="9.0.2" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.2" />
+    <PackageVersion Include="Testcontainers.Papercut" Version="4.2.0" />
+    <PackageVersion Include="Testcontainers.Xunit" Version="4.2.0" />
     <PackageVersion Include="Toolbelt.Blazor.HotKeys2" Version="6.0.0" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
   </ItemGroup>
 </Project>
