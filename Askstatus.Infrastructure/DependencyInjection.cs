@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Askstatus.Infrastructure;
 public static class DependencyInjection
@@ -109,6 +110,12 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddTransient<IRepository<Askstatus.Domain.Entities.PowerDevice>, Repository<Askstatus.Domain.Entities.PowerDevice>>();
         services.AddTransient<IRepository<Askstatus.Domain.Entities.SystemLog>, Repository<Askstatus.Domain.Entities.SystemLog>>();
+
+        services.AddSingleton<IMqttClientService, MqttClientService>();
+        services.AddSingleton<IHostedService>(serviceProvider =>
+        {
+            return serviceProvider.GetService<IMqttClientService>()!;
+        });
 
         return services;
     }

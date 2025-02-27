@@ -13,5 +13,14 @@ public class AskstatusApiSettings
     [Required]
     [Url]
     public string? FrontendUrl { get; set; }
+
+    [Required]
+    public string? MQTTServer { get; set; }
+
+    [Required]
+    public int MQTTPort { get; set; }
+
+    [Required]
+    public string? MQTTClientId { get; set; }
 }
 
