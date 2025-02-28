@@ -39,6 +39,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.2" />
     <!--<PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="8.0.8" />-->
@@ -46,6 +47,7 @@
     <PackageVersion Include="MimeKit" Version="4.10.0" />
     <PackageVersion Include="MockQueryable.Moq" Version="7.0.3" />
     <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="MQTTnet" Version="5.0.1.1416" />
     <PackageVersion Include="MudBlazor" Version="8.2.0" />
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
