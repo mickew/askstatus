@@ -4,6 +4,7 @@ using Askstatus.Common.PowerDevice;
 using Askstatus.Domain.Entities;
 using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Identity;
+using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -17,7 +18,7 @@ namespace Askstatus.Web.API.Tests;
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public PapercutContainer PapercutContainer { get; private set; }
-    //public DotNet.Testcontainers.Containers.IContainer MosquitoContainer { get; private set; }
+    public DotNet.Testcontainers.Containers.IContainer MosquitoContainer { get; private set; }
 
     public const string AdministratorsRole = "Administrators";
     public const string DefaultAdminUserName = "admin";
@@ -45,10 +46,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     {
         TemporaryDirectory = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
         PapercutContainer = new PapercutBuilder().Build();
-        //MosquitoContainer = new ContainerBuilder()
-        //    .WithImage("eclipse-mosquitto:latest")
-        //    .WithPortBinding(1883, true)
-        //    .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1883)).Build();
+        MosquitoContainer = new ContainerBuilder()
+            .WithImage("eclipse-mosquitto:latest")
+            .WithPortBinding(1883, true).WithResourceMapping("mosquitto.conf", "/mosquitto/config/")
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1883)).Build();
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
     }
@@ -61,7 +62,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         Directory.CreateDirectory(TemporaryDirectory!);
         Program.IsIntegrationTestRun = true;
         await PapercutContainer.StartAsync();
-        //await MosquitoContainer.StartAsync();
+        await MosquitoContainer.StartAsync();
     }
 
     public new async Task DisposeAsync()
@@ -121,6 +122,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                     root["MailSettings:Host"] = PapercutContainer.Hostname;
                     root["MailSettings:Port"] = PapercutContainer.GetMappedPublicPort(25).ToString();
                     root["MailSettings:CredentialCacheFolder"] = TemporaryDirectory;
+                    root["AskstatusSettings:MQTTPort"] = MosquitoContainer.GetMappedPublicPort(1883).ToString(); ;
                     root.Reload();
                 }
             }
