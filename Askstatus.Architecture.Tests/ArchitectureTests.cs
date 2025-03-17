@@ -8,7 +8,7 @@ namespace Askstatus.Architecture.Tests
         private const string CommonNamespace = "Askstatus.Common";
         private const string DomainNamespace = "Askstatus.Domain";
         private const string ApplicationNamespace = "Askstatus.Application";
-        private const string InfrastructureNamespace = "Askstatus..Infrastructure";
+        private const string InfrastructureNamespace = "Askstatus.Infrastructure";
         private const string WebAPINamespace = "Askstatus.Web.API";
         private const string WebUiNamespace = "Askstatus.Web.App";
         private const string SdkNamespace = "Askstatus.Sdk";

@@ -6,6 +6,10 @@ Installing Raspberry PI OS on a Raspberry PI is straight forward. Download the R
 ## Setup Static IP
 https://pimylifeup.com/raspberry-pi-static-ip-address/
 
+## Setup wifi as hotspot
+```bash
+sudo nmcli device wifi hotspot ssid askstatus password *****s*****
+```
 ## Setup Nginx as reverse proxy, Mosquitto MQTT boker and Certbot for SSL
 
 ```bash

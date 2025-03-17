@@ -10,7 +10,7 @@
 ### Install, update and uninstall Askholmen Status System
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/mickew/askstatus/main/Tools/gettools.sh)
+curl -s https://raw.githubusercontent.com/mickew/askstatus/main/Tools/setup | sudo bash
 ```
 
 ### linux commands
