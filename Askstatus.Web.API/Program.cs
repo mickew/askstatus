@@ -135,10 +135,7 @@ public class Program
         builder.Services.AddCors(
             options => options.AddPolicy(
                 "wasm",
-                policy => policy.WithOrigins([
-                    askstatusApiSettings!.BackendUrl!,
-                    askstatusApiSettings.FrontendUrl!]
-                    )
+                policy => policy.WithOrigins(GetCorsUrls(askstatusApiSettings))
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()));
@@ -237,5 +234,13 @@ public class Program
         }
         var version = $"{currentAssembly.GetName().Version!.Major}.{currentAssembly.GetName().Version!.Minor}.{currentAssembly.GetName().Version!.Build}";
         return version ?? "?.?.?";
+    }
+
+    private static string[] GetCorsUrls(AskstatusApiSettings askstatusApiSettings)
+    {
+        var backendUrls = askstatusApiSettings.BackendUrl!.Split(';').ToArray();
+        var frontendUrls = askstatusApiSettings.FrontendUrl!.Split(';').ToArray();
+
+        return frontendUrls!.Concat(backendUrls!).ToArray();
     }
 }
