@@ -83,7 +83,7 @@ function update {
         oldver=$($install_dir/$app --version)
         cd ${BASEDIR}
         oldver=$(echo "v$oldver")
-        if [ $(version $oldver) -ge $(version $ver) ]; then
+        if [ $oldver -ge $ver ]; then
             log "Version is up to date, $ver => $oldver ."
             whiptail --title "$application_name" --msgbox "Version is up to date, $ver => $oldver ." 8 78
             exit
@@ -139,7 +139,7 @@ function getlatest {
     echo "Unzipping downloaded files..."
     unzip -a -q -d $out/ $filename
     rm -f ./$out/$install_dir/appsettings.Development.json
-    rm -f ./$out/$install_dir_frontend/appsettings.Development.json
+    rm -f ./$out/$install_dir_frontend/wwwroot/appsettings.Development.json
     mkdir -p $install_dir
     mkdir -p $install_dir_frontend
     chmod 666 $install_dir
