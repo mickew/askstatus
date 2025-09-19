@@ -21,7 +21,7 @@ internal sealed class DeviceStateUpdateEventHandler : INotificationHandler<Devic
 
     public async Task Handle(DeviceStateChangedIntegrationEvent notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Device state changed for device with id {Id} to {State}", notification.Id, notification.State);
+        _logger.LogDebug("Device state changed for device with id {Id} to {State}", notification.Id, notification.State);
         await _hubContext.Clients.All.UpdateDeviceStatus(notification.DeviceId, notification.State);
     }
 }

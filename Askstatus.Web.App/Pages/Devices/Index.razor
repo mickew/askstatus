@@ -38,6 +38,8 @@
         </TemplateColumn>
     </Columns>
 </MudDataGrid>
-<div class="d-flex flex-wrap mt-4 justify-end">
+<div class="d-flex flex-wrap mt-4 justify-end gap-3">
+    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.PermDeviceInformation" @onclick="() => DiscoverDevices()" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Success">Discover devices</MudButton>
+    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.OnDeviceTraining" @onclick="() => DiscoverAllDevices()" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Success">Discover all devices</MudButton>
     <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.DeviceUnknown" @onclick="() => DiscoverDevice()" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Success">Discover device</MudButton>
 </div>

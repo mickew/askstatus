@@ -4,8 +4,12 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Askstatus.Application.DiscoverDevice;
 using Askstatus.Application.Interfaces;
+using Askstatus.Application.PowerDevice;
 using Askstatus.Application.Sensors;
 using Askstatus.Domain;
+using Askstatus.Domain.Constants;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MQTTnet;
@@ -18,13 +22,15 @@ internal class MqttClientService : IMqttClientService
     private readonly ConcurrentDictionary<string, DeviceSensor> _sensors = new ConcurrentDictionary<string, DeviceSensor>();
     private readonly ILogger<MqttClientService> _logger;
     private readonly IOptions<AskstatusApiSettings> _apiOptions;
+    private readonly IServiceProvider _serviceProvider;
     private readonly MqttClientOptions _options;
     private readonly IMqttClient _mqttClient;
 
-    public MqttClientService(ILogger<MqttClientService> logger, IOptions<AskstatusApiSettings> apiOptions)
+    public MqttClientService(ILogger<MqttClientService> logger, IOptions<AskstatusApiSettings> apiOptions, IServiceProvider serviceProvider)
     {
         _logger = logger;
         _apiOptions = apiOptions;
+        _serviceProvider = serviceProvider;
         _options = new MqttClientOptionsBuilder()
             .WithTcpServer(_apiOptions.Value.MQTTServer, _apiOptions.Value.MQTTPort)
             .WithClientId(_apiOptions.Value.MQTTClientId)
@@ -126,9 +132,9 @@ internal class MqttClientService : IMqttClientService
 
     private async Task HandleConnectedAsync(MqttClientConnectedEventArgs args)
     {
-        _logger.LogInformation("MQTTClient connected to server");
+        _logger.LogInformation("MQTTClient connected to server {host}", _apiOptions.Value.MQTTServer);
         await _mqttClient.SubscribeAsync("shellies/announce");
-        await _mqttClient.SubscribeAsync("shellies/+/status/eth");
+        await _mqttClient.SubscribeAsync("shellies/+/status/#");
         await _mqttClient.SubscribeAsync("shellies/+/sensor/#");
         await PublishAsync();
     }
@@ -140,8 +146,15 @@ internal class MqttClientService : IMqttClientService
             await ProcessAnnounce(payload);
             return;
         }
-        Regex rg = new Regex(@"^shellies\/(.+)\/status\/eth$");
+        Regex rg = new Regex(@"^shellies\/(.+)\/status\/input\S\d$");
         Match match = rg.Match(topic);
+        if (match.Success)
+        {
+            await ProcessInput(match.Groups[1].Value, payload);
+            return;
+        }
+        rg = new Regex(@"^shellies\/(.+)\/status\/eth$");
+        match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessEth(match.Groups[1].Value, payload);
@@ -157,9 +170,31 @@ internal class MqttClientService : IMqttClientService
         await Task.CompletedTask;
     }
 
+    private async Task ProcessInput(string id, string payload)
+    {
+        ShellieAnnounce? theItem = _shellieAnnounces.Select(v => v.Value).FirstOrDefault(x => x.Id == id);
+        if (theItem != null)
+        {
+            try
+            {
+                var input = JsonSerializer.Deserialize<Input>(payload);
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+                    var result = await sender.Send(new PowerDeviceWebhookQuery(theItem.Mac, input!.State));
+                    return;
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+        await Task.CompletedTask;
+    }
+
     private async Task ProcessSensor(string id, string value2, string payload)
     {
-        _logger.LogInformation($"ProcessSensor: {id} {value2} {payload}");
+        _logger.LogDebug($"ProcessSensor: {id} {value2} {payload}");
         if (_sensors.ContainsKey(id))
         {
             var sensorValue = new DeviceSensorValue(value2, payload, DateTime.UtcNow);
@@ -189,7 +224,7 @@ internal class MqttClientService : IMqttClientService
     private async Task ProcessAnnounce(string payload)
     {
         var shellieAnnounce = JsonSerializer.Deserialize<ShellieAnnounce>(payload);
-        if (shellieAnnounce != null && !_shellieAnnounces.Any(x => x.Key == shellieAnnounce.Id))
+        if (shellieAnnounce != null && SuportedShellyPowerDevices.Devices.Contains(shellieAnnounce.Model) && !_shellieAnnounces.Any(x => x.Key == shellieAnnounce.Id))
         {
             _shellieAnnounces.TryAdd(shellieAnnounce.Id, shellieAnnounce);
         }
@@ -210,5 +245,10 @@ internal class MqttClientService : IMqttClientService
 
     private record Eth(
         [property: JsonPropertyName("ip")] string Ip
+    );
+
+    private record Input(
+        [property: JsonPropertyName("id")] int Id,
+        [property: JsonPropertyName("state")] bool State
     );
 }

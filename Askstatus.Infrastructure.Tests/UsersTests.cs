@@ -21,7 +21,7 @@ public class UsersTests
     public async Task GetUsers_Should_Return_Success()
     {
         // Arrange
-        Mock <UserManager<ApplicationUser>> userManagerMock = MockUserManager();
+        Mock<UserManager<ApplicationUser>> userManagerMock = MockUserManager();
         Mock<SignInManager<ApplicationUser>> signInManagerMock = MockSignInManager(userManagerMock.Object);
         Mock<RoleManager<ApplicationRole>> roleManagerMock = MockRoleManager();
         var usersService = new UserService(signInManagerMock.Object, roleManagerMock.Object, new Mock<ILogger<UserService>>().Object, ApiOptions());
@@ -1111,7 +1111,7 @@ public class UsersTests
             new ApplicationRole { Id = "2", Name = "User", Permissions = Permissions.None },
         };
 
-        var mock = roles.AsQueryable().BuildMock();
+        var mock = roles.BuildMock();
         var roleManagerMock = new Mock<RoleManager<ApplicationRole>>(
             new Mock<IRoleStore<ApplicationRole>>().Object,
             new IRoleValidator<ApplicationRole>[0],
@@ -1131,7 +1131,7 @@ public class UsersTests
             new ApplicationUser { Id = "2", UserName = "user", Email = "user@localhost.local", FirstName = "User", LastName = "User" },
         };
 
-        var mock = users.AsQueryable().BuildMock();
+        var mock = users.BuildMock();
         var userManagerMock = new Mock<UserManager<ApplicationUser>>(
             new Mock<IUserStore<ApplicationUser>>().Object,
             new Mock<IOptions<IdentityOptions>>().Object,

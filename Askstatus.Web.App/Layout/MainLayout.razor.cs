@@ -41,7 +41,7 @@ public partial class MainLayout : LayoutBase, IAsyncDisposable
         {
             0 => false,
             1 => true,
-            2 => await _mudThemeProvider!.GetSystemPreference(),
+            2 => await _mudThemeProvider!.GetSystemDarkModeAsync(),
             _ => false
         };
         await StoreLocalData();
@@ -56,7 +56,7 @@ public partial class MainLayout : LayoutBase, IAsyncDisposable
             {
                 0 => false,
                 1 => true,
-                2 => await _mudThemeProvider!.GetSystemPreference(),
+                2 => await _mudThemeProvider!.GetSystemDarkModeAsync(),
                 _ => false
             };
             _hotKeysContext = _hotKeys.CreateContext()
