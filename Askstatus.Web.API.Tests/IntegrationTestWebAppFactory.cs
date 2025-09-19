@@ -49,7 +49,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         MosquitoContainer = new ContainerBuilder()
             .WithImage("eclipse-mosquitto:latest")
             .WithPortBinding(1883, true).WithResourceMapping("mosquitto.conf", "/mosquitto/config/")
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1883)).Build();
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(1883)).Build();
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
     }
