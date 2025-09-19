@@ -1,4 +1,5 @@
-﻿using Askstatus.Common.PowerDevice;
+﻿using Askstatus.Common.Models;
+using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
 using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
@@ -97,6 +98,67 @@ public partial class Index
             {
                 var device = ((PowerDeviceDto)result.Data);
                 PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel, device.ChanelType);
+                var res = await ApiService.PowerDeviceAPI.CreatePowerDevice(powerDeviceRequest);
+                if (!res.IsSuccessStatusCode)
+                {
+                    Logger.LogError(res.Error, res.Error.Content);
+                    Snackbar.Add(res.Error.Content!, Severity.Error);
+                    return;
+                }
+                PowerDevices.Add(res.Content!);
+                Snackbar.Add($"Device {res.Content!.Name} added", Severity.Success);
+            }
+        }
+    }
+
+    private async Task DiscoverAllDevices()
+    {
+        var response = await ApiService.DeviceDiscoverAPI.DiscoverAll();
+        if (!response.IsSuccessStatusCode)
+        {
+            Logger.LogError(response.Error, response.Error.Content);
+            Snackbar.Add(response.Error.Content!, Severity.Error);
+            return;
+        }
+        await HandleDiscoverDevicesDialog(response.Content!);
+    }
+
+    private async Task DiscoverDevices()
+    {
+        var response = await ApiService.DeviceDiscoverAPI.NotAssigned();
+        if (!response.IsSuccessStatusCode)
+        {
+            Logger.LogError(response.Error, response.Error.Content);
+            Snackbar.Add(response.Error.Content!, Severity.Error);
+            return;
+        }
+        await HandleDiscoverDevicesDialog(response.Content!);
+    }
+
+    private async Task HandleDiscoverDevicesDialog(IEnumerable<DicoverInfo> dicoverInfos)
+    {
+        var parameters = new DialogParameters<DiscoverAllDevicesDialog> { { x => x.DicoverInfos, dicoverInfos } };
+
+        var dialog = await DialogService.ShowAsync<DiscoverAllDevicesDialog>("Discover devices", parameters);
+        var result = await dialog.Result;
+        if (!result!.Canceled)
+        {
+            if (result.Data is DicoverInfo && result.Data is not null)
+            {
+                var selectedDevice = (DicoverInfo)result.Data;
+                PowerDeviceDto device = new PowerDeviceDto
+                {
+                    Name = selectedDevice.DeviceName,
+                    DeviceType = selectedDevice.DeviceType,
+                    HostName = selectedDevice.DeviceHostName,
+                    DeviceName = selectedDevice.DeviceName,
+                    DeviceId = selectedDevice.DeviceId,
+                    DeviceMac = selectedDevice.DeviceMac,
+                    DeviceModel = selectedDevice.DeviceModel,
+                    Channel = selectedDevice.Channel,
+                    ChanelType = ChanelType.Generic
+                };
+                PowerDeviceRequest powerDeviceRequest = new(0, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel, device.ChanelType);
                 var res = await ApiService.PowerDeviceAPI.CreatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {

@@ -1,0 +1,25 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.PermDeviceInformation" Class="mr-3 mb-n1" />
+            @MudDialog!.Title
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudDataGrid T="Askstatus.Common.Models.DicoverInfo" Items="@DicoverInfos" SelectedItemChanged="@OnSelectedItemChanged">
+            
+            <Columns>
+                <SelectColumn T="Askstatus.Common.Models.DicoverInfo" />
+                <PropertyColumn Property="x => x.DeviceId" Title="Id" Sortable="false" />
+                <PropertyColumn Property="x => x.DeviceHostName" Title="Host" Sortable="false" />
+                <PropertyColumn Property="x => x.DeviceName" Title="Name" Sortable="false" />
+                <PropertyColumn Property="x => x.DeviceType" Title="Type" Sortable="false" />
+                <PropertyColumn Property="x => x.DeviceMac" Title="Mac" Sortable="false" />
+            </Columns>
+        </MudDataGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled="@_addDisabled" Color="Color.Primary" OnClick="Submit">Add</MudButton>
+    </DialogActions>
+</MudDialog>
