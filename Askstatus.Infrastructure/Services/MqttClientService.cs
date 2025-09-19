@@ -132,7 +132,7 @@ internal class MqttClientService : IMqttClientService
 
     private async Task HandleConnectedAsync(MqttClientConnectedEventArgs args)
     {
-        _logger.LogInformation("MQTTClient connected to server");
+        _logger.LogInformation("MQTTClient connected to server {host}", _apiOptions.Value.MQTTServer);
         await _mqttClient.SubscribeAsync("shellies/announce");
         await _mqttClient.SubscribeAsync("shellies/+/status/#");
         await _mqttClient.SubscribeAsync("shellies/+/sensor/#");
@@ -194,7 +194,7 @@ internal class MqttClientService : IMqttClientService
 
     private async Task ProcessSensor(string id, string value2, string payload)
     {
-        _logger.LogInformation($"ProcessSensor: {id} {value2} {payload}");
+        _logger.LogDebug($"ProcessSensor: {id} {value2} {payload}");
         if (_sensors.ContainsKey(id))
         {
             var sensorValue = new DeviceSensorValue(value2, payload, DateTime.UtcNow);
@@ -224,7 +224,7 @@ internal class MqttClientService : IMqttClientService
     private async Task ProcessAnnounce(string payload)
     {
         var shellieAnnounce = JsonSerializer.Deserialize<ShellieAnnounce>(payload);
-        if (shellieAnnounce != null && !SensorTypes.ShellieSensorOnly.Contains(shellieAnnounce.Model) && !_shellieAnnounces.Any(x => x.Key == shellieAnnounce.Id))
+        if (shellieAnnounce != null && SuportedShellyPowerDevices.Devices.Contains(shellieAnnounce.Model) && !_shellieAnnounces.Any(x => x.Key == shellieAnnounce.Id))
         {
             _shellieAnnounces.TryAdd(shellieAnnounce.Id, shellieAnnounce);
         }

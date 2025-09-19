@@ -138,8 +138,9 @@ public partial class Index
     private async Task HandleDiscoverDevicesDialog(IEnumerable<DicoverInfo> dicoverInfos)
     {
         var parameters = new DialogParameters<DiscoverAllDevicesDialog> { { x => x.DicoverInfos, dicoverInfos } };
+        DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
 
-        var dialog = await DialogService.ShowAsync<DiscoverAllDevicesDialog>("Discover devices", parameters);
+        var dialog = await DialogService.ShowAsync<DiscoverAllDevicesDialog>("Discover devices", parameters, dialogOptions);
         var result = await dialog.Result;
         if (!result!.Canceled)
         {
