@@ -22,6 +22,8 @@ public class UnitOfWork : IUnitOfWork
 
     public IRepository<SystemLog> SystemLogRepository => _serviceProvider.GetRequiredService<IRepository<SystemLog>>();
 
+    public IRepository<Sensor> SensorRepository => _serviceProvider.GetRequiredService<IRepository<Sensor>>();
+
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)

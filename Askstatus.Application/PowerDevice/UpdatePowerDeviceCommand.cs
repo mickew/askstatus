@@ -34,7 +34,7 @@ public sealed class UpdatePowerDeviceCommandHandler : IRequestHandler<UpdatePowe
     public async Task<Result> Handle(UpdatePowerDeviceCommand request, CancellationToken cancellationToken)
     {
         var powerDevice = await _unitOfWork.PowerDeviceRepository.GetByIdAsync(request.Id);
-        if (powerDevice == null)
+        if (powerDevice is null)
         {
             _logger.LogWarning("PowerDevice with id {Id} not found", request.Id);
             return Result.Fail(new NotFoundError($"PowerDevice not found"));
