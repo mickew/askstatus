@@ -5,7 +5,21 @@
 [![](https://img.shields.io/github/issues/mickew/askstatus)](https://github.com/mickew/askstatus/issues)
 [![](https://img.shields.io/github/issues-closed/mickew/askstatus)](https://github.com/mickew/askstatus/issues?q=is%3Aissue+is%3Aclosed)
 [![](https://img.shields.io/github/milestones/progress-percent/mickew/askstatus/2)](https://github.com/mickew/askstatus/milestone/2)
-## Askholmen Status System
+## Overview
+Askholmen Status System is a Blazor WebAssembly application for monitoring and managing system status, designed to run on .NET 9. It includes a backend API and supports deployment on Linux and Raspberry Pi.
+
+## Features
+- Blazor WebAssembly frontend
+- ASP.NET Core backend API
+- System info and status display
+- Mail and API settings management
+- Health checks and real-time updates via SignalR
+- Role-based authorization
+
+## Prerequisites
+- .NET 9 SDK
+- Linux or Raspberry Pi (for deployment)
+- SQLite (default database)
 
 ### Install, update and uninstall Askholmen Status System
 

@@ -110,6 +110,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddTransient<IRepository<Askstatus.Domain.Entities.PowerDevice>, Repository<Askstatus.Domain.Entities.PowerDevice>>();
         services.AddTransient<IRepository<Askstatus.Domain.Entities.SystemLog>, Repository<Askstatus.Domain.Entities.SystemLog>>();
+        services.AddTransient<IRepository<Askstatus.Domain.Entities.Sensor>, Repository<Askstatus.Domain.Entities.Sensor>>();
 
         services.AddSingleton<IMqttClientService, MqttClientService>();
         services.AddSingleton<IHostedService>(serviceProvider =>
