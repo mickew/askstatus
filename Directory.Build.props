@@ -9,6 +9,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <RestoreEnablePackagePruning Condition=" '$(VisualStudioVersion)' == '17.0' ">false</RestoreEnablePackagePruning>
   </PropertyGroup>
   
   <PropertyGroup>
