@@ -95,7 +95,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public Task SendMqttMessage(string topic, string payload)
     {
         var options = new MqttClientOptionsBuilder()
-            .WithTcpServer("localhost", MosquitoContainer.GetMappedPublicPort(1883))
+            .WithTcpServer(MosquitoContainer.Hostname, MosquitoContainer.GetMappedPublicPort(1883))
             .WithClientId("TestClient")
             .Build();
         var mqttClient = new MqttClientFactory().CreateMqttClient();
