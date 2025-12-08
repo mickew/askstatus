@@ -22,7 +22,7 @@ public class PapercutMailKitSmtpClientTests : IClassFixture<SMTPServerFixture>
     [Fact]
     public async Task SendEmailAsync_WithResetPassword_ReturnsTrue()
     {
-        var port = _sMTPServerFixture.PapercutContainer.GetMappedPublicPort(25);
+        var port = _sMTPServerFixture.PapercutContainer.GetMappedPublicPort(2525);
         var host = _sMTPServerFixture.PapercutContainer.Hostname;
         //var port = 1025;
         //var host = "localhost";
@@ -45,7 +45,7 @@ public class PapercutMailKitSmtpClientTests : IClassFixture<SMTPServerFixture>
     [Fact]
     public async Task SendEmailAsync_WithRegistrationConfirm_ReturnsTrue()
     {
-        var port = _sMTPServerFixture.PapercutContainer.GetMappedPublicPort(25);
+        var port = _sMTPServerFixture.PapercutContainer.GetMappedPublicPort(2525);
         var host = _sMTPServerFixture.PapercutContainer.Hostname;
         //var port = 1025;
         //var host = "localhost";
