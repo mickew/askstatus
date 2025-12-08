@@ -14,7 +14,8 @@ public enum Permissions
     ViewPowerDevices = 128,
     DiscoverDevices = 256,
     System = 512,
-    //ConfigureClimateDevices = 256,
-    //ViewClimateDevices = 512,
+    DiscoverSensors = 256,
+    ConfigureSensors = 512,
+    ViewSensors = 1024,
     All = ~None
 }

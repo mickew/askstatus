@@ -1,5 +1,6 @@
 ﻿using Askstatus.Sdk.Identity;
 using Askstatus.Sdk.PowerDevices;
+using Askstatus.Sdk.Sensors;
 using Askstatus.Sdk.System;
 using Askstatus.Sdk.Users;
 using Refit;
@@ -39,6 +40,16 @@ public sealed class AskstatusApiService
         {
             ContentSerializer = contentSerializer
         });
+
+        SensorDiscoverAPI = RestService.For<ISensorDiscoverAPI>(httpClient, new RefitSettings
+        {
+            ContentSerializer = contentSerializer
+        });
+
+        SensorAPI = RestService.For<ISensorAPI>(httpClient, new RefitSettings
+        {
+            ContentSerializer = contentSerializer
+        });
     }
 
     public IIdentityApi IdentityApi { get; private set; }
@@ -52,4 +63,8 @@ public sealed class AskstatusApiService
     public IDeviceDiscoverAPI DeviceDiscoverAPI { get; private set; }
 
     public ISystemAPI SystemAPI { get; private set; }
+
+    public ISensorDiscoverAPI SensorDiscoverAPI { get; private set; }
+
+    public ISensorAPI SensorAPI { get; private set; }
 }
