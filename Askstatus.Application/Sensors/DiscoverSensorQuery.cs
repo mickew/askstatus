@@ -6,22 +6,22 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Askstatus.Application.Sensors;
-public sealed record DiscoverSensorsQuery() : IRequest<Result<IEnumerable<SensorInfo>>>;
+public sealed record DiscoverSensorQuery() : IRequest<Result<IEnumerable<SensorInfo>>>;
 
-public sealed class DiscoverSensorsQueryHandler : IRequestHandler<DiscoverSensorsQuery, Result<IEnumerable<SensorInfo>>>
+public sealed class DiscoverSensorQueryHandler : IRequestHandler<DiscoverSensorQuery, Result<IEnumerable<SensorInfo>>>
 {
-    private readonly ILogger<DiscoverSensorsQueryHandler> _logger;
+    private readonly ILogger<DiscoverSensorQueryHandler> _logger;
     private readonly IMqttClientService _mqttClientService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DiscoverSensorsQueryHandler(ILogger<DiscoverSensorsQueryHandler> logger, IMqttClientService mqttClientService, IUnitOfWork unitOfWork)
+    public DiscoverSensorQueryHandler(ILogger<DiscoverSensorQueryHandler> logger, IMqttClientService mqttClientService, IUnitOfWork unitOfWork)
     {
         _logger = logger;
         _mqttClientService = mqttClientService;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<IEnumerable<SensorInfo>>> Handle(DiscoverSensorsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<SensorInfo>>> Handle(DiscoverSensorQuery request, CancellationToken cancellationToken)
     {
         try
         {

@@ -9,16 +9,16 @@ namespace Askstatus.Application.Tests;
 
 public class DiscoverSensorsQueryHandlerTests
 {
-    private readonly Mock<ILogger<DiscoverSensorsQueryHandler>> _loggerMock = new();
+    private readonly Mock<ILogger<DiscoverSensorQueryHandler>> _loggerMock = new();
     private readonly Mock<IMqttClientService> _mqttClientServiceMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IRepository<Askstatus.Domain.Entities.Sensor>> _sensorRepoMock = new();
-    private readonly DiscoverSensorsQueryHandler _handler;
+    private readonly DiscoverSensorQueryHandler _handler;
 
     public DiscoverSensorsQueryHandlerTests()
     {
         _unitOfWorkMock.SetupGet(u => u.SensorRepository).Returns(_sensorRepoMock.Object);
-        _handler = new DiscoverSensorsQueryHandler(_loggerMock.Object, _mqttClientServiceMock.Object, _unitOfWorkMock.Object);
+        _handler = new DiscoverSensorQueryHandler(_loggerMock.Object, _mqttClientServiceMock.Object, _unitOfWorkMock.Object);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class DiscoverSensorsQueryHandlerTests
         _mqttClientServiceMock.Setup(m => m.GetSensorsAsync()).ReturnsAsync(sensors);
 
         // Act
-        var result = await _handler.Handle(new DiscoverSensorsQuery(), CancellationToken.None);
+        var result = await _handler.Handle(new DiscoverSensorQuery(), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -63,7 +63,7 @@ public class DiscoverSensorsQueryHandlerTests
         _sensorRepoMock.Setup(r => r.ListAllAsync()).ThrowsAsync(new Exception("DB error"));
 
         // Act
-        var result = await _handler.Handle(new DiscoverSensorsQuery(), CancellationToken.None);
+        var result = await _handler.Handle(new DiscoverSensorQuery(), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -78,7 +78,7 @@ public class DiscoverSensorsQueryHandlerTests
         _mqttClientServiceMock.Setup(m => m.GetSensorsAsync()).ReturnsAsync(new List<DeviceSensor>());
 
         // Act
-        var result = await _handler.Handle(new DiscoverSensorsQuery(), CancellationToken.None);
+        var result = await _handler.Handle(new DiscoverSensorQuery(), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -99,7 +99,7 @@ public class DiscoverSensorsQueryHandlerTests
         _mqttClientServiceMock.Setup(m => m.GetSensorsAsync()).ReturnsAsync(sensors);
 
         // Act
-        var result = await _handler.Handle(new DiscoverSensorsQuery(), CancellationToken.None);
+        var result = await _handler.Handle(new DiscoverSensorQuery(), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

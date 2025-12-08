@@ -11,17 +11,17 @@ namespace Askstatus.Application.Tests;
 public class GetSensoreByIdQueryHandlerTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-    private readonly Mock<ILogger<GetSensoreByIdQueryHandler>> _loggerMock;
+    private readonly Mock<ILogger<GetSensorByIdQueryHandler>> _loggerMock;
     private readonly Mock<IRepository<Askstatus.Domain.Entities.Sensor>> _sensorRepositoryMock;
-    private readonly GetSensoreByIdQueryHandler _handler;
+    private readonly GetSensorByIdQueryHandler _handler;
 
     public GetSensoreByIdQueryHandlerTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _loggerMock = new Mock<ILogger<GetSensoreByIdQueryHandler>>();
+        _loggerMock = new Mock<ILogger<GetSensorByIdQueryHandler>>();
         _sensorRepositoryMock = new Mock<IRepository<Askstatus.Domain.Entities.Sensor>>();
         _unitOfWorkMock.Setup(u => u.SensorRepository).Returns(_sensorRepositoryMock.Object);
-        _handler = new GetSensoreByIdQueryHandler(_unitOfWorkMock.Object, _loggerMock.Object);
+        _handler = new GetSensorByIdQueryHandler(_unitOfWorkMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class GetSensoreByIdQueryHandlerTests
             ValueName = "Value1"
         };
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(sensor);
-        var query = new GetSensoreByIdQuery(1);
+        var query = new GetSensorByIdQuery(1);
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -59,7 +59,7 @@ public class GetSensoreByIdQueryHandlerTests
     {
         // Arrange
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(2)).Returns(Task.FromResult<Askstatus.Domain.Entities.Sensor>(null!));
-        var query = new GetSensoreByIdQuery(2);
+        var query = new GetSensorByIdQuery(2);
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);

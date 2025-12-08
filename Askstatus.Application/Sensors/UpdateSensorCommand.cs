@@ -11,6 +11,7 @@ public sealed record UpdateSensorCommand() : IRequest<Result>
     public int Id { get; init; }
     public string? Name { get; init; }
     public SensorType SensorType { get; init; }
+    public string? FormatString { get; init; }
     public string? SensorName { get; init; }
     public string? ValueName { get; init; }
 }

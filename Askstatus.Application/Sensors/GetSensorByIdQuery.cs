@@ -6,20 +6,20 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Askstatus.Application.Sensors;
-public sealed record GetSensoreByIdQuery(int Id) : IRequest<Result<SensorDto>>;
+public sealed record GetSensorByIdQuery(int Id) : IRequest<Result<SensorDto>>;
 
-public sealed class GetSensoreByIdQueryHandler : IRequestHandler<GetSensoreByIdQuery, Result<SensorDto>>
+public sealed class GetSensorByIdQueryHandler : IRequestHandler<GetSensorByIdQuery, Result<SensorDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<GetSensoreByIdQueryHandler> _logger;
+    private readonly ILogger<GetSensorByIdQueryHandler> _logger;
 
-    public GetSensoreByIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetSensoreByIdQueryHandler> logger)
+    public GetSensorByIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetSensorByIdQueryHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
-    public async Task<Result<SensorDto>> Handle(GetSensoreByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<SensorDto>> Handle(GetSensorByIdQuery request, CancellationToken cancellationToken)
     {
         var sensor = await _unitOfWork.SensorRepository.GetByIdAsync(request.Id);
         if (sensor == null)

@@ -50,7 +50,7 @@ public class UpdateSensorCommandHandlerTests
     public async Task Handle_ShouldReturnBadRequest_WhenUpdateFails()
     {
         // Arrange
-        var command = new UpdateSensorCommand { Id = 2, Name = "n", SensorType = SensorType.Temperature, SensorName = "sn", ValueName = "vn" };
+        var command = new UpdateSensorCommand { Id = 2, Name = "n", SensorType = SensorType.Temperature, FormatString = "fs", SensorName = "sn", ValueName = "vn" };
         var sensor = new Sensor { Id = 2, Name = "old", SensorType = SensorType.Humidity, SensorName = "oldsn", ValueName = "oldvn" };
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(sensor);
         _sensorRepositoryMock.Setup(r => r.UpdateAsync(sensor)).ReturnsAsync(false);
@@ -73,8 +73,8 @@ public class UpdateSensorCommandHandlerTests
     public async Task Handle_ShouldReturnBadRequest_WhenSaveChangesFails()
     {
         // Arrange
-        var command = new UpdateSensorCommand { Id = 3, Name = "n", SensorType = SensorType.Temperature, SensorName = "sn", ValueName = "vn" };
-        var sensor = new Sensor { Id = 3, Name = "old", SensorType = SensorType.Humidity, SensorName = "oldsn", ValueName = "oldvn" };
+        var command = new UpdateSensorCommand { Id = 3, Name = "n", SensorType = SensorType.Temperature, FormatString = "fs", SensorName = "sn", ValueName = "vn" };
+        var sensor = new Sensor { Id = 3, Name = "old", SensorType = SensorType.Humidity, FormatString = "oldfs", SensorName = "oldsn", ValueName = "oldvn" };
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(3)).ReturnsAsync(sensor);
         _sensorRepositoryMock.Setup(r => r.UpdateAsync(sensor)).ReturnsAsync(true);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(-1);
@@ -97,8 +97,8 @@ public class UpdateSensorCommandHandlerTests
     public async Task Handle_ShouldReturnOk_WhenUpdateSucceeds()
     {
         // Arrange
-        var command = new UpdateSensorCommand { Id = 4, Name = "n", SensorType = SensorType.Temperature, SensorName = "sn", ValueName = "vn" };
-        var sensor = new Sensor { Id = 4, Name = "old", SensorType = SensorType.Humidity, SensorName = "oldsn", ValueName = "oldvn" };
+        var command = new UpdateSensorCommand { Id = 4, Name = "n", SensorType = SensorType.Temperature, FormatString = "fs", SensorName = "sn", ValueName = "vn" };
+        var sensor = new Sensor { Id = 4, Name = "old", SensorType = SensorType.Humidity, FormatString = "oldfs", SensorName = "oldsn", ValueName = "oldvn" };
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(4)).ReturnsAsync(sensor);
         _sensorRepositoryMock.Setup(r => r.UpdateAsync(sensor)).ReturnsAsync(true);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
