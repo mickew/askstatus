@@ -1,14 +1,15 @@
 ﻿namespace Askstatus.Common.Sensor;
 public sealed class SensorDto
 {
-    public SensorDto() : this(0, string.Empty, SensorType.Unknown, string.Empty, string.Empty, string.Empty) { }
-    public SensorDto(int id, string name, SensorType type, string formatString, string sensorName, string valueName)
+    public SensorDto() : this(0, string.Empty, SensorType.Unknown, string.Empty, string.Empty, string.Empty, string.Empty) { }
+    public SensorDto(int id, string name, SensorType type, string formatString, string sensorName, string sensorModel, string valueName)
     {
         Id = id;
         Name = name;
         SensorType = type;
         FormatString = formatString;
         SensorName = sensorName;
+        SensorModel = sensorModel;
         ValueName = valueName;
     }
     public int Id { get; set; }
@@ -16,5 +17,6 @@ public sealed class SensorDto
     public SensorType SensorType { get; set; }
     public string FormatString { get; set; }
     public string SensorName { get; set; }
+    public string SensorModel { get; set; }
     public string ValueName { get; set; }
 }

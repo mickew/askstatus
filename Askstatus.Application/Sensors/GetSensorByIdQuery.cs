@@ -28,7 +28,7 @@ public sealed class GetSensorByIdQueryHandler : IRequestHandler<GetSensorByIdQue
             return Result.Fail<SensorDto>(new NotFoundError("Sensor not found"));
         }
 
-        var sensorDto = new SensorDto(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.SensorName, sensor.ValueName);
+        var sensorDto = new SensorDto(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.SensorName, sensor.SensorModel, sensor.ValueName);
 
         return Result.Ok(sensorDto);
     }

@@ -201,6 +201,7 @@ public class SensorTests
             SensorType.Temperature,
             "{0} %",
             "shellyht-CC2D5C",
+            "SHHT-1",
             "humidity"
         );
 
@@ -215,6 +216,7 @@ public class SensorTests
         response.Content!.SensorType.Should().Be(SensorType.Temperature);
         response.Content!.FormatString.Should().Be("{0} %");
         response.Content!.SensorName.Should().Be("shellyht-CC2D5C");
+        response.Content!.SensorModel.Should().Be("SHHT-1");
         response.Content!.ValueName.Should().Be("humidity");
     }
 
@@ -234,6 +236,7 @@ public class SensorTests
             SensorType.Temperature,
             "{0} %",
             "shellyht-CC2D5C",
+            "SHHT-1",
             "humidity"
         );
 
@@ -260,6 +263,7 @@ public class SensorTests
             SensorType.Temperature,
             "{0} °C",
             "shellyht-CC2D5C",
+            "SHHT-1",
             "temperature"
         );
 
@@ -286,6 +290,7 @@ public class SensorTests
             SensorType.Temperature,
             "0.00 °C",
             "shellyht-CC2D5C",
+            "SHHT-1",
             "temperature"
         );
 
@@ -312,6 +317,7 @@ public class SensorTests
             SensorType.Temperature,
             "0.00 °C",
             "shellyht-CC2D5C",
+            "SHHT-1",
             "temperature"
         );
 
@@ -338,6 +344,7 @@ public class SensorTests
             SensorType.Temperature,
             "0.00 °C",
             "shellyht-CC2D5C",
+            "SHHT-1",
             "temperature"
         );
 
@@ -364,6 +371,7 @@ public class SensorTests
             SensorType.Humidity,
             "{0} %",
             "shellyht-CC2D5C",
+            "SHHT-1",
             "humidity"
         );
         var sensorAdded = await _sensorAPI.CreateSensor(sensorRequestToChange);
@@ -375,6 +383,7 @@ public class SensorTests
             SensorType.Temperature,
             "0.00 °C",
             "shellyht-CC2D5C",
+            "SHHT-1",
             "temperature"
         );
 

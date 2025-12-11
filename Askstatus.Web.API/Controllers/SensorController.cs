@@ -53,6 +53,7 @@ public class SensorController : ControllerBase
             SensorType = request.SensorType,
             FormatString = request.FormatString,
             SensorName = request.SensorName,
+            SensorModel = request.SensorModel,
             ValueName = request.ValueName
         });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
@@ -73,6 +74,7 @@ public class SensorController : ControllerBase
             SensorType = request.SensorType,
             FormatString = request.FormatString,
             SensorName = request.SensorName,
+            SensorModel = request.SensorModel,
             ValueName = request.ValueName
         });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());

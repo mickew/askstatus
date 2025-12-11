@@ -284,6 +284,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             SensorType = Common.Sensor.SensorType.Temperature,
             FormatString = "0.0 °C",
             SensorName = "shellyht-CC2D5C",
+            SensorModel = "SHHT-1",
             ValueName = "temperature",
         };
 

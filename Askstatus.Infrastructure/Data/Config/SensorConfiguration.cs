@@ -12,6 +12,7 @@ internal class SensorConfiguration : IEntityTypeConfiguration<Sensor>
         builder.Property(s => s.Name).IsRequired();
         builder.Property(s => s.SensorType).IsRequired();
         builder.Property(s => s.SensorName).IsRequired();
+        builder.Property(s => s.SensorModel).IsRequired();
         builder.Property(s => s.ValueName).IsRequired();
 
         builder.HasIndex(s => new { s.SensorName, s.ValueName }).IsUnique();

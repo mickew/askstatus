@@ -73,8 +73,8 @@ public class UpdateSensorCommandHandlerTests
     public async Task Handle_ShouldReturnBadRequest_WhenSaveChangesFails()
     {
         // Arrange
-        var command = new UpdateSensorCommand { Id = 3, Name = "n", SensorType = SensorType.Temperature, FormatString = "fs", SensorName = "sn", ValueName = "vn" };
-        var sensor = new Sensor { Id = 3, Name = "old", SensorType = SensorType.Humidity, FormatString = "oldfs", SensorName = "oldsn", ValueName = "oldvn" };
+        var command = new UpdateSensorCommand { Id = 3, Name = "n", SensorType = SensorType.Temperature, FormatString = "fs", SensorName = "sn", SensorModel = "sm", ValueName = "vn" };
+        var sensor = new Sensor { Id = 3, Name = "old", SensorType = SensorType.Humidity, FormatString = "oldfs", SensorName = "oldsn", SensorModel = "oldsm", ValueName = "oldvn" };
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(3)).ReturnsAsync(sensor);
         _sensorRepositoryMock.Setup(r => r.UpdateAsync(sensor)).ReturnsAsync(true);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(-1);
@@ -97,8 +97,8 @@ public class UpdateSensorCommandHandlerTests
     public async Task Handle_ShouldReturnOk_WhenUpdateSucceeds()
     {
         // Arrange
-        var command = new UpdateSensorCommand { Id = 4, Name = "n", SensorType = SensorType.Temperature, FormatString = "fs", SensorName = "sn", ValueName = "vn" };
-        var sensor = new Sensor { Id = 4, Name = "old", SensorType = SensorType.Humidity, FormatString = "oldfs", SensorName = "oldsn", ValueName = "oldvn" };
+        var command = new UpdateSensorCommand { Id = 4, Name = "n", SensorType = SensorType.Temperature, FormatString = "fs", SensorName = "sn", SensorModel = "sm", ValueName = "vn" };
+        var sensor = new Sensor { Id = 4, Name = "old", SensorType = SensorType.Humidity, FormatString = "oldfs", SensorName = "oldsn", SensorModel = "oldsm", ValueName = "oldvn" };
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(4)).ReturnsAsync(sensor);
         _sensorRepositoryMock.Setup(r => r.UpdateAsync(sensor)).ReturnsAsync(true);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);

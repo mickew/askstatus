@@ -50,7 +50,7 @@ public partial class Index
             if (result.Data is SensorDto)
             {
                 sensor = ((SensorDto)result.Data);
-                SensorRequest sensorRequest = new(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.ValueName, sensor.ValueName);
+                SensorRequest sensorRequest = new(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.ValueName, sensor.SensorModel, sensor.ValueName);
                 var res = await ApiService.SensorAPI.UpdateSensor(sensorRequest);
                 if (!res.IsSuccessStatusCode)
                 {
@@ -108,17 +108,8 @@ public partial class Index
             {
                 var selectedDevice = (SensorInfoFlat)result.Data;
 
-                //SensorDto sensorDto = new SensorDto
-                //{
-                //    Id = 0,
-                //    Name = sensorInfo.Id,
-                //    SensorType = SensorType.Unknown,
-                //    FormatString = string.Empty,
-                //    SensorName = string.Empty,
-                //    ValueName = string.Empty
-                //};
-
-                var sensorRequest = new SensorRequest(0, sensorInfo.Id, SensorType.Unknown, string.Empty, sensorInfo.Id, sensorInfo.ValueName);
+                //TODO: Map properly
+                var sensorRequest = new SensorRequest(0, sensorInfo.Id, SensorType.Unknown, string.Empty, sensorInfo.Id, "discoverd_model", sensorInfo.ValueName);
                 var res = await ApiService.SensorAPI.CreateSensor(sensorRequest);
                 if (!res.IsSuccessStatusCode)
                 {

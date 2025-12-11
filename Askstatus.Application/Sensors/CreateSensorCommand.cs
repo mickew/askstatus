@@ -12,6 +12,7 @@ public sealed record CreateSensorCommand() : IRequest<Result<SensorDto>>
     public SensorType SensorType { get; init; }
     public string FormatString { get; init; } = null!;
     public string SensorName { get; init; } = null!;
+    public string SensorModel { get; init; } = null!;
     public string ValueName { get; init; } = null!;
 }
 
@@ -34,6 +35,7 @@ public sealed class CreateSensorCommandHandler : IRequestHandler<CreateSensorCom
             SensorType = request.SensorType,
             FormatString = request.FormatString,
             SensorName = request.SensorName,
+            SensorModel = request.SensorModel,
             ValueName = request.ValueName
         };
 
@@ -50,6 +52,6 @@ public sealed class CreateSensorCommandHandler : IRequestHandler<CreateSensorCom
             return Result.Fail<SensorDto>(new BadRequestError("Error saving changes"));
         }
 
-        return Result.Ok(new SensorDto(result.Id, result.Name, result.SensorType, result.FormatString, result.SensorName, result.ValueName));
+        return Result.Ok(new SensorDto(result.Id, result.Name, result.SensorType, result.FormatString, result.SensorName, result.SensorModel, result.ValueName));
     }
 }
