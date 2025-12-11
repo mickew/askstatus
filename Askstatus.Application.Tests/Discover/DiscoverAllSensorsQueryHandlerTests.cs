@@ -27,10 +27,10 @@ public class DiscoverAllSensorsQueryHandlerTests
         DateTime now = DateTime.UtcNow;
         var sensors = new List<DeviceSensor>
         {
-            new DeviceSensor("1", new List<DeviceSensorValue>() { new DeviceSensorValue("temperature", "22.25", now ) }),
-            new DeviceSensor("2", new List<DeviceSensorValue>() { new DeviceSensorValue("humidity", "55", now ) }),
-            new DeviceSensor("3", new List<DeviceSensorValue>() { new DeviceSensorValue("battery", "100", now ) }),
-            new DeviceSensor("4", new List<DeviceSensorValue>() { new DeviceSensorValue("ext_power", "true", now ) }),
+            new DeviceSensor("1", "Temperature Sensor", "Model X", new List<DeviceSensorValue>() { new DeviceSensorValue("temperature", "22.25", now ) }),
+            new DeviceSensor("2", "Humidity Sensor", "Model Y", new List<DeviceSensorValue>() { new DeviceSensorValue("humidity", "55", now ) }),
+            new DeviceSensor("3", "Battery Sensor", "Model Z", new List<DeviceSensorValue>() { new DeviceSensorValue("battery", "100", now ) }),
+            new DeviceSensor("4", "External Power Sensor", "Model A", new List<DeviceSensorValue>() { new DeviceSensorValue("ext_power", "true", now ) }),
         };
         _mqttClientServiceMock.Setup(x => x.GetSensorsAsync()).ReturnsAsync(sensors);
 
@@ -41,6 +41,8 @@ public class DiscoverAllSensorsQueryHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(4);
         result.Value.First().Id.Should().Be("1");
+        result.Value.First().Name.Should().Be("Temperature Sensor");
+        result.Value.First().Model.Should().Be("Model X");
         result.Value.First().Values.Should().HaveCount(1);
         result.Value.First().Values.First().Name.Should().Be("temperature");
         result.Value.First().Values.First().Value.Should().Be("22.25");

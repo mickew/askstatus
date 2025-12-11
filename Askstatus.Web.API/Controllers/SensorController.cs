@@ -92,5 +92,19 @@ public class SensorController : ControllerBase
         var result = await _sender.Send(new DeleteSensorCommand(id));
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
+
+    //TODO: Implement tests for value
+    [HttpGet]
+    [Route("{id}/value")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetSensorValue(int id)
+    {
+        var result = await _sender.Send(new GetSensorValueQuery(id));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
 }
 

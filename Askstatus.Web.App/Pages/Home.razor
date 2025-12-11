@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Globalization
 @attribute [Authorize]
 
 <PageTitle>Askstatus - Dashboard</PageTitle>
@@ -74,10 +75,24 @@
                         }
                     </CardHeaderActions>
                 </MudCardHeader>
-
-                <MudCardContent>
-                    <MudPaper Elevation="2"  Class="pa-4" Style="height: 50px;"></MudPaper>
-                </MudCardContent>
+                @foreach (var sensor in Sensors)
+                {
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem Style="width: 100%">
+                                <MudPaper Elevation="2" Class="pa-4" >
+                                    @{
+                                        string sensorIcon = AskstatusIcons.SensorTypeToIcon(sensor.SensorType);
+                                    }
+                                    <MudChip T="string" Icon="@sensorIcon" />
+                                    <MudTooltip Text="@sensor.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)">
+                                        <MudChip T="string" Variant="Variant.Outlined" Color="Color.Info"><span>@sensor.Name | @sensor.Value</span></MudChip>
+                                    </MudTooltip>
+                                </MudPaper>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                }
             </MudCard>
         </MudItem>
     </MudGrid>

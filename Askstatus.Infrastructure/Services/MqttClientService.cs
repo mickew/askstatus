@@ -230,7 +230,8 @@ internal class MqttClientService : IMqttClientService
         }
         if (shellieAnnounce != null && SuportedShellySensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
         {
-            _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, new List<DeviceSensorValue>()));
+            var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
+            _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
         await Task.CompletedTask;
     }
