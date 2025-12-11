@@ -12,7 +12,8 @@
             <Columns>
                 <SelectColumn T="Askstatus.Web.App.Pages.Sensors.Index.SensorInfoFlat" />
                 <PropertyColumn Property="x => x.Id" Title="Id" Sortable="false" />
-                <PropertyColumn Property="x => x.ValueName" Title="Name" Sortable="false" />
+                <PropertyColumn Property="x => x.Name" Title="Name" Sortable="false" />
+                <PropertyColumn Property="x => x.ValueName" Title="Value Name" Sortable="false" />
                 <PropertyColumn Property="x => x.Value" Title="Value" Sortable="false" />
                 <PropertyColumn Property="x => UtcToLocalTimeFormat(x.LastReading)" Sortable="false" />
             </Columns>

@@ -22,7 +22,7 @@ public sealed class DiscoverAllSensorsQueryHandler : IRequestHandler<DiscoverAll
         try
         {
             var sensors = await _mqttClientService.GetSensorsAsync();
-            return Result.Ok(sensors.Select(x => new SensorInfo(x.Id, x.Values.Select(v => new SensorValue(v.Name, v.Value, v.LastUpdate)).ToList())));
+            return Result.Ok(sensors.Select(x => new SensorInfo(x.Id, x.Name, x.Model, x.Values.Select(v => new SensorValue(v.Name, v.Value, v.LastUpdate)).ToList())));
         }
         catch (Exception ex)
         {

@@ -32,11 +32,11 @@ public class DiscoverSensorsQueryHandlerTests
         };
         var sensors = new List<DeviceSensor>
         {
-            new DeviceSensor("sensor1", new List<DeviceSensorValue> {
+            new DeviceSensor("sensor1", "Temperature Sensor", "Model X", new List<DeviceSensorValue> {
                 new DeviceSensorValue("temp", "10", DateTime.UtcNow),
                 new DeviceSensorValue("hum", "20", DateTime.UtcNow)
             }),
-            new DeviceSensor("sensor3", new List<DeviceSensorValue> {
+            new DeviceSensor("sensor3", "Humidity Sensor", "Model Y", new List<DeviceSensorValue> {
                 new DeviceSensorValue("temp", "30", DateTime.UtcNow)
             })
         };
@@ -51,6 +51,8 @@ public class DiscoverSensorsQueryHandlerTests
         var sensorInfos = result.Value.ToList();
         sensorInfos.Should().HaveCount(2);
         sensorInfos[0].Id.Should().Be("sensor1");
+        sensorInfos[0].Name.Should().Be("Temperature Sensor");
+        sensorInfos[0].Model.Should().Be("Model X");
         sensorInfos[0].Values.Should().ContainSingle().Which.Name.Should().Be("hum");
         sensorInfos[1].Id.Should().Be("sensor3");
         sensorInfos[1].Values.Should().ContainSingle().Which.Name.Should().Be("temp");
@@ -92,7 +94,7 @@ public class DiscoverSensorsQueryHandlerTests
         _sensorRepoMock.Setup(r => r.ListAllAsync()).ReturnsAsync(new List<Askstatus.Domain.Entities.Sensor>());
         var sensors = new List<DeviceSensor>
         {
-            new DeviceSensor("sensor1", new List<DeviceSensorValue> {
+            new DeviceSensor("sensor1", "Temperature Sensor", "Model X", new List<DeviceSensorValue> {
                 new DeviceSensorValue("temp", "10", DateTime.UtcNow)
             })
         };
@@ -106,6 +108,8 @@ public class DiscoverSensorsQueryHandlerTests
         var sensorInfos = result.Value.ToList();
         sensorInfos.Should().ContainSingle();
         sensorInfos[0].Id.Should().Be("sensor1");
+        sensorInfos[0].Name.Should().Be("Temperature Sensor");
+        sensorInfos[0].Model.Should().Be("Model X");
         sensorInfos[0].Values.Should().ContainSingle().Which.Name.Should().Be("temp");
     }
 }

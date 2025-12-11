@@ -34,7 +34,7 @@ public sealed class DiscoverSensorQueryHandler : IRequestHandler<DiscoverSensorQ
                 SensorInfo? info = null;
                 if (assignedSensors.Any(s => s.SensorName == sensor.Id))
                 {
-                    info = new SensorInfo(sensor.Id, new List<SensorValue>());
+                    info = new SensorInfo(sensor.Id, sensor.Name, sensor.Model, new List<SensorValue>());
 
                     foreach (var value in sensor.Values)
                     {
@@ -47,7 +47,7 @@ public sealed class DiscoverSensorQueryHandler : IRequestHandler<DiscoverSensorQ
                 }
                 else
                 {
-                    info = sensors.Where(s => s.Id == sensor.Id).Select(s => new SensorInfo(s.Id, s.Values.Select(v => new SensorValue(v.Name, v.Value, v.LastUpdate)).ToList())).FirstOrDefault();
+                    info = sensors.Where(s => s.Id == sensor.Id).Select(s => new SensorInfo(s.Id, s.Name, s.Model, s.Values.Select(v => new SensorValue(v.Name, v.Value, v.LastUpdate)).ToList())).FirstOrDefault();
                 }
                 if (info is not null)
                 {

@@ -18,4 +18,8 @@ public interface ISensorAPI
 
     [Delete("/api/sensor/{id}")]
     Task<IApiResponse> DeleteSensor(int id);
+
+    [Get("/api/sensor/{id}/value")]
+    Task<IApiResponse<SensorValue>> GetSensorValue(int id);
+
 }

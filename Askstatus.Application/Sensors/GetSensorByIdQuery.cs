@@ -22,7 +22,7 @@ public sealed class GetSensorByIdQueryHandler : IRequestHandler<GetSensorByIdQue
     public async Task<Result<SensorDto>> Handle(GetSensorByIdQuery request, CancellationToken cancellationToken)
     {
         var sensor = await _unitOfWork.SensorRepository.GetByIdAsync(request.Id);
-        if (sensor == null)
+        if (sensor is null)
         {
             _logger.LogWarning("Sensor with id {SensorId} not found", request.Id);
             return Result.Fail<SensorDto>(new NotFoundError("Sensor not found"));

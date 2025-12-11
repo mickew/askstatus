@@ -22,6 +22,7 @@
 <MudDataGrid Items="@Sensors">
     <Columns>
         <PropertyColumn Property="x => x.Name" Title="Name" />
+        <PropertyColumn Property="x => x.SensorModel" Title="Model" />
         <TemplateColumn Title="Type">
             <CellTemplate>
                 <MudIcon Icon="@AskstatusIcons.SensorTypeToIcon(context.Item.SensorType)" Title="@context.Item.SensorType.ToString()"></MudIcon>
