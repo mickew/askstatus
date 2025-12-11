@@ -1,6 +1,5 @@
 ﻿using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
-using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
@@ -176,24 +175,6 @@ public partial class Home : IAsyncDisposable
     }
 
     private static string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
-
-    private static string ChanelTypeToIcon(ChanelType chanelType, bool state)
-    {
-        switch
-            (chanelType)
-        {
-            case ChanelType.Generic:
-                return state ? AskstatusIcons.GenericOn : AskstatusIcons.GenericOff;
-            case ChanelType.Relay:
-                return state ? AskstatusIcons.RelayOn : AskstatusIcons.RelayOff;
-            case ChanelType.Heat:
-                return state ? AskstatusIcons.HeatOn : AskstatusIcons.HeatOff;
-            case ChanelType.Bulb:
-                return state ? AskstatusIcons.BulbOn : AskstatusIcons.BulbOff;
-            default:
-                return state ? AskstatusIcons.GenericOn : AskstatusIcons.GenericOff;
-        }
-    }
 
     private async Task GetIsOnline(Device device)
     {

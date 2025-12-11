@@ -1,7 +1,6 @@
 ﻿using Askstatus.Common.Models;
 using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
-using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -170,24 +169,6 @@ public partial class Index
                 PowerDevices.Add(res.Content!);
                 Snackbar.Add($"Device {res.Content!.Name} added", Severity.Success);
             }
-        }
-    }
-
-    private string ChanelTypeToIcon(ChanelType chanelType)
-    {
-        switch
-            (chanelType)
-        {
-            case ChanelType.Generic:
-                return AskstatusIcons.GenericOn;
-            case ChanelType.Relay:
-                return AskstatusIcons.RelayOn;
-            case ChanelType.Heat:
-                return AskstatusIcons.HeatOn;
-            case ChanelType.Bulb:
-                return AskstatusIcons.BulbOn;
-            default:
-                return AskstatusIcons.GenericOn;
         }
     }
 }

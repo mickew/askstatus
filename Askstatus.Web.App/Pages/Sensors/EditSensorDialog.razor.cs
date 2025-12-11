@@ -1,14 +1,14 @@
-﻿using Askstatus.Common.PowerDevice;
+﻿using Askstatus.Common.Sensor;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace Askstatus.Web.App.Pages.Devices;
+namespace Askstatus.Web.App.Pages.Sensors;
 
-public partial class EditDeviceDialog
+public partial class EditSensorDialog
 {
     [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
 
-    [Parameter] public PowerDeviceDto device { get; set; } = new PowerDeviceDto();
+    [Parameter] public SensorDto sensor { get; set; } = new SensorDto();
 
     private DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
 
@@ -16,9 +16,9 @@ public partial class EditDeviceDialog
     {
         MudDialog!.Cancel();
     }
-
-    private void SaveDevice()
+    private void SaveSensor()
     {
-        MudDialog!.Close(DialogResult.Ok(device));
+        MudDialog!.Close(DialogResult.Ok(sensor));
     }
+
 }

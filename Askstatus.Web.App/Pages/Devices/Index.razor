@@ -25,7 +25,7 @@
         <PropertyColumn Property="x => x.DeviceId" Title="Device id" />
         <TemplateColumn Title="Channel type">
             <CellTemplate>
-                <MudIcon Icon="@ChanelTypeToIcon(context.Item.ChanelType)" Title="@context.Item.ChanelType.ToString()"></MudIcon>
+                <MudIcon Icon="@AskstatusIcons.ChanelTypeToIcon(context.Item.ChanelType)" Title="@context.Item.ChanelType.ToString()"></MudIcon>
             </CellTemplate>
         </TemplateColumn>
         <TemplateColumn CellClass="d-flex justify-end">

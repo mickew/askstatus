@@ -1,0 +1,45 @@
+﻿@page "/admin/sensors"
+@using System.Globalization
+@attribute [Authorize(Permissions.ViewSensors | Permissions.ConfigureSensors)]
+
+<PageTitle>Askstatus - Sensors</PageTitle>
+<div>
+    <MudChip T="string" Label="true" Color="Color.Info" Icon="@Icons.Material.Filled.Sensors">Sensors</MudChip>
+    <MudText>@(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture))</MudText>
+</div>
+<FlexibleAuthorizeView Permissions="@Permissions.ConfigureSensors">
+    <Authorized>
+        @{
+            UserGotNoRights = false;
+        }
+    </Authorized>
+    <NotAuthorized>
+        @{
+            UserGotNoRights = true;
+        }
+    </NotAuthorized>
+</FlexibleAuthorizeView>
+<MudDataGrid Items="@Sensors">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+        <TemplateColumn Title="Type">
+            <CellTemplate>
+                <MudIcon Icon="@AskstatusIcons.SensorTypeToIcon(context.Item.SensorType)" Title="@context.Item.SensorType.ToString()"></MudIcon>
+            </CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="x => x.FormatString" Title="Format" />
+        <PropertyColumn Property="x => x.SensorName" Title="Sensor Id" />
+        <PropertyColumn Property="x => x.ValueName" Title="Value Id" />
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.Edit" @onclick="() => EditSensor(context.Item)" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">Edit</MudButton>
+                    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.Delete" @onclick="() => DeleteSensor(context.Item)" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Warning">Delete</MudButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+<div class="d-flex flex-wrap mt-4 justify-end gap-3">
+    <MudButton Disabled=@UserGotNoRights StartIcon="@Icons.Material.Filled.Bathroom" @onclick="() => DiscoverSensor()" Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Success">Discover Sensors</MudButton>
+</div>
