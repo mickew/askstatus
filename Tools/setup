@@ -56,9 +56,14 @@ function install {
         # create database folder
         mkdir -p /usr/share/$db_dir
         sudo chmod 777 /usr/share/$db_dir
+        # create CredentialCacheFolder folder
+        mkdir -p /usr/share/$db_dir/CredentialCacheFolder
+        chown www-data:www-data /usr/share/CredentialCacheFolder
         cd $install_dir/
         $install_dir/$app --seed
         cd ${BASEDIR}
+        chown www-data:www-data /usr/share/$db_dir/askstatus.db
+        chmod 644 /usr/share/$db_dir/askstatus.db
 
         if [[ $service != "" ]]; then
             systemctl enable $service
