@@ -36,7 +36,7 @@ public sealed class DbInitializer
         {
             Name = UserRole,
             NormalizedName = UserRole.ToUpper(),
-            Permissions = Permissions.ViewRoles
+            Permissions = Permissions.None
         };
 
         if (!await _context.Roles.AnyAsync())
