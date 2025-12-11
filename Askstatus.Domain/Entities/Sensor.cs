@@ -10,5 +10,6 @@ public class Sensor
     public string FormatString { get; set; } = null!;
 
     public string SensorName { get; set; } = null!;
+    public string SensorModel { get; set; } = null!;
     public string ValueName { get; set; } = null!;
 }

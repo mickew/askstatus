@@ -20,6 +20,7 @@ namespace Askstatus.Infrastructure.Data.Migrations
                     SensorType = table.Column<int>(type: "INTEGER", nullable: false),
                     FormatString = table.Column<string>(type: "TEXT", nullable: false),
                     SensorName = table.Column<string>(type: "TEXT", nullable: false),
+                    SensorModel = table.Column<string>(type: "TEXT", nullable: false),
                     ValueName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>

@@ -27,20 +27,21 @@ public class CreateSensorCommandHandlerTests
         Name = "TestSensor",
         SensorType = SensorType.Temperature,
         SensorName = "TS-01",
+        SensorModel = "ModelX",
         ValueName = "Value1"
     };
 
     [Fact]
     public async Task Handle_ShouldReturnOk_WhenSensorCreatedSuccessfully()
     {
-        var sensor = new Sensor { Id = 1, Name = "TestSensor", SensorType = SensorType.Temperature, FormatString = "°C", SensorName = "TS-01", ValueName = "Value1" };
+        var sensor = new Sensor { Id = 1, Name = "TestSensor", SensorType = SensorType.Temperature, FormatString = "°C", SensorName = "TS-01", SensorModel = "ModelX", ValueName = "Value1" };
         _sensorRepoMock.Setup(r => r.AddAsync(It.IsAny<Sensor>())).ReturnsAsync(sensor);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(new SensorDto(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.SensorName, sensor.ValueName));
+        result.Value.Should().BeEquivalentTo(new SensorDto(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.SensorName, sensor.SensorModel, sensor.ValueName));
     }
 
     [Fact]

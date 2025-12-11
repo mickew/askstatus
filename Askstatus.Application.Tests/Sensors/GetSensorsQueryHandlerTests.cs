@@ -15,8 +15,8 @@ namespace Askstatus.Application.Tests.Sensors
             // Arrange
             var sensors = new List<Sensor>
             {
-                new Sensor { Id = 1, Name = "TempSensor", SensorType = SensorType.Temperature, FormatString = "°C", SensorName = "TS1", ValueName = "Value1" },
-                new Sensor { Id = 2, Name = "HumSensor", SensorType = SensorType.Humidity, FormatString = "%", SensorName = "HS1", ValueName = "Value2" }
+                new Sensor { Id = 1, Name = "TempSensor", SensorType = SensorType.Temperature, FormatString = "°C", SensorName = "TS1", SensorModel = "ModelX", ValueName = "Value1" },
+                new Sensor { Id = 2, Name = "HumSensor", SensorType = SensorType.Humidity, FormatString = "%", SensorName = "HS1", SensorModel = "ModelY", ValueName = "Value2" }
             };
 
             var sensorRepoMock = new Mock<IRepository<Sensor>>();
@@ -39,6 +39,7 @@ namespace Askstatus.Application.Tests.Sensors
             result.Value.First().SensorType.Should().Be(SensorType.Temperature);
             result.Value.First().FormatString.Should().Be("°C");
             result.Value.First().SensorName.Should().Be("TS1");
+            result.Value.First().SensorModel.Should().Be("ModelX");
             result.Value.First().ValueName.Should().Be("Value1");
         }
 

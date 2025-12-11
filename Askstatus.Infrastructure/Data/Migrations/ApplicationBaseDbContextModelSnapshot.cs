@@ -84,6 +84,10 @@ namespace Askstatus.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("SensorModel")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("SensorName")
                         .IsRequired()
                         .HasColumnType("TEXT");

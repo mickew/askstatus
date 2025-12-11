@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Askstatus.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251205130502_AddSensors")]
+    [Migration("20251211144400_AddSensors")]
     partial class AddSensors
     {
         /// <inheritdoc />
@@ -84,6 +84,10 @@ namespace Askstatus.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SensorModel")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

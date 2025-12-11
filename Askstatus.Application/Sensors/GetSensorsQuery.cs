@@ -18,6 +18,6 @@ public sealed class GetSensorsQueryHandler : IRequestHandler<GetSensorsQuery, Re
     public async Task<Result<IEnumerable<SensorDto>>> Handle(GetSensorsQuery request, CancellationToken cancellationToken)
     {
         var sensors = await _unitOfWork.SensorRepository.ListAllAsync();
-        return Result.Ok(sensors.Select(s => new SensorDto(s.Id, s.Name, s.SensorType, s.FormatString, s.SensorName, s.ValueName)));
+        return Result.Ok(sensors.Select(s => new SensorDto(s.Id, s.Name, s.SensorType, s.FormatString, s.SensorName, s.SensorModel, s.ValueName)));
     }
 }

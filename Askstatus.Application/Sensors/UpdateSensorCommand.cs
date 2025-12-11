@@ -13,6 +13,7 @@ public sealed record UpdateSensorCommand() : IRequest<Result>
     public SensorType SensorType { get; init; }
     public string? FormatString { get; init; }
     public string? SensorName { get; init; }
+    public string? SensorModel { get; init; }
     public string? ValueName { get; init; }
 }
 
@@ -36,6 +37,7 @@ public sealed class UpdateSensorCommandHandler : IRequestHandler<UpdateSensorCom
         sensor.Name = request.Name!;
         sensor.SensorType = request.SensorType;
         sensor.SensorName = request.SensorName!;
+        sensor.SensorModel = request.SensorModel!;
         sensor.ValueName = request.ValueName!;
         var result = await _unitOfWork.SensorRepository.UpdateAsync(sensor);
         if (!result)

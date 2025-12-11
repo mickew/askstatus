@@ -35,6 +35,7 @@ public class GetSensoreByIdQueryHandlerTests
             SensorType = SensorType.Temperature,
             FormatString = "°C",
             SensorName = "TempSensor",
+            SensorModel = "ModelX",
             ValueName = "Value1"
         };
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(sensor);
@@ -51,6 +52,7 @@ public class GetSensoreByIdQueryHandlerTests
         result.Value.SensorType.Should().Be(sensor.SensorType);
         result.Value.FormatString.Should().Be(sensor.FormatString);
         result.Value.SensorName.Should().Be(sensor.SensorName);
+        result.Value.SensorModel.Should().Be(sensor.SensorModel);
         result.Value.ValueName.Should().Be(sensor.ValueName);
     }
 
