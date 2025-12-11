@@ -38,10 +38,22 @@ journalctl -t askstatus-control --since today
 ```
 
 ### Databese migrations
-
-Add-Migration InitialCreate -OutputDir Data\Migrations
-
-Update-Database
+#### Create a new migration
+```
+Add-Migration migration_name -OutputDir Data\Migrations
+```
+#### Remove the last migration
+```
+Remove-Migration
+```
+#### Apply pending migrations
+```
+Update-Database -Args '--environment Development'
+```
+#### Apply specific migration or roll back to a previous migration
+```
+Update-Database migration_id -Args '--environment Development'
+```
 
 ## Setup Raspbery PI
 [Setup Raspbery PI for Askholmen Status System](Tools/RPISetup.md)
