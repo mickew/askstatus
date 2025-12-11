@@ -27,6 +27,11 @@
                 <MudNavLink Icon="@Icons.Material.Filled.Devices" Href="admin/devices" Match="NavLinkMatch.Prefix">Devices</MudNavLink>
             </MudTooltip>
         </FlexibleAuthorizeView>        
+        <FlexibleAuthorizeView Permissions="@(Permissions.ViewSensors | Permissions.ConfigureSensors)">
+            <MudTooltip Text="Ctrl+S" Inline="false" RootStyle="width:100%">
+                <MudNavLink Icon="@Icons.Material.Filled.Sensors" Href="admin/sensors" Match="NavLinkMatch.Prefix">Sensors</MudNavLink>
+            </MudTooltip>
+        </FlexibleAuthorizeView>
     </MudNavGroup>
     <FlexibleAuthorizeView Permissions="@(Permissions.System)">
         <MudNavGroup Icon="@Icons.Material.Filled.Build" Title="Tools">

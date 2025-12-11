@@ -12,7 +12,7 @@
             @foreach (Askstatus.Common.PowerDevice.ChanelType item in Enum.GetValues(typeof(Askstatus.Common.PowerDevice.ChanelType)))
             {
                 <MudSelectItem T="Askstatus.Common.PowerDevice.ChanelType" Value="@item">
-                    <MudIcon Icon="@ChanelTypeToIcon(item)"></MudIcon> @item.ToString()
+                    <MudIcon Icon="@AskstatusIcons.ChanelTypeToIcon(item)"></MudIcon> @item.ToString()
                 </MudSelectItem>
             }
         </MudSelect>
