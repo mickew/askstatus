@@ -22,6 +22,8 @@ public class ApplicationBaseDbContext<TPowerDevice> : IdentityDbContext<Applicat
 
     public DbSet<SystemLog> SystemLogs { get; set; }
 
+    public DbSet<Sensor> Sensors { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

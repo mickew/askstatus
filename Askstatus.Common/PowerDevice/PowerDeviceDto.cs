@@ -3,6 +3,7 @@ public class PowerDeviceDto
 {
     public PowerDeviceDto() : this(0, string.Empty, PowerDeviceTypes.Generic, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, 0, 0) { }
 
+    public PowerDeviceDto(PowerDeviceDto powerDeviceDto) : this(powerDeviceDto.Id, powerDeviceDto.Name, powerDeviceDto.DeviceType, powerDeviceDto.HostName, powerDeviceDto.DeviceName, powerDeviceDto.DeviceId, powerDeviceDto.DeviceMac, powerDeviceDto.DeviceModel, powerDeviceDto.Channel, powerDeviceDto.ChanelType) { }
     public PowerDeviceDto(int id, string name, PowerDeviceTypes deviceType, string hostName, string deviceName, string deviceId, string deviceMac, string deviceModel, int deviceGen, ChanelType chanelType)
     {
         Id = id;

@@ -18,7 +18,7 @@ namespace Askstatus.Infrastructure.Services;
 
 internal class MqttClientService : IMqttClientService
 {
-    private readonly ConcurrentDictionary<string, ShellieAnnounce> _shellieAnnounces = new ConcurrentDictionary<string, ShellieAnnounce>();
+    private readonly ConcurrentDictionary<string, ShellieAnnounce> _devices = new ConcurrentDictionary<string, ShellieAnnounce>();
     private readonly ConcurrentDictionary<string, DeviceSensor> _sensors = new ConcurrentDictionary<string, DeviceSensor>();
     private readonly ILogger<MqttClientService> _logger;
     private readonly IOptions<AskstatusApiSettings> _apiOptions;
@@ -46,12 +46,12 @@ internal class MqttClientService : IMqttClientService
 
     public async Task<IEnumerable<ShellieAnnounce>> GetShellieDevicesAsync()
     {
-        return await Task.FromResult(_shellieAnnounces.Select(x => x.Value).ToList());
+        return await Task.FromResult(_devices.Select(x => x.Value).ToList());
     }
 
     public async Task RefreshShellieDevicesAsync()
     {
-        _shellieAnnounces.Clear();
+        _devices.Clear();
         await PublishAsync();
     }
 
@@ -172,7 +172,7 @@ internal class MqttClientService : IMqttClientService
 
     private async Task ProcessInput(string id, string payload)
     {
-        ShellieAnnounce? theItem = _shellieAnnounces.Select(v => v.Value).FirstOrDefault(x => x.Id == id);
+        ShellieAnnounce? theItem = _devices.Select(v => v.Value).FirstOrDefault(x => x.Id == id);
         if (theItem != null)
         {
             try
@@ -201,22 +201,24 @@ internal class MqttClientService : IMqttClientService
             var sensor = _sensors[id];
             sensor.Values.RemoveAll(x => x.Name == value2);
             sensor.Values.Add(sensorValue);
-        }
-        else
-        {
-            _sensors.TryAdd(id, new DeviceSensor(id, new List<DeviceSensorValue>() { new DeviceSensorValue(value2, payload, DateTime.UtcNow) }));
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+                var result = await sender.Send(new UpdateSensorValueCommand(sensor.Name, sensorValue.Name, sensorValue.Value, sensorValue.LastUpdate));
+                return;
+            }
         }
         await Task.CompletedTask;
     }
 
     private async Task ProcessEth(string id, string payload)
     {
-        ShellieAnnounce? theItem = _shellieAnnounces.Select(v => v.Value).FirstOrDefault(x => x.Ip == null && x.Id == id);
+        ShellieAnnounce? theItem = _devices.Select(v => v.Value).FirstOrDefault(x => x.Ip == null && x.Id == id);
         if (theItem != null)
         {
             var eth = JsonSerializer.Deserialize<Eth>(payload);
             var newItem = theItem with { Ip = eth!.Ip };
-            _shellieAnnounces.TryUpdate(newItem.Id, newItem, theItem);
+            _devices.TryUpdate(newItem.Id, newItem, theItem);
         }
         await Task.CompletedTask;
     }
@@ -224,9 +226,14 @@ internal class MqttClientService : IMqttClientService
     private async Task ProcessAnnounce(string payload)
     {
         var shellieAnnounce = JsonSerializer.Deserialize<ShellieAnnounce>(payload);
-        if (shellieAnnounce != null && SuportedShellyPowerDevices.Devices.Contains(shellieAnnounce.Model) && !_shellieAnnounces.Any(x => x.Key == shellieAnnounce.Id))
+        if (shellieAnnounce != null && SuportedShellyPowerDevices.Devices.Contains(shellieAnnounce.Model) && !_devices.Any(x => x.Key == shellieAnnounce.Id))
         {
-            _shellieAnnounces.TryAdd(shellieAnnounce.Id, shellieAnnounce);
+            _devices.TryAdd(shellieAnnounce.Id, shellieAnnounce);
+        }
+        if (shellieAnnounce != null && SuportedShellySensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
+        {
+            var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
+            _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
         await Task.CompletedTask;
     }

@@ -1,0 +1,25 @@
+﻿<MudDialog DefaultFocus="DefaultFocus">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.SensorWindow" Class="mr-3 mb-n1" />
+            Edit Sensor!
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="@sensor.Name" Label="Name" />
+        <MudSelect T="Askstatus.Common.Sensor.SensorType" @bind-Value="sensor.SensorType" Label="Type">
+            @foreach (Askstatus.Common.Sensor.SensorType item in Enum.GetValues(typeof(Askstatus.Common.Sensor.SensorType)))
+            {
+                <MudSelectItem T="Askstatus.Common.Sensor.SensorType" Value="@item">
+                    <MudIcon Icon="@AskstatusIcons.SensorTypeToIcon(item)"></MudIcon> @item.ToString()
+                </MudSelectItem>
+            }
+        </MudSelect>
+        <MudTextField @bind-Value="@sensor.FormatString" Label="Format String" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Success" OnClick="SaveSensor">Save</MudButton>
+    </DialogActions>
+
+</MudDialog>

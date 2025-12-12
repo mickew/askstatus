@@ -1,0 +1,26 @@
+﻿@using System.Globalization
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Bathroom" Class="mr-3 mb-n1" />
+            @MudDialog!.Title
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudDataGrid T="Askstatus.Web.App.Pages.Sensors.Index.SensorInfoFlat" Items="@SensorInfos" SelectedItemChanged="@OnSelectedItemChanged">
+
+            <Columns>
+                <SelectColumn T="Askstatus.Web.App.Pages.Sensors.Index.SensorInfoFlat" />
+                <PropertyColumn Property="x => x.Id" Title="Id" Sortable="false" />
+                <PropertyColumn Property="x => x.Name" Title="Name" Sortable="false" />
+                <PropertyColumn Property="x => x.ValueName" Title="Value Name" Sortable="false" />
+                <PropertyColumn Property="x => x.Value" Title="Value" Sortable="false" />
+                <PropertyColumn Property="x => UtcToLocalTimeFormat(x.LastReading)" Sortable="false" />
+            </Columns>
+        </MudDataGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled="@_addDisabled" Color="Color.Primary" OnClick="Submit">Add</MudButton>
+    </DialogActions>
+</MudDialog>

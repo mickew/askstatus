@@ -2,10 +2,11 @@ using Askstatus.Application.DiscoverDevice;
 using Askstatus.Application.Errors;
 using Askstatus.Application.Interfaces;
 using Askstatus.Common.PowerDevice;
-using Askstatus.Domain.Entities;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+
+namespace Askstatus.Application.Tests;
 
 public class DiscoverDevicesQueryHandlerTests
 {
@@ -26,9 +27,9 @@ public class DiscoverDevicesQueryHandlerTests
     public async Task Handle_ShouldReturnDevices_WhenDevicesAreNotAssigned()
     {
         // Arrange
-        var assignedDevices = new List<PowerDevice>
+        var assignedDevices = new List<Askstatus.Domain.Entities.PowerDevice>
         {
-            new PowerDevice { DeviceId = "0" }
+            new Askstatus.Domain.Entities.PowerDevice { DeviceId = "0" }
         };
         var devices = new List<ShellieAnnounce>
         {
@@ -58,9 +59,9 @@ public class DiscoverDevicesQueryHandlerTests
     public async Task Handle_ShouldReturnEmpty_WhenAllDevicesAreAssigned()
     {
         // Arrange
-        var assignedDevices = new List<PowerDevice>
+        var assignedDevices = new List<Askstatus.Domain.Entities.PowerDevice>
         {
-            new PowerDevice { DeviceId = "Id1" }
+            new Askstatus.Domain.Entities.PowerDevice { DeviceId = "Id1" }
         };
         var devices = new List<ShellieAnnounce>
         {

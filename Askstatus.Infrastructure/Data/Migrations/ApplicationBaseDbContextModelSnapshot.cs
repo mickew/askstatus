@@ -15,7 +15,7 @@ namespace Askstatus.Infrastructure.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.12");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
 
             modelBuilder.Entity("Askstatus.Domain.Entities.PowerDevice", b =>
                 {
@@ -68,6 +68,43 @@ namespace Askstatus.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("PowerDevices");
+                });
+
+            modelBuilder.Entity("Askstatus.Domain.Entities.Sensor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FormatString")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SensorModel")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SensorName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SensorType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ValueName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SensorName", "ValueName")
+                        .IsUnique();
+
+                    b.ToTable("Sensors");
                 });
 
             modelBuilder.Entity("Askstatus.Domain.Entities.SystemLog", b =>

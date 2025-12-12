@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Askstatus.Common.PowerDevice;
+using Askstatus.Common.Sensor;
 
 namespace Askstatus.Web.App.Layout;
 
@@ -19,4 +20,43 @@ public static class AskstatusIcons
     public const string GenericOn = "<svg style=\"width:24px;height:24px\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M16,7V3H14V7H10V3H8V7H8C7,7 6,8 6,9V14.5L9.5,18V21H14.5V18L18,14.5V9C18,8 17,7 16,7Z\"/></svg>";
 
     public const string GenericOff = "<svg style=\"width:24px;height:24px\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M20.84 22.73L15.31 17.2L14.5 18V21H9.5V18L6 14.5V9C6 8.7 6.1 8.41 6.25 8.14L1.11 3L2.39 1.73L22.11 21.46L20.84 22.73M18 14.5V9C18 8 17 7 16 7V3H14V7H10.2L17.85 14.65L18 14.5M10 3H8V4.8L10 6.8V3Z\"/></svg>";
+
+    public const string Thermometer = "<svg style=\"width:24px;height:24px\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M15 13V5A3 3 0 0 0 9 5V13A5 5 0 1 0 15 13M12 4A1 1 0 0 1 13 5V8H11V5A1 1 0 0 1 12 4Z\"/></svg>";
+
+    public const string Humidity = "<svg style=\"width:24px;height:24px\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M12,3.25C12,3.25 6,10 6,14C6,17.32 8.69,20 12,20A6,6 0 0,0 18,14C18,10 12,3.25 12,3.25M14.47,9.97L15.53,11.03L9.53,17.03L8.47,15.97M9.75,10A1.25,1.25 0 0,1 11,11.25A1.25,1.25 0 0,1 9.75,12.5A1.25,1.25 0 0,1 8.5,11.25A1.25,1.25 0 0,1 9.75,10M14.25,14.5A1.25,1.25 0 0,1 15.5,15.75A1.25,1.25 0 0,1 14.25,17A1.25,1.25 0 0,1 13,15.75A1.25,1.25 0 0,1 14.25,14.5Z\"/></svg>";
+
+    public const string Unknown = "<svg style=\"width:24px;height:24px\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M21.86 12.5C21.1 11.63 20.15 11.13 19 11C19 9.05 18.32 7.4 16.96 6.04C15.6 4.68 13.95 4 12 4C10.42 4 9 4.47 7.75 5.43S5.67 7.62 5.25 9.15C4 9.43 2.96 10.08 2.17 11.1S1 13.28 1 14.58C1 16.09 1.54 17.38 2.61 18.43C3.69 19.5 5 20 6.5 20H18.5C19.75 20 20.81 19.56 21.69 18.69C22.56 17.81 23 16.75 23 15.5C23 14.35 22.62 13.35 21.86 12.5M13 17H11V15H13V17M14.8 11.82C14.5 12.21 14.13 12.5 13.67 12.75C13.41 12.91 13.24 13.07 13.15 13.26C13.06 13.45 13 13.69 13 14H11C11 13.45 11.11 13.08 11.3 12.82C11.5 12.56 11.85 12.25 12.37 11.91C12.63 11.75 12.84 11.56 13 11.32C13.15 11.09 13.23 10.81 13.23 10.5C13.23 10.18 13.14 9.94 12.96 9.76C12.78 9.56 12.5 9.47 12.2 9.47C11.93 9.47 11.71 9.55 11.5 9.7C11.35 9.85 11.25 10.08 11.25 10.39H9.28C9.23 9.64 9.5 9 10.06 8.59C10.6 8.2 11.31 8 12.2 8C13.14 8 13.89 8.23 14.43 8.68S15.24 9.75 15.24 10.5C15.24 11 15.09 11.41 14.8 11.82Z\"/></svg>";
+
+
+    public static string SensorTypeToIcon(SensorType sensorType)
+    {
+        return sensorType switch
+        {
+            SensorType.Temperature => AskstatusIcons.Thermometer,
+            SensorType.Humidity => AskstatusIcons.Humidity,
+            _ => AskstatusIcons.Unknown,
+        };
+    }
+
+    public static string ChanelTypeToIcon(ChanelType chanelType)
+    {
+        return chanelType switch
+        {
+            ChanelType.Relay => RelayOn,
+            ChanelType.Heat => HeatOn,
+            ChanelType.Bulb => BulbOn,
+            _ => GenericOn,
+        };
+    }
+
+    public static string ChanelTypeStateToIcon(ChanelType chanelType, bool state)
+    {
+        return chanelType switch
+        {
+            ChanelType.Relay => state ? RelayOn : RelayOff,
+            ChanelType.Heat => state ? HeatOn : HeatOff,
+            ChanelType.Bulb => state ? BulbOn : BulbOff,
+            _ => state ? GenericOn : GenericOff,
+        };
+    }
 }

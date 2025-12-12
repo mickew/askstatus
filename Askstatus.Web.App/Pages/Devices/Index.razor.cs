@@ -1,7 +1,6 @@
 ﻿using Askstatus.Common.Models;
 using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
-using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -42,7 +41,8 @@ public partial class Index
 
     private async Task EditDevice(PowerDeviceDto device)
     {
-        var parameters = new DialogParameters<EditDeviceDialog> { { x => x.device, device } };
+        var deviceCopy = new PowerDeviceDto(device);
+        var parameters = new DialogParameters<EditDeviceDialog> { { x => x.device, deviceCopy } };
 
         var dialog = await DialogService.ShowAsync<EditDeviceDialog>("Edit Device", parameters);
         var result = await dialog.Result;
@@ -51,8 +51,8 @@ public partial class Index
         {
             if (result.Data is PowerDeviceDto)
             {
-                device = ((PowerDeviceDto)result.Data);
-                PowerDeviceRequest powerDeviceRequest = new(device.Id, device.Name, device.DeviceType, device.HostName, device.DeviceName, device.DeviceId, device.DeviceMac, device.DeviceModel, device.Channel, device.ChanelType);
+                deviceCopy = ((PowerDeviceDto)result.Data);
+                PowerDeviceRequest powerDeviceRequest = new(deviceCopy.Id, deviceCopy.Name, deviceCopy.DeviceType, deviceCopy.HostName, deviceCopy.DeviceName, deviceCopy.DeviceId, deviceCopy.DeviceMac, deviceCopy.DeviceModel, deviceCopy.Channel, deviceCopy.ChanelType);
                 var res = await ApiService.PowerDeviceAPI.UpdatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {
@@ -60,7 +60,10 @@ public partial class Index
                     Snackbar.Add(res.Error.Content!, Severity.Error);
                     return;
                 }
+                device.Name = deviceCopy.Name;
+                device.ChanelType = deviceCopy.ChanelType;
                 Snackbar.Add($"Device {device.Name} updated", Severity.Success);
+                StateHasChanged();
             }
         }
     }
@@ -170,24 +173,6 @@ public partial class Index
                 PowerDevices.Add(res.Content!);
                 Snackbar.Add($"Device {res.Content!.Name} added", Severity.Success);
             }
-        }
-    }
-
-    private string ChanelTypeToIcon(ChanelType chanelType)
-    {
-        switch
-            (chanelType)
-        {
-            case ChanelType.Generic:
-                return AskstatusIcons.GenericOn;
-            case ChanelType.Relay:
-                return AskstatusIcons.RelayOn;
-            case ChanelType.Heat:
-                return AskstatusIcons.HeatOn;
-            case ChanelType.Bulb:
-                return AskstatusIcons.BulbOn;
-            default:
-                return AskstatusIcons.GenericOn;
         }
     }
 }

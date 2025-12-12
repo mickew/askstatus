@@ -12,6 +12,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MQTTnet;
 using Testcontainers.Papercut;
 
 namespace Askstatus.Web.API.Tests;
@@ -39,6 +40,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public int PowerDeviceId { get; private set; }
 
     public int SystemLogId { get; private set; }
+
+    public int SensorId { get; private set; }
 
     public string? TemporaryDirectory { get; private set; }
 
@@ -89,6 +92,24 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         return Task.CompletedTask;
     }
 
+    public Task SendMqttMessage(string topic, string payload)
+    {
+        var options = new MqttClientOptionsBuilder()
+            .WithTcpServer(MosquitoContainer.Hostname, MosquitoContainer.GetMappedPublicPort(1883))
+            .WithClientId("TestClient")
+            .Build();
+        var mqttClient = new MqttClientFactory().CreateMqttClient();
+        return mqttClient.ConnectAsync(options).ContinueWith(async t =>
+        {
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic(topic)
+                .WithPayload(payload)
+                .Build();
+            await mqttClient.PublishAsync(message);
+            await mqttClient.DisconnectAsync();
+        }).Unwrap();
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         base.ConfigureWebHost(builder);
@@ -120,7 +141,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                 if (config is IConfigurationRoot root)
                 {
                     root["MailSettings:Host"] = PapercutContainer.Hostname;
-                    root["MailSettings:Port"] = PapercutContainer.GetMappedPublicPort(25).ToString();
+                    root["MailSettings:Port"] = PapercutContainer.GetMappedPublicPort(2525).ToString();
                     root["MailSettings:CredentialCacheFolder"] = TemporaryDirectory;
                     root["AskstatusSettings:MQTTPort"] = MosquitoContainer.GetMappedPublicPort(1883).ToString(); ;
                     root.Reload();
@@ -147,6 +168,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         context.Roles.RemoveRange(context.Roles);
         context.PowerDevices.RemoveRange(context.PowerDevices);
         context.SystemLogs.RemoveRange(context.SystemLogs);
+        context.Sensors.RemoveRange(context.Sensors);
         context.SaveChanges();
     }
 
@@ -256,6 +278,21 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             context.SystemLogs.Add(systemLog);
         }
 
+        var sensor = new Domain.Entities.Sensor()
+        {
+            Name = "Test Sensor",
+            SensorType = Common.Sensor.SensorType.Temperature,
+            FormatString = "{0} °C",
+            SensorName = "shellyht-CC2D5C",
+            SensorModel = "SHHT-1",
+            ValueName = "temperature",
+        };
+
+        if (!context.Sensors.Any())
+        {
+            context.Sensors.Add(sensor);
+        }
+
         context.SaveChanges();
         AdministratorsRoleId = adminRole.Id;
         UserRoleId = userRole.Id;
@@ -264,5 +301,6 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
         PowerDeviceId = testPowerDevice.Id;
         SystemLogId = systemLog.Id;
+        SensorId = sensor.Id;
     }
 }

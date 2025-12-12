@@ -1,8 +1,9 @@
 ﻿@page "/"
+@using System.Globalization
 @attribute [Authorize]
 
 <PageTitle>Askstatus - Dashboard</PageTitle>
-<FlexibleAuthorizeView Permissions="@Permissions.ConfigurePowerDevices">
+<FlexibleAuthorizeView Permissions="@(Permissions.ConfigurePowerDevices | Permissions.ViewSensors)">
     <Authorized>
         @{
             UserGotNoRights = false;
@@ -16,7 +17,7 @@
 </FlexibleAuthorizeView>
 <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
     <MudGrid>
-        <MudItem xs="12" sm="6" md="6">
+        <MudItem xs="12" sm="6" md="4">
             <MudCard>
                 <MudCardHeader>
                     <CardHeaderContent>
@@ -41,7 +42,7 @@
                                 <MudPaper Elevation="2" Class="pa-4" >
                                     @{
                                         Color stateColor = device.IsOnline ? device.State ? Color.Success : Color.Warning : Color.Error;
-                                        string stateIcon = ChanelTypeToIcon(device.ChanelType, device.State);
+                                        string stateIcon = AskstatusIcons.ChanelTypeStateToIcon(device.ChanelType, device.State);
                                         bool prossesing = device.Prosessing;
                                     }
                                     <MudTooltip Text="@(device.IsOnline ? device.State ? "Click to turn off" : "Click to turn on" : "Offline")">
@@ -57,20 +58,47 @@
             </MudCard>
         </MudItem>
 
-        <MudItem xs="12" sm="6" md="6">
+        <MudItem xs="12" sm="6" md="8">
             <MudCard>
                 <MudCardHeader>
                     <CardHeaderContent>
                         <MudText Typo="Typo.h6">Sensors</MudText>
                     </CardHeaderContent>
                     <CardHeaderActions>
-                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="@HubIsConnectedColor" />
+                        @if (UserGotNoRights)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Sensors" Color="@HubIsConnectedColor" />
+                        }
+                        else
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Sensors" Href="admin/sensors" Color="@HubIsConnectedColor" />
+                        }
                     </CardHeaderActions>
                 </MudCardHeader>
-
-                <MudCardContent>
-                    <MudPaper Elevation="2" Class="pa-4" Style="height: 50px;"></MudPaper>
-                </MudCardContent>
+                @foreach (var sensor in GroupedSensors)
+                {
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem>
+                                <MudText>@sensor.Key</MudText>
+                                <MudStack Row="true" Wrap="Wrap.Wrap">
+                                    @foreach (var sensorValue in sensor)
+                                {
+                                    <MudPaper Elevation="2" Class="pa-4">
+                                        @{
+                                            string sensorIcon = AskstatusIcons.SensorTypeToIcon(sensorValue.SensorType);
+                                            Color sensorColor = DateTime.UtcNow - sensorValue.LastUpdate < TimeSpan.FromMinutes(SensorLastUpdateTimeSpanMinutes) ? Color.Success : Color.Warning;
+                                        }
+                                        <MudTooltip Text="@GetSensorToolTip(sensorValue)">
+                                            <MudChip T="string" Variant="Variant.Outlined" Icon="@sensorIcon" Color="@sensorColor"><span>@sensorValue.Value</span></MudChip>
+                                        </MudTooltip>
+                                    </MudPaper>
+                                }
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                }
             </MudCard>
         </MudItem>
     </MudGrid>

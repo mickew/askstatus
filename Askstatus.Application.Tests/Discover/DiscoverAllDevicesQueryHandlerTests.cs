@@ -6,6 +6,8 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
+namespace Askstatus.Application.Tests;
+
 public class DiscoverAllDevicesQueryHandlerTests
 {
     private readonly Mock<ILogger<DiscoverAllDevicesQueryHandler>> _loggerMock;

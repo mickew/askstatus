@@ -1,6 +1,7 @@
-﻿using Askstatus.Common.PowerDevice;
+﻿using System.Globalization;
+using Askstatus.Common.PowerDevice;
+using Askstatus.Common.Sensor;
 using Askstatus.Sdk;
-using Askstatus.Web.App.Layout;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
@@ -27,7 +28,13 @@ public partial class Home : IAsyncDisposable
 
     public List<Device> Devices { get; set; } = new List<Device>();
 
+    public List<Sensor> Sensors { get; set; } = new List<Sensor>();
+
+    public List<IGrouping<String, Sensor>> GroupedSensors => [.. Sensors.GroupBy(n => n.Name!)];
+
     protected bool UserGotNoRights { get; set; } = true;
+
+    private const int SensorLastUpdateTimeSpanMinutes = 30;
 
     private HubConnection? _hubConnection;
 
@@ -43,19 +50,34 @@ public partial class Home : IAsyncDisposable
             .WithAutomaticReconnect()
             .Build();
 
-        var response = await ApiService.PowerDeviceAPI.GetPowerDevices();
-        if (!response.IsSuccessStatusCode)
+        var DeviceResponse = await ApiService.PowerDeviceAPI.GetPowerDevices();
+        if (!DeviceResponse.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(DeviceResponse.Error, DeviceResponse.Error.Content);
+            Snackbar.Add(DeviceResponse.Error.Content!, Severity.Error);
         }
-        Devices = response.Content!.Select(x => new Device
+        Devices = DeviceResponse.Content!.Select(x => new Device
         {
             Id = x.Id,
             Mac = x.DeviceMac,
             Name = x.Name,
             IsOnline = false,
             ChanelType = x.ChanelType,
+        }).ToList();
+
+        var senorResponse = await ApiService.SensorAPI.GetSensors();
+        if (!senorResponse.IsSuccessStatusCode)
+        {
+            Logger.LogError(senorResponse.Error, senorResponse.Error.Content);
+            Snackbar.Add(senorResponse.Error.Content!, Severity.Error);
+        }
+        Sensors = senorResponse.Content!.Select(x => new Sensor
+        {
+            Id = x.Id,
+            Name = x.Name,
+            SensorType = x.SensorType,
+            Value = "N/A",
+            LastUpdate = DateTime.MinValue,
         }).ToList();
 
         StateHasChanged();
@@ -98,6 +120,18 @@ public partial class Home : IAsyncDisposable
                 StateHasChanged();
             }
         });
+        _hubConnection.On<int, string, DateTime>("SensorValueChanged", (id, value, timeStamp) =>
+        {
+            Logger.LogInformation("SensorValueChanged received");
+            var sensorToUpdate = Sensors.FirstOrDefault(s => s.Id == id);
+            if (sensorToUpdate != null)
+            {
+                sensorToUpdate.Value = value;
+                sensorToUpdate.LastUpdate = timeStamp;
+                Snackbar.Add($"{sensorToUpdate.Name} value updated to {value}!", Severity.Info);
+                StateHasChanged();
+            }
+        });
         try
         {
             HubIsConnected = await ConnectWithRetryAsync(_hubConnection, CancellationToken.None);
@@ -118,6 +152,15 @@ public partial class Home : IAsyncDisposable
             }));
         }
         await Task.WhenAll(onlineTasks);
+        var sensorTasks = new List<Task>();
+        foreach (var sensor in Sensors)
+        {
+            sensorTasks.Add(Task.Run(async () =>
+            {
+                await GetSensoValue(sensor);
+            }));
+        }
+        await Task.WhenAll(sensorTasks);
         StateHasChanged();
     }
 
@@ -177,24 +220,6 @@ public partial class Home : IAsyncDisposable
 
     private static string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
 
-    private static string ChanelTypeToIcon(ChanelType chanelType, bool state)
-    {
-        switch
-            (chanelType)
-        {
-            case ChanelType.Generic:
-                return state ? AskstatusIcons.GenericOn : AskstatusIcons.GenericOff;
-            case ChanelType.Relay:
-                return state ? AskstatusIcons.RelayOn : AskstatusIcons.RelayOff;
-            case ChanelType.Heat:
-                return state ? AskstatusIcons.HeatOn : AskstatusIcons.HeatOff;
-            case ChanelType.Bulb:
-                return state ? AskstatusIcons.BulbOn : AskstatusIcons.BulbOff;
-            default:
-                return state ? AskstatusIcons.GenericOn : AskstatusIcons.GenericOff;
-        }
-    }
-
     private async Task GetIsOnline(Device device)
     {
         var response = await ApiService.PowerDeviceAPI.GetPowerDeviceStatus(device.Id);
@@ -208,6 +233,25 @@ public partial class Home : IAsyncDisposable
         device.IsOnline = true;
         device.State = response.Content!;
     }
+
+    private async Task GetSensoValue(Sensor sensor)
+    {
+        var response = await ApiService.SensorAPI.GetSensorValue(sensor.Id);
+        if (!response.IsSuccessStatusCode)
+        {
+            Logger.LogError(response.Error, response.Error.Content);
+            Snackbar.Add($"{sensor.Name} value could not be retrieved", Severity.Error);
+            sensor.Value = "N/A";
+            return;
+        }
+        sensor.Value = response.Content!.Value;
+        sensor.LastUpdate = response.Content.LastUpdate;
+    }
+
+    private string GetSensorToolTip(Sensor sensor)
+    {
+        return $"{sensor.SensorType} updated at {sensor.LastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}";
+    }
 }
 
 public class Device
@@ -219,4 +263,13 @@ public class Device
     public bool Prosessing { get; set; }
     public bool IsOnline { get; set; }
     public ChanelType ChanelType { get; set; }
+}
+
+public class Sensor
+{
+    public int Id { get; init; }
+    public string? Name { get; init; }
+    public SensorType SensorType { get; init; }
+    public string? Value { get; set; }
+    public DateTime LastUpdate { get; set; }
 }
