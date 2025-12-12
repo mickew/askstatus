@@ -94,6 +94,7 @@ public class PowerDeviceTests
     {
         // Arrange
         _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
 
         // Act
         var response = await _powerDeviceAPI.GetPowerDevices();
@@ -124,6 +125,7 @@ public class PowerDeviceTests
     {
         // Arrange
         _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         // Act
@@ -195,6 +197,7 @@ public class PowerDeviceTests
     {
         // Arrange
         _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         var powerDeviceRequest = new PowerDeviceRequest
         (
@@ -281,6 +284,7 @@ public class PowerDeviceTests
     {
         // Arrange
         _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         var powerDeviceRequest = new PowerDeviceRequest
         (
@@ -411,6 +415,7 @@ public class PowerDeviceTests
     {
         // Arrange
         _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         // Act
