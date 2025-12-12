@@ -2,6 +2,7 @@
 public sealed class SensorDto
 {
     public SensorDto() : this(0, string.Empty, SensorType.Unknown, string.Empty, string.Empty, string.Empty, string.Empty) { }
+    public SensorDto(SensorDto sensorDto) : this(sensorDto.Id, sensorDto.Name, sensorDto.SensorType, sensorDto.FormatString, sensorDto.SensorName, sensorDto.SensorModel, sensorDto.ValueName) { }
     public SensorDto(int id, string name, SensorType type, string formatString, string sensorName, string sensorModel, string valueName)
     {
         Id = id;
