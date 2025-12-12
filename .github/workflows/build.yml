@@ -28,7 +28,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal --logger "junit;LogFileName=../../TestResults/{assembly}.results.xml"
+      run: dotnet test --no-build --verbosity normal --logger "junit;LogFileName=../../TestResults/{assembly}.results.xml" -maxCpuCount:1
 
     - name: Test Report
       uses: dorny/test-reporter@v1
