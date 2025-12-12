@@ -50,7 +50,7 @@ public partial class Index
             if (result.Data is SensorDto)
             {
                 sensor = ((SensorDto)result.Data);
-                SensorRequest sensorRequest = new(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.Name, sensor.SensorModel, sensor.ValueName);
+                SensorRequest sensorRequest = new(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.SensorName, sensor.SensorModel, sensor.ValueName);
                 var res = await ApiService.SensorAPI.UpdateSensor(sensorRequest);
                 if (!res.IsSuccessStatusCode)
                 {

@@ -1,4 +1,5 @@
-﻿using Askstatus.Common.PowerDevice;
+﻿using System.Globalization;
+using Askstatus.Common.PowerDevice;
 using Askstatus.Common.Sensor;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
@@ -29,7 +30,11 @@ public partial class Home : IAsyncDisposable
 
     public List<Sensor> Sensors { get; set; } = new List<Sensor>();
 
+    public List<IGrouping<String, Sensor>> GroupedSensors => [.. Sensors.GroupBy(n => n.Name!)];
+
     protected bool UserGotNoRights { get; set; } = true;
+
+    private const int SensorLastUpdateTimeSpanMinutes = 30;
 
     private HubConnection? _hubConnection;
 
@@ -112,6 +117,18 @@ public partial class Home : IAsyncDisposable
                 deviceToUpdate.IsOnline = true;
                 deviceToUpdate.State = onoff;
                 Snackbar.Add($"{deviceToUpdate.Name} turned {BooleanToOnOff(onoff)}!", Severity.Success);
+                StateHasChanged();
+            }
+        });
+        _hubConnection.On<int, string, DateTime>("SensorValueChanged", (id, value, timeStamp) =>
+        {
+            Logger.LogInformation("SensorValueChanged received");
+            var sensorToUpdate = Sensors.FirstOrDefault(s => s.Id == id);
+            if (sensorToUpdate != null)
+            {
+                sensorToUpdate.Value = value;
+                sensorToUpdate.LastUpdate = timeStamp;
+                Snackbar.Add($"{sensorToUpdate.Name} value updated to {value}!", Severity.Info);
                 StateHasChanged();
             }
         });
@@ -229,6 +246,11 @@ public partial class Home : IAsyncDisposable
         }
         sensor.Value = response.Content!.Value;
         sensor.LastUpdate = response.Content.LastUpdate;
+    }
+
+    private string GetSensorToolTip(Sensor sensor)
+    {
+        return $"{sensor.SensorType} updated at {sensor.LastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}";
     }
 }
 

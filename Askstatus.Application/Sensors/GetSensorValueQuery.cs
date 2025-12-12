@@ -39,10 +39,15 @@ public sealed class GetSensorValueQueryHandler : IRequestHandler<GetSensorValueQ
 
             if (sensorValue is null)
             {
-                _logger.LogWarning("Sensor value {SensorValue} for sensor {SensorName} not found", sensor.ValueName, sensor.SensorName);
+                _logger.LogDebug("Sensor value {SensorValue} for sensor {SensorName} not found", sensor.ValueName, sensor.SensorName);
                 return Result.Fail<SensorValue>(new NotFoundError("Sensor value not found"));
             }
-            return Result.Ok(new SensorValue(sensorValue.Name, sensorValue.Value, sensorValue.LastUpdate));
+            var formatedValue = sensorValue.Value;
+            if (!string.IsNullOrEmpty(sensor.FormatString))
+            {
+                formatedValue = string.Format(sensor.FormatString, sensorValue.Value);
+            }
+            return Result.Ok(new SensorValue(sensorValue.Name, formatedValue, sensorValue.LastUpdate));
 
         }
         catch (Exception ex)

@@ -37,6 +37,7 @@ public sealed class UpdateSensorCommandHandler : IRequestHandler<UpdateSensorCom
         sensor.Name = request.Name!;
         sensor.SensorType = request.SensorType;
         sensor.SensorName = request.SensorName!;
+        sensor.FormatString = request.FormatString!;
         sensor.SensorModel = request.SensorModel!;
         sensor.ValueName = request.ValueName!;
         var result = await _unitOfWork.SensorRepository.UpdateAsync(sensor);

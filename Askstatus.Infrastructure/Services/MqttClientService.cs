@@ -201,11 +201,13 @@ internal class MqttClientService : IMqttClientService
             var sensor = _sensors[id];
             sensor.Values.RemoveAll(x => x.Name == value2);
             sensor.Values.Add(sensorValue);
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+                var result = await sender.Send(new UpdateSensorValueCommand(sensor.Name, sensorValue.Name, sensorValue.Value, sensorValue.LastUpdate));
+                return;
+            }
         }
-        //else
-        //{
-        //    _sensors.TryAdd(id, new DeviceSensor(id, new List<DeviceSensorValue>() { new DeviceSensorValue(value2, payload, DateTime.UtcNow) }));
-        //}
         await Task.CompletedTask;
     }
 

@@ -17,7 +17,7 @@
 </FlexibleAuthorizeView>
 <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
     <MudGrid>
-        <MudItem xs="12" sm="6" md="6">
+        <MudItem xs="12" sm="6" md="4">
             <MudCard>
                 <MudCardHeader>
                     <CardHeaderContent>
@@ -58,7 +58,7 @@
             </MudCard>
         </MudItem>
 
-        <MudItem xs="12" sm="6" md="6">
+        <MudItem xs="12" sm="6" md="8">
             <MudCard>
                 <MudCardHeader>
                     <CardHeaderContent>
@@ -75,20 +75,26 @@
                         }
                     </CardHeaderActions>
                 </MudCardHeader>
-                @foreach (var sensor in Sensors)
+                @foreach (var sensor in GroupedSensors)
                 {
                     <MudCardContent>
                         <MudGrid>
-                            <MudItem Style="width: 100%">
-                                <MudPaper Elevation="2" Class="pa-4" >
-                                    @{
-                                        string sensorIcon = AskstatusIcons.SensorTypeToIcon(sensor.SensorType);
-                                    }
-                                    <MudChip T="string" Icon="@sensorIcon" />
-                                    <MudTooltip Text="@sensor.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)">
-                                        <MudChip T="string" Variant="Variant.Outlined" Color="Color.Info"><span>@sensor.Name | @sensor.Value</span></MudChip>
-                                    </MudTooltip>
-                                </MudPaper>
+                            <MudItem>
+                                <MudText>@sensor.Key</MudText>
+                                <MudStack Row="true" Wrap="Wrap.Wrap">
+                                    @foreach (var sensorValue in sensor)
+                                {
+                                    <MudPaper Elevation="2" Class="pa-4">
+                                        @{
+                                            string sensorIcon = AskstatusIcons.SensorTypeToIcon(sensorValue.SensorType);
+                                            Color sensorColor = DateTime.UtcNow - sensorValue.LastUpdate < TimeSpan.FromMinutes(SensorLastUpdateTimeSpanMinutes) ? Color.Success : Color.Warning;
+                                        }
+                                        <MudTooltip Text="@GetSensorToolTip(sensorValue)">
+                                            <MudChip T="string" Variant="Variant.Outlined" Icon="@sensorIcon" Color="@sensorColor"><span>@sensorValue.Value</span></MudChip>
+                                        </MudTooltip>
+                                    </MudPaper>
+                                }
+                                </MudStack>
                             </MudItem>
                         </MudGrid>
                     </MudCardContent>
