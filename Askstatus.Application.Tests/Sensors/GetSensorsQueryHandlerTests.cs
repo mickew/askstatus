@@ -5,7 +5,7 @@ using Askstatus.Domain.Entities;
 using FluentAssertions;
 using Moq;
 
-namespace Askstatus.Application.Tests.Sensors
+namespace Askstatus.Application.Tests
 {
     public class GetSensorsQueryHandlerTests
     {

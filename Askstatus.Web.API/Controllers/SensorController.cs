@@ -93,11 +93,11 @@ public class SensorController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
-    //TODO: Implement tests for value
     [HttpGet]
     [Route("{id}/value")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetSensorValue(int id)

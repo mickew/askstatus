@@ -462,6 +462,50 @@ public class SensorTests
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
+    [Fact]
+    public async Task GetSensorValues_Should_Return_Success()
+    {
+        // Arrange
+        await ArrangeSensors();
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _sensorAPI.GetSensorValue(_factory.SensorId);
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var value = response.Content;
+        value.Should().NotBeNull();
+        value.Value.Should().Be("25.5 °C");
+    }
+
+    [Fact]
+    public async Task GetSensorValues_Should_Return_Unauthorized()
+    {
+        // Arrange
+        await ArrangeSensors();
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        // Act
+        var response = await _sensorAPI.GetSensorValue(_factory.SensorId);
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task GetSensorValues_Should_Return_NotFound()
+    {
+        // Arrange
+        await ArrangeSensors();
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _sensorAPI.GetSensorValue(-1);
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
     private async Task ArrangeSensors()
     {
         var json = "{ \"id\":\"shellyht-CC2D5C\",\"model\":\"SHHT-1\",\"mac\":\"483FDACC2D5C\",\"ip\":\"192.168.1.55\",\"new_fw\":false,\"fw_ver\":\"20230913-112531/v1.14.0-gcb84623\"}";

@@ -21,7 +21,6 @@ public sealed class GetSensorValueQueryHandler : IRequestHandler<GetSensorValueQ
         _logger = logger;
     }
 
-    //TODO: Implement tests for Handle
     public async Task<Result<SensorValue>> Handle(GetSensorValueQuery request, CancellationToken cancellationToken)
     {
         try
@@ -29,7 +28,7 @@ public sealed class GetSensorValueQueryHandler : IRequestHandler<GetSensorValueQ
             var sensor = await _unitOfWork.SensorRepository.GetByIdAsync(request.Id);
             if (sensor is null)
             {
-                _logger.LogWarning("Sensor with id {SensorId} not found", request.Id);
+                _logger.LogDebug("Sensor with id {SensorId} not found", request.Id);
                 return Result.Fail<SensorValue>(new NotFoundError("Sensor not found"));
             }
 
