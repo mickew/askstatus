@@ -55,7 +55,6 @@ public class SensorTests
     {
         // Arrange
         await ArrangeSensors();
-        await _factory.SetUsersPermission(Permissions.None);
 
         // Act
         var response = await _sensorDiscoverAPI.DiscoverAll();
@@ -90,7 +89,6 @@ public class SensorTests
     {
         // Arrange
         await ArrangeSensors();
-        await _factory.SetUsersPermission(Permissions.None);
 
         // Act
         var response = await _sensorDiscoverAPI.NotAssigned();
@@ -124,7 +122,6 @@ public class SensorTests
     {
         // Arrange
         await ArrangeSensors();
-        await _factory.SetUsersPermission(Permissions.None);
 
         _factory.ReSeedData();
 
@@ -157,7 +154,6 @@ public class SensorTests
     {
         // Arrange
         await ArrangeSensors();
-        await _factory.SetUsersPermission(Permissions.None);
 
         _factory.ReSeedData();
 
@@ -227,8 +223,6 @@ public class SensorTests
         await ArrangeSensors();
 
         _factory.ReSeedData();
-        await _factory.SetUsersPermission(Permissions.None);
-        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         var sensorRequest = new SensorRequest
         (
             0,
@@ -308,8 +302,6 @@ public class SensorTests
         await ArrangeSensors();
 
         _factory.ReSeedData();
-        await _factory.SetUsersPermission(Permissions.None);
-        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         var sensorRequest = new SensorRequest
         (
             _factory.SensorId,
@@ -418,8 +410,6 @@ public class SensorTests
         await ArrangeSensors();
 
         _factory.ReSeedData();
-        await _factory.SetUsersPermission(Permissions.None);
-        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
         // Act
         var response = await _sensorAPI.DeleteSensor(_factory.SensorId);
@@ -485,7 +475,6 @@ public class SensorTests
         // Arrange
         await ArrangeSensors();
         _factory.ReSeedData();
-        await _factory.SetUsersPermission(Permissions.None);
         // Act
         var response = await _sensorAPI.GetSensorValue(_factory.SensorId);
         // Assert

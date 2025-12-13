@@ -55,6 +55,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(1883)).Build();
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
+        using var command = _connection.CreateCommand();
+        command.CommandText = "PRAGMA journal_mode=WAL;";
+        command.ExecuteNonQuery();
     }
     public async Task InitializeAsync()
     {
@@ -81,14 +84,19 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public Task SetUsersPermission(Permissions permission)
     {
-        using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var role = context.Roles.FirstOrDefault(r => r.Name == UserRole);
-        if (role != null)
-        {
-            role.Permissions = permission;
-            context.SaveChanges();
-        }
+        var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseSqlite(_connection)
+            .Options);
+        ctx.Roles.First(r => r.Name == UserRole).Permissions = permission;
+        ctx.SaveChanges();
+        //using var scope = Services.CreateScope();
+        //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        //var role = context.Roles.FirstOrDefault(r => r.Name == UserRole);
+        //if (role != null)
+        //{
+        //    role.Permissions = permission;
+        //    context.SaveChanges();
+        //}
         return Task.CompletedTask;
     }
 
@@ -128,6 +136,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             {
                 options.UseSqlite(_connection);
                 options.UseInternalServiceProvider(serviceProvider);
+                options.EnableThreadSafetyChecks(true);
                 //options.UseInMemoryDatabase("TestDb");
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
@@ -136,6 +145,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 db.Database.EnsureCreated();
+                db.Database.SetCommandTimeout(60);
                 SeedData(db);
                 var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
                 if (config is IConfigurationRoot root)
@@ -155,10 +165,16 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public void ReSeedData()
     {
-        using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        UnSeedData(context);
-        SeedData(context);
+        var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseSqlite(_connection)
+            .Options);
+        UnSeedData(ctx);
+        SeedData(ctx);
+
+        //using var scope = Services.CreateScope();
+        //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        //UnSeedData(context);
+        //SeedData(context);
     }
 
     private void UnSeedData(ApplicationDbContext context)
@@ -167,8 +183,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         context.Users.RemoveRange(context.Users);
         context.Roles.RemoveRange(context.Roles);
         context.PowerDevices.RemoveRange(context.PowerDevices);
-        context.SystemLogs.RemoveRange(context.SystemLogs);
         context.Sensors.RemoveRange(context.Sensors);
+        context.SystemLogs.RemoveRange(context.SystemLogs);
         context.SaveChanges();
     }
 
