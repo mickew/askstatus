@@ -5,7 +5,6 @@
 <PageTitle>Askstatus - Sensors</PageTitle>
 <div>
     <MudChip T="string" Label="true" Color="Color.Info" Icon="@Icons.Material.Filled.Sensors">Sensors</MudChip>
-    <MudText>@(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture))</MudText>
 </div>
 <FlexibleAuthorizeView Permissions="@Permissions.ConfigureSensors">
     <Authorized>
