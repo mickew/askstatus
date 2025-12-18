@@ -128,7 +128,7 @@ public partial class Home : IAsyncDisposable
             {
                 sensorToUpdate.Value = value;
                 sensorToUpdate.LastUpdate = timeStamp;
-                Snackbar.Add($"{sensorToUpdate.Name} value updated to {value}!", Severity.Info);
+                //Snackbar.Add($"{sensorToUpdate.Name} value updated to {value}!", Severity.Info);
                 StateHasChanged();
             }
         });
