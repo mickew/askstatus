@@ -18,6 +18,7 @@ namespace Askstatus.Infrastructure.Services;
 
 internal class MqttClientService : IMqttClientService
 {
+    private readonly ConcurrentDictionary<string, bool> _onlineStatus = new ConcurrentDictionary<string, bool>();
     private readonly ConcurrentDictionary<string, ShellieAnnounce> _devices = new ConcurrentDictionary<string, ShellieAnnounce>();
     private readonly ConcurrentDictionary<string, DeviceSensor> _sensors = new ConcurrentDictionary<string, DeviceSensor>();
     private readonly ILogger<MqttClientService> _logger;
@@ -134,6 +135,7 @@ internal class MqttClientService : IMqttClientService
     {
         _logger.LogInformation("MQTTClient connected to server {host}", _apiOptions.Value.MQTTServer);
         await _mqttClient.SubscribeAsync("shellies/announce");
+        await _mqttClient.SubscribeAsync("shellies/+/online");
         await _mqttClient.SubscribeAsync("shellies/+/status/#");
         await _mqttClient.SubscribeAsync("shellies/+/sensor/#");
         await PublishAsync();
@@ -146,8 +148,40 @@ internal class MqttClientService : IMqttClientService
             await ProcessAnnounce(payload);
             return;
         }
-        Regex rg = new Regex(@"^shellies\/(.+)\/status\/input\S\d$");
+
+        Regex rg = new Regex(@"^shellies\/(.+)\/online$");
         Match match = rg.Match(topic);
+        if (match.Success)
+        {
+            var id = match.Groups[1].Value;
+            var isOnline = payload == "true";
+            if (_onlineStatus.ContainsKey(id))
+            {
+                var oldV = _onlineStatus[id];
+                if (oldV == false && !_sensors.ContainsKey(id))
+                {
+                    await PublishAnnounceWithDelayAsync().ConfigureAwait(false);
+                }
+            }
+            _onlineStatus.AddOrUpdate(id, isOnline, (key, oldValue) => isOnline);
+            return;
+        }
+
+        rg = new Regex(@"^shellies\/(.+)\/status\/(.+)$");
+        match = rg.Match(topic);
+        if (match.Success)
+        {
+            var id = match.Groups[1].Value;
+            var statusType = match.Groups[2].Value;
+            if (_sensors.ContainsKey(id))
+            {
+                await ProcessSensor(id, statusType, payload);
+                return;
+            }
+        }
+
+        rg = new Regex(@"^shellies\/(.+)\/status\/input\S\d$");
+        match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessInput(match.Groups[1].Value, payload);
@@ -204,7 +238,7 @@ internal class MqttClientService : IMqttClientService
             using (var scope = _serviceProvider.CreateScope())
             {
                 var sender = scope.ServiceProvider.GetRequiredService<ISender>();
-                var result = await sender.Send(new UpdateSensorValueCommand(sensor.Name, sensorValue.Name, sensorValue.Value, sensorValue.LastUpdate));
+                var result = await sender.Send(new UpdateSensorValueCommand(sensor.Id, sensorValue.Name, sensorValue.Value, sensorValue.LastUpdate));
                 return;
             }
         }
@@ -228,10 +262,13 @@ internal class MqttClientService : IMqttClientService
         var shellieAnnounce = JsonSerializer.Deserialize<ShellieAnnounce>(payload);
         if (shellieAnnounce != null && SuportedShellyPowerDevices.Devices.Contains(shellieAnnounce.Model) && !_devices.Any(x => x.Key == shellieAnnounce.Id))
         {
+            shellieAnnounce = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce with { Name = shellieAnnounce.Id } : shellieAnnounce;
+            _logger.LogInformation("Adding power device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
             _devices.TryAdd(shellieAnnounce.Id, shellieAnnounce);
         }
         if (shellieAnnounce != null && SuportedShellySensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
         {
+            _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
             var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
             _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
@@ -247,6 +284,15 @@ internal class MqttClientService : IMqttClientService
         await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic("shellies/command")
             .WithPayload("status_update")
+            .Build());
+    }
+
+    private async Task PublishAnnounceWithDelayAsync()
+    {
+        await Task.Delay(200);
+        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic("shellies/command")
+            .WithPayload("announce")
             .Build());
     }
 

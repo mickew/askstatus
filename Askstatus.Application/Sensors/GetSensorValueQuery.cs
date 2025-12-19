@@ -1,4 +1,5 @@
-﻿using Askstatus.Application.Errors;
+﻿using System.Globalization;
+using Askstatus.Application.Errors;
 using Askstatus.Application.Interfaces;
 using Askstatus.Common.Sensor;
 using FluentResults;
@@ -44,7 +45,15 @@ public sealed class GetSensorValueQueryHandler : IRequestHandler<GetSensorValueQ
             var formatedValue = sensorValue.Value;
             if (!string.IsNullOrEmpty(sensor.FormatString))
             {
-                formatedValue = string.Format(sensor.FormatString, sensorValue.Value);
+                if (ParseSensor.TryParseValue(sensorValue.Value, sensor, out var result))
+                {
+                    formatedValue = string.Format(CultureInfo.InvariantCulture, sensor.FormatString, result);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to parse sensor value {NewValue} for sensor {SensorName} and value name {ValueName}.", sensorValue.Value, sensor.SensorName, sensor.ValueName);
+                }
+
             }
             return Result.Ok(new SensorValue(sensorValue.Name, formatedValue, sensorValue.LastUpdate));
 

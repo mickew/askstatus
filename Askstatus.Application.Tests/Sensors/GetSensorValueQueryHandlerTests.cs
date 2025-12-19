@@ -94,7 +94,7 @@ namespace Askstatus.Application.Tests
                 Name = "TestSensor",
                 SensorType = 0,
                 FormatString = "Value: {0}",
-                SensorModel = "model"
+                SensorModel = "SHHT-1"
             };
             var now = DateTime.UtcNow;
             var sensorValue = new DeviceSensorValue("temp", "42", now);

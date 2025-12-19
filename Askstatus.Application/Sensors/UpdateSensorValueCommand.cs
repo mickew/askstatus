@@ -32,7 +32,15 @@ public class UpdateSensorValueCommandHandler : IRequestHandler<UpdateSensorValue
         var formatedValue = request.NewValue;
         if (!string.IsNullOrEmpty(sensor.FormatString))
         {
-            formatedValue = string.Format(sensor.FormatString, request.NewValue);
+            if (ParseSensor.TryParseValue(request.NewValue, sensor, out var result))
+            {
+                formatedValue = string.Format(sensor.FormatString, result);
+                // maybe log the value in the future
+            }
+            else
+            {
+                _logger.LogWarning("Failed to parse sensor value {NewValue} for sensor {SensorName} and value name {ValueName}.", request.NewValue, request.SensorName, request.ValueName);
+            }
         }
         await _eventBus.PublishAsync(new SensorValueChangedIntegrationEvent(Guid.NewGuid(), sensor.Id, formatedValue, request.TimeStamp), cancellationToken);
         return Result.Ok();
