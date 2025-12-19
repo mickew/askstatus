@@ -44,7 +44,7 @@ public class ParseSensorTests
         {
             SensorModel = "S3SN-0U12A"
         };
-        var value = "{\"tc\":22.3,\"rh\":55.0}";
+        var value = "{\"tC\":22.3,\"rh\":55.0}";
         // Act
         var result = ParseSensor.TryParseValue(value, sensor, out double parsedValue);
         // Assert

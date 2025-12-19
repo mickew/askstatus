@@ -1,4 +1,5 @@
-﻿using Askstatus.Application.Errors;
+﻿using System.Globalization;
+using Askstatus.Application.Errors;
 using Askstatus.Application.Interfaces;
 using Askstatus.Common.Sensor;
 using FluentResults;
@@ -46,7 +47,7 @@ public sealed class GetSensorValueQueryHandler : IRequestHandler<GetSensorValueQ
             {
                 if (ParseSensor.TryParseValue(sensorValue.Value, sensor, out var result))
                 {
-                    formatedValue = string.Format(sensor.FormatString, result);
+                    formatedValue = string.Format(CultureInfo.InvariantCulture, sensor.FormatString, result);
                 }
                 else
                 {
