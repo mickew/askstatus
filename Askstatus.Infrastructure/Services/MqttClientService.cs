@@ -262,6 +262,7 @@ internal class MqttClientService : IMqttClientService
         var shellieAnnounce = JsonSerializer.Deserialize<ShellieAnnounce>(payload);
         if (shellieAnnounce != null && SuportedShellyPowerDevices.Devices.Contains(shellieAnnounce.Model) && !_devices.Any(x => x.Key == shellieAnnounce.Id))
         {
+            shellieAnnounce = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce with { Name = shellieAnnounce.Id } : shellieAnnounce;
             _logger.LogInformation("Adding power device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
             _devices.TryAdd(shellieAnnounce.Id, shellieAnnounce);
         }
