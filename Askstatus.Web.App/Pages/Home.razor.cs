@@ -240,7 +240,7 @@ public partial class Home : IAsyncDisposable
         if (!response.IsSuccessStatusCode)
         {
             Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add($"{sensor.Name} value could not be retrieved", Severity.Error);
+            Snackbar.Add($"{sensor.Name} sensor(s) could not be retrieved", Severity.Error);
             sensor.Value = "N/A";
             return;
         }
