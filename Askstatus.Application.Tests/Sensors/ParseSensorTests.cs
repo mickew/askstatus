@@ -1,7 +1,7 @@
 ﻿using Askstatus.Application.Sensors;
 using FluentAssertions;
 
-namespace Askstatus.Application.Tests.Sensors;
+namespace Askstatus.Application.Tests;
 public class ParseSensorTests
 {
     [Fact]

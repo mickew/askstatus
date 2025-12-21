@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Web;
 using Askstatus.Common.Models;
 
 namespace Askstatus.Domain.Constants;
@@ -65,6 +63,32 @@ public static class MailMessageBody
     </body>
     </html>";
 
+    private const string SendMailTxt = @"
+    Hi {name},
+    
+    {header}!
+    {body}
+
+    Thanks,
+    The Askstatus Team";
+
+    private const string SendMailHtml = @"
+    <html>
+    <body>
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+            <div>
+                <h2 style='color: #333;'><img src='cid:{imageCid}' alt='Askstatus Logo' style='max-width: 100%; height: auto;' /> Askstatus</h2>
+            </div>
+            <h3 style='color: #333;'>{header}!</h3>
+            <p>Hi {name},</p>
+            <p>{body}</p>
+            <p>Best regards,<br>The Askstatus Team</p>
+        </div>
+    </body>
+    </html>";
+
+
+
     public static MailBody MailBodyTest() => new MailBody(MailMessageBodyTxt, MailMessageBodyHtml);
 
     public static MailBody ResetPasswordMailBody(string resetLink, string name)
@@ -79,5 +103,12 @@ public static class MailMessageBody
         string registrationConfirmationHtmlWithLink = RegistrationConfirmationHtml.Replace("{userName}", userName).Replace("{confirmationLink}", confirmationLink).Replace("{name}", name);
         string registrationConfirmationTxtWithLink = RegistrationConfirmationTxt.Replace("{userName}", userName).Replace("{confirmationLink}", confirmationLink).Replace("{name}", name);
         return new MailBody(registrationConfirmationTxtWithLink, registrationConfirmationHtmlWithLink);
+    }
+
+    public static MailBody SendMailBody(string name, string header, string body)
+    {
+        string sendEmailHtml = SendMailHtml.Replace("{name}", name).Replace("{header}", header).Replace("{body}", HttpUtility.HtmlEncode(body).Replace("\n", "<br>"));
+        string sendEmailTxt = SendMailTxt.Replace("{name}", name).Replace("{header}", header).Replace("{body}", body.Replace("\n", "\n    "));
+        return new MailBody(sendEmailTxt, sendEmailHtml);
     }
 }

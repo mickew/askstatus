@@ -17,4 +17,7 @@ public interface ISystemAPI
 
     [Get("/api/system/systeminfo")]
     Task<IApiResponse<SystemInfoDto>> GetSystemInfo();
+
+    [Post("/api/system/sendemail")]
+    Task<IApiResponse> SendMail([Body] SystemSendMailRequest request);
 }
