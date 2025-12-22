@@ -32,9 +32,9 @@ public class SensorTests
     public async Task GetAllDiscoverdSensors_ShouldReturnOk()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.DiscoverSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
@@ -67,9 +67,9 @@ public class SensorTests
     public async Task GetDiscoverdSensors_ShouldReturnOk()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.DiscoverSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
@@ -101,9 +101,9 @@ public class SensorTests
     public async Task GetSensors_Should_Return_Success()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.None);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
@@ -121,9 +121,9 @@ public class SensorTests
     public async Task GetSensors_Should_Return_Unauthorized()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
 
         // Act
         var response = await _sensorAPI.GetSensors();
@@ -136,9 +136,9 @@ public class SensorTests
     public async Task GetSensorById_Should_Return_Success()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.ViewSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
@@ -153,9 +153,9 @@ public class SensorTests
     public async Task GetSensorById_Should_Return_Unauthorized()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
 
         // Act
         var response = await _sensorAPI.GetSensorById(_factory.SensorId);
@@ -168,9 +168,9 @@ public class SensorTests
     public async Task GetSensorById_Should_Return_NotFound()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.ViewSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
@@ -185,9 +185,9 @@ public class SensorTests
     public async Task CreateSensor_Should_Return_Success()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.ConfigureSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         var sensorRequest = new SensorRequest
@@ -220,9 +220,9 @@ public class SensorTests
     public async Task CreateSensor_Should_Return_Unauthorized()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         var sensorRequest = new SensorRequest
         (
             0,
@@ -245,9 +245,9 @@ public class SensorTests
     public async Task CreateSensor_Should_Return_BadRequest()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.ConfigureSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         var sensorRequest = new SensorRequest
@@ -390,9 +390,9 @@ public class SensorTests
     public async Task DeleteSensor_Should_Return_Success()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.ConfigureSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
@@ -407,9 +407,9 @@ public class SensorTests
     public async Task DeleteSensor_Should_Return_Unauthorized()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
 
         // Act
         var response = await _sensorAPI.DeleteSensor(_factory.SensorId);
@@ -422,9 +422,9 @@ public class SensorTests
     public async Task DeleteSensor_Should_Return_NotFound()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.ConfigureSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
@@ -439,9 +439,9 @@ public class SensorTests
     public async Task DeleteSensor_Should_Return_BadRequest()
     {
         // Arrange
+        _factory.ReSeedData();
         await ArrangeSensors();
 
-        _factory.ReSeedData();
         await _factory.SetUsersPermission(Permissions.ConfigureSensors);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
 
@@ -456,8 +456,8 @@ public class SensorTests
     public async Task GetSensorValues_Should_Return_Success()
     {
         // Arrange
-        await ArrangeSensors();
         _factory.ReSeedData();
+        await ArrangeSensors();
         await _factory.SetUsersPermission(Permissions.None);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         // Act
@@ -473,8 +473,8 @@ public class SensorTests
     public async Task GetSensorValues_Should_Return_Unauthorized()
     {
         // Arrange
-        await ArrangeSensors();
         _factory.ReSeedData();
+        await ArrangeSensors();
         // Act
         var response = await _sensorAPI.GetSensorValue(_factory.SensorId);
         // Assert
@@ -485,8 +485,8 @@ public class SensorTests
     public async Task GetSensorValues_Should_Return_NotFound()
     {
         // Arrange
-        await ArrangeSensors();
         _factory.ReSeedData();
+        await ArrangeSensors();
         await _factory.SetUsersPermission(Permissions.None);
         await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
         // Act
