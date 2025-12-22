@@ -1,0 +1,24 @@
+﻿@page "/admin/system/sendemail"
+@attribute [Authorize(Permissions.System)]
+
+<PageTitle>Askstatus - Send Email</PageTitle>
+<div>
+    <MudChip T="string" Label="true" Color="Color.Info" Icon="@Icons.Material.Filled.Email">Send Email</MudChip>
+</div>
+<MudCard>
+    <MudCardContent>
+        <MudForm Model="@SystemSendMailRequest" @ref="@Form" Validation="@SystemSendMailRequestFluentValidator.ValidateValue" ValidationDelay="0">
+            <MudStack Row="true">
+                <MudTextField InputType="InputType.Text" @bind-Value="@SystemSendMailRequest.EmailTo" Label="To" For="@(() => SystemSendMailRequest.EmailTo)" />
+                <MudButton StartIcon="@Icons.Material.Filled.People" Color="@Color.Primary" Size="@Size.Small" Variant="@Variant.Filled" @onclick="() => SelectUser()">Select User</MudButton>
+            </MudStack>
+            <MudTextField InputType="InputType.Text" @bind-Value="@SystemSendMailRequest.Subject" Label="Subject" For="@(() => SystemSendMailRequest.Subject)" />
+            <MudTextField InputType="InputType.Text" @bind-Value="@SystemSendMailRequest.Header" Label="Header" For="@(() => SystemSendMailRequest.Header)" />
+            <MudTextField InputType="InputType.Text" @bind-Value="@SystemSendMailRequest.FirstName" Label="First name" For="@(() => SystemSendMailRequest.FirstName)" />
+            <MudTextField InputType="InputType.Text" @bind-Value="@SystemSendMailRequest.Body" Label="Body" For="@(() => SystemSendMailRequest.Body)" Lines="10" />
+        </MudForm>
+    </MudCardContent>
+    <MudCardActions Class="justify-end">
+        <MudButton Variant="Variant.Filled" Color="Color.Success" EndIcon="@Icons.Material.Filled.Send" OnClick="SendMail">Send Email</MudButton>
+    </MudCardActions>
+</MudCard>

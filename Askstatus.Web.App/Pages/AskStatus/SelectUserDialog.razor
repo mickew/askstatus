@@ -1,0 +1,23 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.PersonSearch" Class="mr-3 mb-n1" />
+            @MudDialog!.Title
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudDataGrid T="Askstatus.Common.Users.UserVM" Items="@Users" SelectedItemChanged="@OnSelectedItemChanged">
+            <Columns>
+                <SelectColumn T="Askstatus.Common.Users.UserVM" />
+                <PropertyColumn Property="x => x.FirstName" Title="FirstName" Sortable="true" />
+                <PropertyColumn Property="x => x.LastName" Title="LastName" Sortable="true" />
+                <PropertyColumn Property="x => x.Email" Title="Email" Sortable="false" />
+            </Columns>
+        </MudDataGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Disabled="@_submitDisabled" Color="Color.Primary" OnClick="Submit">Select</MudButton>
+    </DialogActions>
+</MudDialog>
+

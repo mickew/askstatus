@@ -71,4 +71,16 @@ public class SystemController : ControllerBase
         var result = await _sender.Send(new GetSystemInfoQuery());
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
+
+    [HttpPost]
+    [Route("sendemail")]
+    [Authorize(Permissions.System)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> SendEmail([FromBody] SystemSendMailRequest command)
+    {
+        var result = await _sender.Send(new SendEmailCommand(command.EmailTo, command.Header, command.FirstName, command.Subject, command.Body));
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
 }
