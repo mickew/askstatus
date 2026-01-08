@@ -10,12 +10,12 @@ namespace Askstatus.Infrastructure.Events;
 internal sealed class UserChangedEventHandler : INotificationHandler<UserChangedIntegrationEvent>
 {
     private readonly IEmailService _emailService;
-    private readonly IOptions<AskstatusApiSettings> _apiOptions;
+    private readonly IOptionsSnapshot<MailSettings> _options;
 
-    public UserChangedEventHandler(IEmailService emailService, IOptions<AskstatusApiSettings> apiOptions)
+    public UserChangedEventHandler(IEmailService emailService, IOptionsSnapshot<MailSettings> options)
     {
         _emailService = emailService;
-        _apiOptions = apiOptions;
+        _options = options;
     }
     public async Task Handle(UserChangedIntegrationEvent notification, CancellationToken cancellationToken)
     {
@@ -35,8 +35,8 @@ internal sealed class UserChangedEventHandler : INotificationHandler<UserChanged
 
     private async Task SendRegistrationConfirmationEmail(UserChangedIntegrationEvent notification)
     {
-        var uri = new Uri(_apiOptions.Value.FrontendUrl!);
-        var from = $"info@{uri.Host}";
+        var from = "info@askstatus.com";
+        from = _options.Value.Account ?? from;
 
         var mailMessage = new MailMessage
         (
@@ -53,8 +53,8 @@ internal sealed class UserChangedEventHandler : INotificationHandler<UserChanged
 
     private async Task SendResetPasswordEmail(UserChangedIntegrationEvent notification)
     {
-        var uri = new Uri(_apiOptions.Value.FrontendUrl!);
-        var from = $"info@{uri.Host}";
+        var from = "info@askstatus.com";
+        from = _options.Value.Account ?? from;
 
         var mailMessage = new MailMessage
         (
