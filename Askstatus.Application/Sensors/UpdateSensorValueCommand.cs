@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 namespace Askstatus.Application.Sensors;
 public record UpdateSensorValueCommand(string SensorName, string ValueName, string NewValue, DateTime TimeStamp) : IRequest<Result>;
 
-// TODO: Add tests
 public class UpdateSensorValueCommandHandler : IRequestHandler<UpdateSensorValueCommand, Result>
 {
     private readonly ILogger<UpdateSensorValueCommandHandler> _logger;
