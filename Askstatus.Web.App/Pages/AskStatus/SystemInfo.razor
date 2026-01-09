@@ -3,9 +3,12 @@
 @attribute [Authorize(Permissions.System)]
 
 <PageTitle>Askstatus - System Info</PageTitle>
+<MudStack>
+    <MudPaper>
+        <MudText>Environment: @_environmentName</MudText>
+    </MudPaper>
 @if (_systemInfo != null)
 {
-    <MudStack>
     <MudPaper>
         <MudText>Mail Settings</MudText>
             <table class="system-info-table">
@@ -68,6 +71,5 @@
                 </tr>
             </table>
     </MudPaper>
-    </MudStack>
-
 }
+</MudStack>
