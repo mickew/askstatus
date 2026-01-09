@@ -360,14 +360,14 @@ public class PowerDeviceTests
         var powerDevices = MockTestdata();
         var logger = new Mock<ILogger<TogglePowerDeviceCommandHandler>>();
         var unitOfWork = new Mock<IUnitOfWork>();
-        var deviceService = new Mock<IDeviceService>();
+        var mqttClientServiceMock = new Mock<IMqttClientService>();
 
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevices.First());
         unitOfWork.Setup(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()));
         unitOfWork.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
-        deviceService.Setup(x => x.Toggle(It.IsAny<string>(), 0)).ReturnsAsync(Result.Ok());
-        var handler = new TogglePowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
-        var command = new TogglePowerDeviceCommand(1, "TestUser");
+        mqttClientServiceMock.Setup(x => x.ToggleDeviceAsync(powerDevices.First().DeviceId, powerDevices.First().Channel)).ReturnsAsync(true);
+        var handler = new TogglePowerDeviceCommandHandler(unitOfWork.Object, logger.Object, mqttClientServiceMock.Object);
+        var command = new TogglePowerDeviceCommand(powerDevices.First().Id, "TestUser");
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -377,7 +377,7 @@ public class PowerDeviceTests
         unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
         unitOfWork.Verify(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()), Times.Once);
         unitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
-        deviceService.Verify(x => x.Toggle(powerDevices.First().HostName, 0), Times.Once);
+        mqttClientServiceMock.Verify(x => x.ToggleDeviceAsync(powerDevices.First().DeviceId, powerDevices.First().Channel), Times.Once);
     }
 
     [Fact]
@@ -387,11 +387,10 @@ public class PowerDeviceTests
         Domain.Entities.PowerDevice powerDevice = null!;
         var logger = new Mock<ILogger<TogglePowerDeviceCommandHandler>>();
         var unitOfWork = new Mock<IUnitOfWork>();
-        var deviceService = new Mock<IDeviceService>();
+        var mqttClientServiceMock = new Mock<IMqttClientService>();
 
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
-        deviceService.Setup(x => x.Toggle(It.IsAny<string>(), 0)).ReturnsAsync(Result.Ok());
-        var handler = new TogglePowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
+        var handler = new TogglePowerDeviceCommandHandler(unitOfWork.Object, logger.Object, mqttClientServiceMock.Object);
         var command = new TogglePowerDeviceCommand(1, "TestUser");
 
         // Act
@@ -420,14 +419,14 @@ public class PowerDeviceTests
         var powerDevices = MockTestdata();
         var logger = new Mock<ILogger<SwitchPowerDeviceCommandHandler>>();
         var unitOfWork = new Mock<IUnitOfWork>();
-        var deviceService = new Mock<IDeviceService>();
+        var mqttClientServiceMock = new Mock<IMqttClientService>();
 
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevices.First());
         unitOfWork.Setup(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()));
         unitOfWork.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
-        deviceService.Setup(x => x.Switch(It.IsAny<string>(), 0, true)).ReturnsAsync(Result.Ok());
-        var handler = new SwitchPowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
-        var command = new SwitchPowerDeviceCommand(1, true, "TestUser");
+        mqttClientServiceMock.Setup(x => x.SwitchDeviceAsync(powerDevices.First().DeviceId, powerDevices.First().Channel, true)).ReturnsAsync(true);
+        var handler = new SwitchPowerDeviceCommandHandler(unitOfWork.Object, logger.Object, mqttClientServiceMock.Object);
+        var command = new SwitchPowerDeviceCommand(powerDevices.First().Id, true, "TestUser");
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -437,7 +436,7 @@ public class PowerDeviceTests
         unitOfWork.Verify(x => x.PowerDeviceRepository.GetByIdAsync(1), Times.Once);
         unitOfWork.Verify(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()), Times.Once);
         unitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
-        deviceService.Verify(x => x.Switch(powerDevices.First().HostName, 0, true), Times.Once);
+        mqttClientServiceMock.Verify(x => x.SwitchDeviceAsync(powerDevices.First().DeviceId, powerDevices.First().Channel, true), Times.Once);
     }
 
     [Fact]
@@ -447,10 +446,11 @@ public class PowerDeviceTests
         Domain.Entities.PowerDevice powerDevice = null!;
         var logger = new Mock<ILogger<SwitchPowerDeviceCommandHandler>>();
         var unitOfWork = new Mock<IUnitOfWork>();
-        var deviceService = new Mock<IDeviceService>();
+        var mqttClientServiceMock = new Mock<IMqttClientService>();
+
 
         unitOfWork.Setup(x => x.PowerDeviceRepository.GetByIdAsync(1)).ReturnsAsync(powerDevice);
-        var handler = new SwitchPowerDeviceCommandHandler(unitOfWork.Object, logger.Object, deviceService.Object);
+        var handler = new SwitchPowerDeviceCommandHandler(unitOfWork.Object, logger.Object, mqttClientServiceMock.Object);
         var command = new SwitchPowerDeviceCommand(1, true, "TestUser");
 
         // Act

@@ -457,4 +457,88 @@ public class PowerDeviceTests
         response.IsSuccessStatusCode.Should().BeFalse();
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+
+    [Fact]
+    public async Task ToggleDevice_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TogglePowerDevice(_factory.PowerDeviceId);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task ToggleDevice_Should_Return_NotFound()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TogglePowerDevice(0);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task TurnOnPowerDevice_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TurnOnPowerDevice(_factory.PowerDeviceId);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task TurnOnPowerDevice_Should_Return_NotFound()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TurnOnPowerDevice(0);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task TurnOffPowerDevice_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TurnOffPowerDevice(_factory.PowerDeviceId);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task TurnOffPowerDevice_Should_Return_NotFound()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TurnOffPowerDevice(0);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }

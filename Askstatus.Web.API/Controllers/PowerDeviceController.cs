@@ -110,7 +110,6 @@ public class PowerDeviceController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
-    //TODO: Implement tests for toggle
     [HttpGet]
     [Route("{id}/toggle")]
     [Authorize]
@@ -123,7 +122,6 @@ public class PowerDeviceController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
-    //TODO: Implement tests for switch
     [HttpGet]
     [Route("{id}/switch/{onoff}")]
     [Authorize]

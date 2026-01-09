@@ -12,13 +12,13 @@ public sealed class TogglePowerDeviceCommandHandler : IRequestHandler<TogglePowe
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<TogglePowerDeviceCommandHandler> _logger;
-    private readonly IDeviceService _deviceService;
+    private readonly IMqttClientService _mqttClientService;
 
-    public TogglePowerDeviceCommandHandler(IUnitOfWork unitOfWork, ILogger<TogglePowerDeviceCommandHandler> logger, IDeviceService deviceService)
+    public TogglePowerDeviceCommandHandler(IUnitOfWork unitOfWork, ILogger<TogglePowerDeviceCommandHandler> logger, IMqttClientService mqttClientService)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
-        _deviceService = deviceService;
+        _mqttClientService = mqttClientService;
     }
 
     public async Task<Result> Handle(TogglePowerDeviceCommand request, CancellationToken cancellationToken)
@@ -47,8 +47,8 @@ public sealed class TogglePowerDeviceCommandHandler : IRequestHandler<TogglePowe
             {
                 _logger.LogError(ex, "Error saving SystemLog");
             }
-            var result = await _deviceService.Toggle(powerDevice.HostName, 0);
-            return result;
+            var mqttResult = await _mqttClientService.ToggleDeviceAsync(powerDevice.DeviceId, powerDevice.Channel);
+            return mqttResult ? Result.Ok() : Result.Fail(new ServerError("Failed to toggle device via MQTT"));
         }
     }
 }

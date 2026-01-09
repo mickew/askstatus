@@ -195,16 +195,42 @@ public partial class Home : IAsyncDisposable
         var device = Devices.Where(x => x.Id == id).FirstOrDefault();
         device!.Prosessing = true;
         StateHasChanged();
-        var response = await ApiService.PowerDeviceAPI.TogglePowerDevice(id);
-        if (!response.IsSuccessStatusCode)
+        if (device.State)
         {
-            device.IsOnline = false;
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
-            device.Prosessing = false;
-            StateHasChanged();
-            return;
+            var response = await ApiService.PowerDeviceAPI.TurnOffPowerDevice(id);
+            if (!response.IsSuccessStatusCode)
+            {
+                device.IsOnline = false;
+                Logger.LogError(response.Error, response.Error.Content);
+                Snackbar.Add(response.Error.Content!, Severity.Error);
+                device.Prosessing = false;
+                StateHasChanged();
+                return;
+            }
         }
+        else
+        {
+            var response = await ApiService.PowerDeviceAPI.TurnOnPowerDevice(id);
+            if (!response.IsSuccessStatusCode)
+            {
+                device.IsOnline = false;
+                Logger.LogError(response.Error, response.Error.Content);
+                Snackbar.Add(response.Error.Content!, Severity.Error);
+                device.Prosessing = false;
+                StateHasChanged();
+                return;
+            }
+        }
+        //var response = await ApiService.PowerDeviceAPI.TogglePowerDevice(id);
+        //if (!response.IsSuccessStatusCode)
+        //{
+        //    device.IsOnline = false;
+        //    Logger.LogError(response.Error, response.Error.Content);
+        //    Snackbar.Add(response.Error.Content!, Severity.Error);
+        //    device.Prosessing = false;
+        //    StateHasChanged();
+        //    return;
+        //}
         await Task.Delay(1000);
         device!.Prosessing = false;
     }
