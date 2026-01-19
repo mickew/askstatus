@@ -271,7 +271,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             DeviceType = PowerDeviceTypes.ShellyGen2,
             HostName = "192.168.1.85",
             DeviceName = "Test Device",
-            DeviceId = "Test Device",
+            DeviceId = "Test_Device",
             DeviceMac = "EC626081CDF4",
             DeviceModel = "Test Model",
             Channel = 0
