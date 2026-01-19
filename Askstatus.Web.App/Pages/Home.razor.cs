@@ -116,7 +116,10 @@ public partial class Home : IAsyncDisposable
             {
                 deviceToUpdate.IsOnline = true;
                 deviceToUpdate.State = onoff;
-                Snackbar.Add($"{deviceToUpdate.Name} turned {BooleanToOnOff(onoff)}!", Severity.Success);
+                if (deviceToUpdate.Prosessing)
+                {
+                    Snackbar.Add($"{deviceToUpdate.Name} turned {BooleanToOnOff(onoff)}!", Severity.Success);
+                }
                 StateHasChanged();
             }
         });
@@ -128,7 +131,6 @@ public partial class Home : IAsyncDisposable
             {
                 sensorToUpdate.Value = value;
                 sensorToUpdate.LastUpdate = timeStamp;
-                //Snackbar.Add($"{sensorToUpdate.Name} value updated to {value}!", Severity.Info);
                 StateHasChanged();
             }
         });
@@ -143,15 +145,16 @@ public partial class Home : IAsyncDisposable
             return;
         }
         Logger.LogInformation("_hubConnection started");
-        var onlineTasks = new List<Task>();
-        foreach (var device in Devices)
-        {
-            onlineTasks.Add(Task.Run(async () =>
-            {
-                await GetIsOnline(device);
-            }));
-        }
-        await Task.WhenAll(onlineTasks);
+        //var onlineTasks = new List<Task>();
+        //foreach (var device in Devices)
+        //{
+        //    onlineTasks.Add(Task.Run(async () =>
+        //    {
+        //        await GetIsOnline(device);
+        //    }));
+        //}
+        //await Task.WhenAll(onlineTasks);
+        await ApiService.PowerDeviceAPI.RefreshStatus();
         var sensorTasks = new List<Task>();
         foreach (var sensor in Sensors)
         {
@@ -246,19 +249,19 @@ public partial class Home : IAsyncDisposable
 
     private static string BooleanToOnOff(bool onOff) => onOff ? "on" : "off";
 
-    private async Task GetIsOnline(Device device)
-    {
-        var response = await ApiService.PowerDeviceAPI.GetPowerDeviceStatus(device.Id);
-        if (!response.IsSuccessStatusCode)
-        {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add($"{device.Name} is offline", Severity.Error);
-            device.IsOnline = false;
-            return;
-        }
-        device.IsOnline = true;
-        device.State = response.Content!;
-    }
+    //private async Task GetIsOnline(Device device)
+    //{
+    //    var response = await ApiService.PowerDeviceAPI.GetPowerDeviceStatus(device.Id);
+    //    if (!response.IsSuccessStatusCode)
+    //    {
+    //        Logger.LogError(response.Error, response.Error.Content);
+    //        Snackbar.Add($"{device.Name} is offline", Severity.Error);
+    //        device.IsOnline = false;
+    //        return;
+    //    }
+    //    device.IsOnline = true;
+    //    device.State = response.Content!;
+    //}
 
     private async Task GetSensoValue(Sensor sensor)
     {

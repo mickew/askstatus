@@ -78,6 +78,11 @@ internal class MqttClientService : IMqttClientService
         await PublishAsync();
     }
 
+    public async Task RefreshStatusAsync()
+    {
+        await PublishStatusUpdateAsync();
+    }
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("MqttClientService starting...");
@@ -303,6 +308,11 @@ internal class MqttClientService : IMqttClientService
             .WithTopic("shellies/command")
             .WithPayload("announce")
             .Build());
+        await PublishStatusUpdateAsync();
+    }
+
+    private async Task PublishStatusUpdateAsync()
+    {
         await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic("shellies/command")
             .WithPayload("status_update")

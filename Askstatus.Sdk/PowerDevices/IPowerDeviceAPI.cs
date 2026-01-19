@@ -33,5 +33,8 @@ public interface IPowerDeviceAPI
 
     [Get("/api/powerdevice/webhook?mac={mac}&state={state}")]
     Task<IApiResponse<bool>> Webhook(string mac, bool state);
+
+    [Post("/api/powerdevice/refresh-status")]
+    Task<IApiResponse> RefreshStatus();
 }
 

@@ -150,5 +150,14 @@ public class PowerDeviceController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
+    [HttpPost]
+    [Route("refresh-status")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> RefreshStatus()
+    {
+        var result = await _sender.Send(new SRefreshPowerDeviceStatusCommand());
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
 
 }
