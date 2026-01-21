@@ -110,7 +110,6 @@ public class PowerDeviceController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
-    //TODO: Implement tests for toggle
     [HttpGet]
     [Route("{id}/toggle")]
     [Authorize]
@@ -123,7 +122,6 @@ public class PowerDeviceController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
-    //TODO: Implement tests for switch
     [HttpGet]
     [Route("{id}/switch/{onoff}")]
     [Authorize]
@@ -152,5 +150,24 @@ public class PowerDeviceController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
+    [HttpPost]
+    [Route("refresh-status")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> RefreshStatus()
+    {
+        var result = await _sender.Send(new RefreshPowerDeviceStatusCommand());
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
+    [HttpPost]
+    [Route("refresh")]
+    [Authorize(Permissions.ConfigurePowerDevices)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Refresh()
+    {
+        var result = await _sender.Send(new RefreshPowerDevicesCommand());
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
 
 }

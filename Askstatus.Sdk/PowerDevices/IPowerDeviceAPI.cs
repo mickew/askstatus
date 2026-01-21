@@ -25,13 +25,19 @@ public interface IPowerDeviceAPI
     [Get("/api/powerdevice/{id}/toggle")]
     Task<IApiResponse> TogglePowerDevice(int id);
 
-    [Get($"/api/powerdevice/{{id}}/true")]
+    [Get("/api/powerdevice/{id}/switch/true")]
     Task<IApiResponse> TurnOnPowerDevice(int id);
 
-    [Get($"/api/powerdevice/{{id}}/false")]
+    [Get("/api/powerdevice/{id}/switch/false")]
     Task<IApiResponse> TurnOffPowerDevice(int id);
 
     [Get("/api/powerdevice/webhook?mac={mac}&state={state}")]
     Task<IApiResponse<bool>> Webhook(string mac, bool state);
+
+    [Post("/api/powerdevice/refresh-status")]
+    Task<IApiResponse> RefreshStatus();
+
+    [Post("/api/powerdevice/refresh")]
+    Task<IApiResponse> Refresh();
 }
 

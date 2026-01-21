@@ -29,7 +29,6 @@ public class DeviceDiscoverController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
-    //TODO: Add test when MQTT container is available
     [HttpGet("all")]
     [Authorize(Permissions.DiscoverDevices)]
     [ProducesResponseType(typeof(IEnumerable<DicoverInfo>), StatusCodes.Status200OK)]
@@ -40,7 +39,6 @@ public class DeviceDiscoverController : ControllerBase
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 
-    //TODO: Add test when MQTT container is available
     [HttpGet("notassigned")]
     [Authorize(Permissions.DiscoverDevices)]
     [ProducesResponseType(typeof(IEnumerable<DicoverInfo>), StatusCodes.Status200OK)]

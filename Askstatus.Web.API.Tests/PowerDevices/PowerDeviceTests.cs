@@ -16,6 +16,7 @@ public class PowerDeviceTests
     private readonly IntegrationTestWebAppFactory _factory;
     private readonly IIdentityApi _identityApi;
     private readonly IPowerDeviceAPI _powerDeviceAPI;
+    private readonly IDeviceDiscoverAPI _deviceDiscoverAPI;
 
     //private static readonly HttpConnectionFactory ConnectionFactory = new(Options.Create(
     //new HttpConnectionOptions
@@ -46,6 +47,7 @@ public class PowerDeviceTests
         var askstatusApiService = new AskstatusApiService(_client);
         _identityApi = askstatusApiService.IdentityApi;
         _powerDeviceAPI = askstatusApiService.PowerDeviceAPI;
+        _deviceDiscoverAPI = askstatusApiService.DeviceDiscoverAPI;
         _factory = factory;
     }
 
@@ -456,5 +458,209 @@ public class PowerDeviceTests
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task ToggleDevice_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TogglePowerDevice(_factory.PowerDeviceId);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task ToggleDevice_Should_Return_NotFound()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TogglePowerDevice(0);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task TurnOnPowerDevice_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TurnOnPowerDevice(_factory.PowerDeviceId);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task TurnOnPowerDevice_Should_Return_NotFound()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TurnOnPowerDevice(0);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task TurnOffPowerDevice_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TurnOffPowerDevice(_factory.PowerDeviceId);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task TurnOffPowerDevice_Should_Return_NotFound()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.TurnOffPowerDevice(0);
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task DiscoverAll_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.DiscoverDevices);
+        await AnnonceDevice();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _deviceDiscoverAPI.DiscoverAll();
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Content.Should().NotBeNull();
+        response.Content.Count().Should().Be(2);
+    }
+
+    [Fact]
+    public async Task DiscoverAll_Should_Return_Unauthorized()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await AnnonceDevice();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _deviceDiscoverAPI.DiscoverAll();
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task DiscoverAllNotAssigned_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.DiscoverDevices);
+        await AnnonceDevice();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _deviceDiscoverAPI.NotAssigned();
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Content.Should().NotBeNull();
+        response.Content.Count().Should().Be(1);
+    }
+
+    [Fact]
+    public async Task DiscoverAllNotAssigned_Should_Return_Unauthorized()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await AnnonceDevice();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _deviceDiscoverAPI.NotAssigned();
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Refresh_Should_Return_Unauthorized()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await AnnonceDevice();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.Refresh();
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Refresh_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.ConfigurePowerDevices);
+        await AnnonceDevice();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.Refresh();
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    private async Task AnnonceDevice()
+    {
+        await _factory.SendMqttMessage("shellies/shellygen2-EC626081CDF4/online", "true");
+        await _factory.SendMqttMessage("shellies/announce", """
+        {
+            "id":"shellygen2-EC626081CDF4",
+            "model":"SPSW-201XE16EU",
+            "mac":"EC626081CDF4",
+            "ip":"192.168.1.100",
+            "new_fw":false,
+            "fw_ver":"20230913-112531/v1.14.0-gcb84623"
+            }
+        """);
+        await _factory.SendMqttMessage("shellies/Test_Device/online", "true");
+        await _factory.SendMqttMessage("shellies/announce", """
+        {
+            "id":"Test_Device",
+            "model":"SPSW-201XE16EU",
+            "mac":"EC626081CDF5",
+            "ip":"192.168.1.85",
+            "new_fw":false,
+            "fw_ver":"20230913-112531/v1.14.0-gcb84623"
+            }
+        """);
     }
 }

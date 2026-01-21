@@ -40,6 +40,28 @@ internal class MqttClientService : IMqttClientService
         ConfigureMqttClient();
     }
 
+    public async Task<bool> SwitchDeviceAsync(string deviceId, int switchId, bool state)
+    {
+        var payload = $"{{\"method\": \"Switch.Set\", \"params\": {{\"id\": {switchId}, \"on\": {state.ToString().ToLower()} }}}}";
+
+        var result = await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic($"shellies/{deviceId}/rpc")
+            .WithPayload(payload)
+            .Build());
+        return result.IsSuccess;
+    }
+
+    public async Task<bool> ToggleDeviceAsync(string deviceId, int switchId)
+    {
+        var payload = $"{{\"method\": \"Switch.Toggle\", \"params\": {{\"id\": {switchId} }}}}";
+
+        var result = await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic($"shellies/{deviceId}/rpc")
+            .WithPayload(payload)
+            .Build());
+        return result.IsSuccess;
+    }
+
     public async Task<IEnumerable<DeviceSensor>> GetSensorsAsync()
     {
         return await Task.FromResult(_sensors.Select(x => x.Value).ToList());
@@ -54,6 +76,11 @@ internal class MqttClientService : IMqttClientService
     {
         _devices.Clear();
         await PublishAsync();
+    }
+
+    public async Task RefreshStatusAsync()
+    {
+        await PublishStatusUpdateAsync();
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -281,6 +308,11 @@ internal class MqttClientService : IMqttClientService
             .WithTopic("shellies/command")
             .WithPayload("announce")
             .Build());
+        await PublishStatusUpdateAsync();
+    }
+
+    private async Task PublishStatusUpdateAsync()
+    {
         await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic("shellies/command")
             .WithPayload("status_update")
