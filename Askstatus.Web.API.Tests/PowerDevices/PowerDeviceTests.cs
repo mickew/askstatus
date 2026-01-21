@@ -608,6 +608,36 @@ public class PowerDeviceTests
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
+    [Fact]
+    public async Task Refresh_Should_Return_Unauthorized()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.None);
+        await AnnonceDevice();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.Refresh();
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Refresh_Should_Return_Success()
+    {
+        // Arrange
+        _factory.ReSeedData();
+        await _factory.SetUsersPermission(Permissions.ConfigurePowerDevices);
+        await AnnonceDevice();
+        await _identityApi.Login(new LoginRequest(IntegrationTestWebAppFactory.DefaultUserUserName, IntegrationTestWebAppFactory.DefaultPassword));
+        // Act
+        var response = await _powerDeviceAPI.Refresh();
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
     private async Task AnnonceDevice()
     {
         await _factory.SendMqttMessage("shellies/shellygen2-EC626081CDF4/online", "true");

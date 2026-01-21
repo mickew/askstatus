@@ -156,7 +156,17 @@ public class PowerDeviceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> RefreshStatus()
     {
-        var result = await _sender.Send(new SRefreshPowerDeviceStatusCommand());
+        var result = await _sender.Send(new RefreshPowerDeviceStatusCommand());
+        return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
+    }
+
+    [HttpPost]
+    [Route("refresh")]
+    [Authorize(Permissions.ConfigurePowerDevices)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Refresh()
+    {
+        var result = await _sender.Send(new RefreshPowerDevicesCommand());
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
 

@@ -658,6 +658,92 @@ public class PowerDeviceTests
         ), Times.Once);
     }
 
+    [Fact]
+    public async Task RefreshShellieDevices_Should_Return_Success()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<RefreshPowerDevicesCommandHandler>>();
+        var mqttClientServiceMock = new Mock<IMqttClientService>();
+        var handler = new RefreshPowerDevicesCommandHandler(logger.Object, mqttClientServiceMock.Object);
+        var command = new RefreshPowerDevicesCommand();
+        mqttClientServiceMock.Setup(x => x.RefreshShellieDevicesAsync()).Returns(Task.CompletedTask);
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        mqttClientServiceMock.Verify(x => x.RefreshShellieDevicesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task RefreshShellieDevices_Should_Return_Error()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<RefreshPowerDevicesCommandHandler>>();
+        var mqttClientServiceMock = new Mock<IMqttClientService>();
+        var handler = new RefreshPowerDevicesCommandHandler(logger.Object, mqttClientServiceMock.Object);
+        var command = new RefreshPowerDevicesCommand();
+        mqttClientServiceMock.Setup(x => x.RefreshShellieDevicesAsync()).ThrowsAsync(new Exception("Test exception"));
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Should().BeOfType<ServerError>();
+        result.Errors.First().Message.Should().Be("Failed to refresh devices");
+        mqttClientServiceMock.Verify(x => x.RefreshShellieDevicesAsync(), Times.Once);
+        logger.Verify(l =>
+        l.Log(LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Failed to refresh devices")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task RefreshPowerDeviceStatus_Should_Return_Success()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<RefreshPowerDeviceStatusCommandHandler>>();
+        var mqttClientServiceMock = new Mock<IMqttClientService>();
+        var handler = new RefreshPowerDeviceStatusCommandHandler(logger.Object, mqttClientServiceMock.Object);
+        var command = new RefreshPowerDeviceStatusCommand();
+        mqttClientServiceMock.Setup(x => x.RefreshStatusAsync()).Returns(Task.CompletedTask);
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        mqttClientServiceMock.Verify(x => x.RefreshStatusAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task RefreshPowerDeviceStatus_Should_Return_Error()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<RefreshPowerDeviceStatusCommandHandler>>();
+        var mqttClientServiceMock = new Mock<IMqttClientService>();
+        var handler = new RefreshPowerDeviceStatusCommandHandler(logger.Object, mqttClientServiceMock.Object);
+        var command = new RefreshPowerDeviceStatusCommand();
+        mqttClientServiceMock.Setup(x => x.RefreshStatusAsync()).ThrowsAsync(new Exception("Test exception"));
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.First().Should().BeOfType<ServerError>();
+        result.Errors.First().Message.Should().Be("Failed to refresh devices status");
+        mqttClientServiceMock.Verify(x => x.RefreshStatusAsync(), Times.Once);
+        logger.Verify(l =>
+        l.Log(LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Failed to refresh devices status")),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+        ), Times.Once);
+    }
+
     private List<Askstatus.Domain.Entities.PowerDevice> MockTestdata()
     {
         var powerDevice1 = new Askstatus.Domain.Entities.PowerDevice

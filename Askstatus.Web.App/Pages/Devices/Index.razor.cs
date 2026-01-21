@@ -29,6 +29,14 @@ public partial class Index
 
     protected override async Task OnInitializedAsync()
     {
+        var res = await ApiService.PowerDeviceAPI.Refresh();
+        if (!res.IsSuccessStatusCode)
+        {
+            Logger.LogError(res.Error, res.Error.Content);
+            Snackbar.Add(res.Error.Content!, Severity.Error);
+            return;
+        }
+
         var response = await ApiService.PowerDeviceAPI.GetPowerDevices();
         if (!response.IsSuccessStatusCode)
         {

@@ -36,5 +36,8 @@ public interface IPowerDeviceAPI
 
     [Post("/api/powerdevice/refresh-status")]
     Task<IApiResponse> RefreshStatus();
+
+    [Post("/api/powerdevice/refresh")]
+    Task<IApiResponse> Refresh();
 }
 
