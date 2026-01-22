@@ -10,7 +10,8 @@ public sealed class AskstatusApiService
 {
     public AskstatusApiService(HttpClient httpClient)
     {
-        var contentSerializer = new NewtonsoftJsonContentSerializer();
+        var contentSerializer = new SystemTextJsonContentSerializer();
+        //var contentSerializer = new NewtonsoftJsonContentSerializer();
         IdentityApi = RestService.For<IIdentityApi>(httpClient, new RefitSettings
         {
             ContentSerializer = contentSerializer
