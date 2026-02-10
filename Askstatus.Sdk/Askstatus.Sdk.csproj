@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Refit.Newtonsoft.Json" />
+    <PackageReference Include="Refit" />
   </ItemGroup>
 
   <ItemGroup>

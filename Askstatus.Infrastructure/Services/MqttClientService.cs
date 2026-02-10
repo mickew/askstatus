@@ -136,7 +136,10 @@ internal class MqttClientService : IMqttClientService
             };
             await _mqttClient.DisconnectAsync(disconnectOption, cancellationToken);
         }
-        await _mqttClient.DisconnectAsync();
+        if (_mqttClient.IsConnected)
+        {
+            await _mqttClient.DisconnectAsync();
+        }
         _logger.LogInformation("MqttClientService stopped");
     }
 

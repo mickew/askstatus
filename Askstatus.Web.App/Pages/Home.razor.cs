@@ -34,7 +34,7 @@ public partial class Home : IAsyncDisposable
 
     protected bool UserGotNoRights { get; set; } = true;
 
-    private const int SensorLastUpdateTimeSpanMinutes = 30;
+    private const int SensorLastUpdateTimeSpanMinutes = 130;
 
     private HubConnection? _hubConnection;
 

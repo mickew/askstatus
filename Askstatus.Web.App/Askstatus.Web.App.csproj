@@ -23,7 +23,6 @@
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
     <PackageReference Include="MudBlazor" />
-    <PackageReference Include="System.Text.Json" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" />
   </ItemGroup>
 

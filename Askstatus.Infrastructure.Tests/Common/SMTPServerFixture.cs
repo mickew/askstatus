@@ -7,7 +7,9 @@ public class SMTPServerFixture : IAsyncLifetime
 
     public SMTPServerFixture()
     {
+#pragma warning disable CS0618 // Type or member is obsolete
         PapercutContainer = new PapercutBuilder().Build();
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
     public async Task InitializeAsync()
