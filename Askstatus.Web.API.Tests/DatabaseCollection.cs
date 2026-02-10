@@ -5,7 +5,7 @@
 /// to be the place to apply [CollectionDefinition] and all the
 /// ICollectionFixture interfaces.
 /// </summary>
-[CollectionDefinition(WebAPICollectionDefinition)]
+[CollectionDefinition(WebAPICollectionDefinition, DisableParallelization = true)]
 public class DatabaseCollection : ICollectionFixture<IntegrationTestWebAppFactory>
 {
     public const string WebAPICollectionDefinition = "WebAPI collection";

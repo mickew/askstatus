@@ -6,7 +6,7 @@
 [![](https://img.shields.io/github/issues-closed/mickew/askstatus)](https://github.com/mickew/askstatus/issues?q=is%3Aissue+is%3Aclosed)
 [![](https://img.shields.io/github/milestones/progress-percent/mickew/askstatus/2)](https://github.com/mickew/askstatus/milestone/2)
 ## Overview
-Askholmen Status System is a Blazor WebAssembly application for monitoring and managing system status, designed to run on .NET 9. It includes a backend API and supports deployment on Linux and Raspberry Pi.
+Askholmen Status System is a Blazor WebAssembly application for monitoring and managing system status, designed to run on .NET 10. It includes a backend API and supports deployment on Linux and Raspberry Pi.
 
 ## Features
 - Blazor WebAssembly frontend
@@ -17,14 +17,17 @@ Askholmen Status System is a Blazor WebAssembly application for monitoring and m
 - Role-based authorization
 
 ## Prerequisites
-- .NET 9 SDK
+- .NET 10 SDK
+- MQTT broker (for MQTT integration)
 - Linux or Raspberry Pi (for deployment)
 - SQLite (default database)
 
 ### Install, update and uninstall Askholmen Status System
 
 ```bash
-curl -s https://raw.githubusercontent.com/mickew/askstatus/main/Tools/setup | sudo bash
+sudo bash
+curl -s https://raw.githubusercontent.com/mickew/askstatus/main/Tools/setup | bash
+exit
 ```
 
 ### linux commands

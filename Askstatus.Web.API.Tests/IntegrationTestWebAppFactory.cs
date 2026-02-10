@@ -49,8 +49,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     {
         TemporaryDirectory = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
 #pragma warning disable CS0618 // Type or member is obsolete
-        PapercutContainer = new PapercutBuilder().Build();
-        MosquitoContainer = new ContainerBuilder()
+        PapercutContainer = new PapercutBuilder("changemakerstudiosus/papercut-smtp:7.0").Build();
+        MosquitoContainer = new ContainerBuilder("eclipse-mosquitto:latest")
             .WithImage("eclipse-mosquitto:latest")
             .WithPortBinding(1883, true).WithResourceMapping("mosquitto.conf", "/mosquitto/config/")
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(1883)).Build();
@@ -69,8 +69,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         }
         Directory.CreateDirectory(TemporaryDirectory!);
         Program.IsIntegrationTestRun = true;
-        await PapercutContainer.StartAsync();
         await MosquitoContainer.StartAsync();
+        await PapercutContainer.StartAsync();
     }
 
     public new async Task DisposeAsync()
