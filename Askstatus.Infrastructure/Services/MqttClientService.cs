@@ -173,18 +173,22 @@ internal class MqttClientService : IMqttClientService
         await _mqttClient.SubscribeAsync("pitemps/+/online");
         await _mqttClient.SubscribeAsync("pitemps/+/status/#");
 
+        await _mqttClient.SubscribeAsync("nutups/announce");
+        await _mqttClient.SubscribeAsync("nutups/+/online");
+        await _mqttClient.SubscribeAsync("nutups/+/status/#");
+
         await PublishAsync();
     }
 
     private async Task ParseTopic(string topic, string payload)
     {
-        if (topic == "shellies/announce" || topic == "pitemps/announce")
+        if (topic == "shellies/announce" || topic == "pitemps/announce" || topic == "nutups/announce")
         {
             await ProcessAnnounce(payload);
             return;
         }
 
-        Regex rg = new Regex(@"^(shellies|pitemps)\/(.+)\/online$");
+        Regex rg = new Regex(@"^(shellies|pitemps|nutups)\/(.+)\/online$");
         Match match = rg.Match(topic);
         if (match.Success)
         {
@@ -237,6 +241,13 @@ internal class MqttClientService : IMqttClientService
             return;
         }
         rg = new Regex(@"^pitemps\/(.+)\/status\/(.+)$");
+        match = rg.Match(topic);
+        if (match.Success)
+        {
+            await ProcessSensor(match.Groups[1].Value, match.Groups[2].Value, payload);
+            return;
+        }
+        rg = new Regex(@"^nutups\/(.+)\/status\/(.+)$");
         match = rg.Match(topic);
         if (match.Success)
         {
