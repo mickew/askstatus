@@ -37,7 +37,7 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
         MimeEntity image;
         using (var stream = FindResource(names => names?.FirstOrDefault(rn => rn.Contains("logo-32x32.png"))))
         {
-            image = builder.LinkedResources.Add("logo-32x32.png", stream);
+            image = builder.LinkedResources.Add("logo-32x32.png", stream!);
             image.ContentId = MimeUtils.GenerateMessageId();
         }
 
