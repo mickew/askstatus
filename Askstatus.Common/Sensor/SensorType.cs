@@ -4,4 +4,5 @@ public enum SensorType
     Unknown,
     Temperature,
     Humidity,
+    Battery,
 }
