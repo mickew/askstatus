@@ -15,6 +15,7 @@ namespace Askstatus.Architecture.Tests
 
 
         private const string ApplicationTestsNamespace = "Askstatus.Application.Tests";
+        private const string DomainTestsNamespace = "Askstatus.Domain.Tests";
         private const string ArchitectureTestsNamespace = "Askstatus.Architecture.Tests";
         private const string InfrastructureTestsNamespace = "Askstatus.Infrastructure.Tests";
         private const string WebAPITestsNamespace = "Askstatus.Web.API.Tests";
@@ -34,6 +35,7 @@ namespace Askstatus.Architecture.Tests
                 SdkNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                DomainTestsNamespace,
                 InfrastructureTestsNamespace,
                 WebAPITestsNamespace
             };
@@ -58,6 +60,7 @@ namespace Askstatus.Architecture.Tests
                 SdkNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                DomainTestsNamespace,
                 InfrastructureTestsNamespace,
                 WebAPITestsNamespace,
             };
@@ -80,6 +83,7 @@ namespace Askstatus.Architecture.Tests
                 SdkNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                DomainTestsNamespace,
                 InfrastructureTestsNamespace,
                 WebAPITestsNamespace,
             };
@@ -102,6 +106,7 @@ namespace Askstatus.Architecture.Tests
                 SdkNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                DomainTestsNamespace,
                 InfrastructureTestsNamespace,
                 WebAPITestsNamespace,
             };
@@ -123,6 +128,7 @@ namespace Askstatus.Architecture.Tests
                 SdkNamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                DomainTestsNamespace,
                 InfrastructureTestsNamespace,
                 WebAPITestsNamespace,
             };
@@ -142,6 +148,7 @@ namespace Askstatus.Architecture.Tests
                 WebAPINamespace,
                 ArchitectureTestsNamespace,
                 ApplicationTestsNamespace,
+                DomainTestsNamespace,
                 InfrastructureTestsNamespace,
                 WebAPITestsNamespace,
             };
