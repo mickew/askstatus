@@ -158,5 +158,28 @@ namespace Askstatus.Architecture.Tests
             result.IsSuccessful.Should().BeTrue();
         }
 
+        [Fact]
+        public void Sdk_Shuld_Not_HaveDependencyOnOtherProjects()
+        {
+            var assembly = typeof(Askstatus.Sdk.AssemblyReference).Assembly;
+
+            var otherProjects = new[]
+            {
+                DomainNamespace,
+                ApplicationNamespace,
+                InfrastructureNamespace,
+                WebAPINamespace,
+                WebUiNamespace,
+                ArchitectureTestsNamespace,
+                ApplicationTestsNamespace,
+                DomainTestsNamespace,
+                InfrastructureTestsNamespace,
+                WebAPITestsNamespace
+            };
+
+            var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(otherProjects).GetResult();
+
+            result.IsSuccessful.Should().BeTrue();
+        }
     }
 }

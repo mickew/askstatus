@@ -30,6 +30,7 @@
     <ProjectReference Include="..\Askstatus.Common\Askstatus.Common.csproj" />
     <ProjectReference Include="..\Askstatus.Domain\Askstatus.Domain.csproj" />
     <ProjectReference Include="..\Askstatus.Infrastructure\Askstatus.Infrastructure.csproj" />
+    <ProjectReference Include="..\Askstatus.Sdk\Askstatus.Sdk.csproj" />
     <ProjectReference Include="..\Askstatus.Web.API\Askstatus.Web.API.csproj" />
     <ProjectReference Include="..\Askstatus.Web.App\Askstatus.Web.App.csproj" />
   </ItemGroup>
