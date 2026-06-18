@@ -344,7 +344,11 @@ internal class MqttClientService : IMqttClientService
             .WithTopic("pitemps/command")
             .WithPayload("announce")
             .Build());
-        
+        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic("nutups/command")
+            .WithPayload("announce")
+            .Build());
+
         await PublishStatusUpdateAsync();
     }
 
@@ -365,6 +369,10 @@ internal class MqttClientService : IMqttClientService
             .Build());
         await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic("pitemps/command")
+            .WithPayload("announce")
+            .Build());
+        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic("nutups/command")
             .WithPayload("announce")
             .Build());
     }
