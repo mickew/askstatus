@@ -67,6 +67,7 @@ public class ParseSensorTests
         // Assert
         result.Should().BeFalse();
     }
+
     [Fact]
     public void TryParseValue_ShouldReturnTrue_ForValidDS18B20Value()
     {
@@ -99,4 +100,35 @@ public class ParseSensorTests
         result.Should().BeFalse();
     }
 
+    [Fact]
+    public void TryParseValue_ShouldReturnTrue_ForValidPINUTValue()
+    {
+        // Arrange
+        var sensor = new Askstatus.Domain.Entities.Sensor
+        {
+            SensorModel = "PINUT"
+        };
+        var value = "23.5";
+        // Act
+        var result = ParseSensor.TryParseValue(value, sensor, out double parsedValue);
+        // Assert
+        result.Should().BeTrue();
+        parsedValue.Should().Be(23.5);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("invalid")]
+    public void TryParseValue_ShouldReturnFalse_ForInvalidPINUTValue(string value)
+    {
+        // Arrange
+        var sensor = new Askstatus.Domain.Entities.Sensor
+        {
+            SensorModel = "PINUT"
+        };
+        // Act
+        var result = ParseSensor.TryParseValue(value, sensor, out double parsedValue);
+        // Assert
+        result.Should().BeFalse();
+    }
 }

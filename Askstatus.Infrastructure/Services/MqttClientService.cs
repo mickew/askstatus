@@ -331,6 +331,12 @@ internal class MqttClientService : IMqttClientService
             var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
             _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
+        if (shellieAnnounce != null && SuportedPINutSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
+        {
+            _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
+            var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
+            _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
+        }
         await Task.CompletedTask;
     }
 

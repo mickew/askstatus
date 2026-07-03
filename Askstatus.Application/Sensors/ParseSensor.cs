@@ -5,6 +5,7 @@ using Askstatus.Domain.Extensions;
 using Askstatus.Domain.Models;
 
 namespace Askstatus.Application.Sensors;
+
 public static class ParseSensor
 {
     public static bool TryParseValue(string value, Sensor sensor, out double result)
@@ -16,6 +17,10 @@ public static class ParseSensor
         else if (SuportedPITempSensorTypes.Sensors.Contains(sensor.SensorModel))
         {
             return TryParsePITempSensorType(value, sensor.SensorModel, out result);
+        }
+        else if (SuportedPINutSensorTypes.Sensors.Contains(sensor.SensorModel))
+        {
+            return TryParsePINutSensorType(value, sensor.SensorModel, out result);
         }
         else
         {
@@ -79,4 +84,29 @@ public static class ParseSensor
         }
     }
 
+    public static bool TryParsePINutSensorType(string value, String sensorModel, out double result)
+    {
+        double valueDouble = default;
+        try
+        {
+            bool isDouble;
+            var model = EnumExtensions.GetEnumFromString<PINutSensorType>(sensorModel);
+            switch (model)
+            {
+                case PINutSensorType.PINUT:
+                    isDouble = double.TryParse(value, CultureInfo.InvariantCulture, out valueDouble);
+                    break;
+                default:
+                    isDouble = false;
+                    break;
+            }
+            result = valueDouble;
+            return isDouble;
+        }
+        catch (Exception)
+        {
+            result = valueDouble;
+            return false;
+        }
+    }
 }

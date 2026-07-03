@@ -5,4 +5,11 @@ public enum SensorType
     Temperature,
     Humidity,
     Battery,
+    UpsStatus,
+    PowerIn,
+    PowerOut,
+    LoadWatts,
+    LoadPercent,
+    Runtime,
+    BatteryUsage,
 }
