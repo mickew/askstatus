@@ -188,11 +188,12 @@ internal class MqttClientService : IMqttClientService
             return;
         }
 
-        Regex rg = new Regex(@"^(shellies|pitemps|nutups)\/(.+)\/online$");
+        // Regex(@"^[^/]+/([^/]+)/online$");
+        Regex rg = MqttTopicMatcher.OnlineTopicRegex();        
         Match match = rg.Match(topic);
         if (match.Success)
         {
-            var id = match.Groups[2].Value;
+            var id = match.Groups[1].Value;
             var isOnline = payload == "true";
             if (_onlineStatus.ContainsKey(id))
             {
@@ -205,8 +206,8 @@ internal class MqttClientService : IMqttClientService
             _onlineStatus.AddOrUpdate(id, isOnline, (key, oldValue) => isOnline);
             return;
         }
-
-        rg = new Regex(@"^shellies\/(.+)\/status\/(.+)$");
+        // Regex(@"^shellies\/(.+)\/status\/(.+)$");
+        rg = MqttTopicMatcher.ShellieStatusTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
@@ -218,36 +219,40 @@ internal class MqttClientService : IMqttClientService
                 return;
             }
         }
-
-        rg = new Regex(@"^shellies\/(.+)\/status\/input\S\d$");
+        // Regex(@"^shellies\/(.+)\/status\/input\S\d$");
+        rg = MqttTopicMatcher.ShellieStatusInputTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessInput(match.Groups[1].Value, payload);
             return;
         }
-        rg = new Regex(@"^shellies\/(.+)\/status\/eth$");
+        // Regex(@"^shellies\/(.+)\/status\/eth$");
+        rg = MqttTopicMatcher.ShellieStatusEthTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessEth(match.Groups[1].Value, payload);
             return;
         }
-        rg = new Regex(@"^shellies\/(.+)\/sensor\/(.+)$");
+        // Regex(@"^shellies\/(.+)\/sensor\/(.+)$");
+        rg = MqttTopicMatcher.ShellieSensorTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessSensor(match.Groups[1].Value, match.Groups[2].Value, payload);
             return;
         }
-        rg = new Regex(@"^pitemps\/(.+)\/status\/(.+)$");
+        // Regex(@"^pitemps\/(.+)\/status\/(.+)$");
+        rg = MqttTopicMatcher.PiTempTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessSensor(match.Groups[1].Value, match.Groups[2].Value, payload);
             return;
         }
-        rg = new Regex(@"^nutups\/(.+)\/status\/(.+)$");
+        // Regex(@"^nutups\/(.+)\/status\/(.+)$");
+        rg = MqttTopicMatcher.NutUpsSensorTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
