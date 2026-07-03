@@ -1,4 +1,6 @@
-﻿using System.Runtime.Intrinsics.Arm;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using System.Runtime.Intrinsics.Arm;
 using Askstatus.Common.PowerDevice;
 using Askstatus.Common.Sensor;
 
@@ -42,21 +44,22 @@ public static class AskstatusIcons
 
     public const string Load = "<svg style=\"width:24px;height:24px\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M12 2C7.04 2 3 6.04 3 11C3 14.91 5.5 18.24 9 19.47V22H11V19.94C11.33 20 11.66 20 12 20S12.67 20 13 19.94V22H15V19.47C18.5 18.23 21 14.9 21 11C21 6.04 16.96 2 12 2M14.25 14L11.25 17L9.75 15.5L11 14.25L9.75 13L12.75 10L14.25 11.5L13 12.75L14.25 14M16 9H8V7H16V9Z\"/></svg>";
 
-    public static string SensorTypeToIcon(SensorType sensorType)
+    public static Tuple<string, string> SensorTypeToIcon(SensorType sensorType)
     {
+        var displayName = GetDisplayAttribute(sensorType);
         return sensorType switch
         {
-            SensorType.Temperature => AskstatusIcons.Thermometer,
-            SensorType.Humidity => AskstatusIcons.Humidity,
-            SensorType.Battery => AskstatusIcons.Battery,
-            SensorType.UpsStatus => AskstatusIcons.UpsStatus,
-            SensorType.PowerIn => AskstatusIcons.PowerIn,
-            SensorType.PowerOut => AskstatusIcons.PowerOut,
-            SensorType.LoadWatts => AskstatusIcons.Load,
-            SensorType.LoadPercent => AskstatusIcons.Load,
-            SensorType.Runtime => AskstatusIcons.Runtime,
-            SensorType.BatteryUsage => AskstatusIcons.BatteryUsage,
-            _ => AskstatusIcons.Unknown,
+            SensorType.Temperature => new Tuple<string, string>( AskstatusIcons.Thermometer, displayName),
+            SensorType.Humidity => new Tuple<string, string>( AskstatusIcons.Humidity, displayName),
+            SensorType.Battery => new Tuple<string, string>( AskstatusIcons.Battery, displayName),
+            SensorType.Status => new Tuple<string, string>( AskstatusIcons.UpsStatus, displayName),
+            SensorType.PowerIn => new Tuple<string, string>( AskstatusIcons.PowerIn, displayName),
+            SensorType.PowerOut => new Tuple<string, string>( AskstatusIcons.PowerOut, displayName),
+            SensorType.LoadWatts => new Tuple<string, string>( AskstatusIcons.Load, displayName),
+            SensorType.LoadPercent => new Tuple<string, string>( AskstatusIcons.Load, displayName),
+            SensorType.Runtime => new Tuple<string, string>( AskstatusIcons.Runtime, displayName),
+            SensorType.BatteryUsage => new Tuple<string, string>( AskstatusIcons.BatteryUsage, displayName),
+            _ => new Tuple<string, string>( AskstatusIcons.Unknown, displayName),
         };
     }
 
@@ -80,5 +83,14 @@ public static class AskstatusIcons
             ChanelType.Bulb => state ? BulbOn : BulbOff,
             _ => state ? GenericOn : GenericOff,
         };
+    }
+
+    public static string GetDisplayAttribute(this Enum value)
+    {
+        var result = value.GetType()
+                    .GetMember(value.ToString())
+                    .First()
+                    .GetCustomAttribute<DisplayAttribute>();
+        return result?.Name ?? value.ToString();
     }
 }
