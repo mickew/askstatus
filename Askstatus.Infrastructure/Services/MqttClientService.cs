@@ -173,22 +173,27 @@ internal class MqttClientService : IMqttClientService
         await _mqttClient.SubscribeAsync("pitemps/+/online");
         await _mqttClient.SubscribeAsync("pitemps/+/status/#");
 
+        await _mqttClient.SubscribeAsync("nutups/announce");
+        await _mqttClient.SubscribeAsync("nutups/+/online");
+        await _mqttClient.SubscribeAsync("nutups/+/status/#");
+
         await PublishAsync();
     }
 
     private async Task ParseTopic(string topic, string payload)
     {
-        if (topic == "shellies/announce" || topic == "pitemps/announce")
+        if (topic == "shellies/announce" || topic == "pitemps/announce" || topic == "nutups/announce")
         {
             await ProcessAnnounce(payload);
             return;
         }
 
-        Regex rg = new Regex(@"^(shellies|pitemps)\/(.+)\/online$");
+        // Regex(@"^[^/]+/([^/]+)/online$");
+        Regex rg = MqttTopicMatcher.OnlineTopicRegex();        
         Match match = rg.Match(topic);
         if (match.Success)
         {
-            var id = match.Groups[2].Value;
+            var id = match.Groups[1].Value;
             var isOnline = payload == "true";
             if (_onlineStatus.ContainsKey(id))
             {
@@ -201,8 +206,8 @@ internal class MqttClientService : IMqttClientService
             _onlineStatus.AddOrUpdate(id, isOnline, (key, oldValue) => isOnline);
             return;
         }
-
-        rg = new Regex(@"^shellies\/(.+)\/status\/(.+)$");
+        // Regex(@"^shellies\/(.+)\/status\/(.+)$");
+        rg = MqttTopicMatcher.ShellieStatusTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
@@ -214,29 +219,40 @@ internal class MqttClientService : IMqttClientService
                 return;
             }
         }
-
-        rg = new Regex(@"^shellies\/(.+)\/status\/input\S\d$");
+        // Regex(@"^shellies\/(.+)\/status\/input\S\d$");
+        rg = MqttTopicMatcher.ShellieStatusInputTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessInput(match.Groups[1].Value, payload);
             return;
         }
-        rg = new Regex(@"^shellies\/(.+)\/status\/eth$");
+        // Regex(@"^shellies\/(.+)\/status\/eth$");
+        rg = MqttTopicMatcher.ShellieStatusEthTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessEth(match.Groups[1].Value, payload);
             return;
         }
-        rg = new Regex(@"^shellies\/(.+)\/sensor\/(.+)$");
+        // Regex(@"^shellies\/(.+)\/sensor\/(.+)$");
+        rg = MqttTopicMatcher.ShellieSensorTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
             await ProcessSensor(match.Groups[1].Value, match.Groups[2].Value, payload);
             return;
         }
-        rg = new Regex(@"^pitemps\/(.+)\/status\/(.+)$");
+        // Regex(@"^pitemps\/(.+)\/status\/(.+)$");
+        rg = MqttTopicMatcher.PiTempTopicRegex();
+        match = rg.Match(topic);
+        if (match.Success)
+        {
+            await ProcessSensor(match.Groups[1].Value, match.Groups[2].Value, payload);
+            return;
+        }
+        // Regex(@"^nutups\/(.+)\/status\/(.+)$");
+        rg = MqttTopicMatcher.NutUpsSensorTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
@@ -320,6 +336,12 @@ internal class MqttClientService : IMqttClientService
             var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
             _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
+        if (shellieAnnounce != null && SuportedPINutSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
+        {
+            _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
+            var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
+            _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
+        }
         await Task.CompletedTask;
     }
 
@@ -333,7 +355,11 @@ internal class MqttClientService : IMqttClientService
             .WithTopic("pitemps/command")
             .WithPayload("announce")
             .Build());
-        
+        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic("nutups/command")
+            .WithPayload("announce")
+            .Build());
+
         await PublishStatusUpdateAsync();
     }
 
@@ -354,6 +380,10 @@ internal class MqttClientService : IMqttClientService
             .Build());
         await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic("pitemps/command")
+            .WithPayload("announce")
+            .Build());
+        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic("nutups/command")
             .WithPayload("announce")
             .Build());
     }

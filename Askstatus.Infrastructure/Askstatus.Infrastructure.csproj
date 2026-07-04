@@ -33,4 +33,8 @@
     <ProjectReference Include="..\Askstatus.Domain\Askstatus.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Askstatus.Infrastructure.Tests" />
+  </ItemGroup>
+
 </Project>

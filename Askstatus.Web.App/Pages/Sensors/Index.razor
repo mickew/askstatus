@@ -24,7 +24,7 @@
         <PropertyColumn Property="x => x.SensorModel" Title="Model" />
         <TemplateColumn Title="Type">
             <CellTemplate>
-                <MudIcon Icon="@AskstatusIcons.SensorTypeToIcon(context.Item.SensorType)" Title="@context.Item.SensorType.ToString()"></MudIcon>
+                <MudIcon Icon="@AskstatusIcons.SensorTypeToIcon(context.Item.SensorType).Item1" Title="@context.Item.SensorType.ToString()"></MudIcon>
             </CellTemplate>
         </TemplateColumn>
         <PropertyColumn Property="x => x.FormatString" Title="Format" />

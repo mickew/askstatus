@@ -10,6 +10,7 @@
     <Nullable>enable</Nullable>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <RestoreEnablePackagePruning Condition=" '$(VisualStudioVersion)' == '17.0' ">false</RestoreEnablePackagePruning>
+    <NoWarn>NU1903</NoWarn>    
   </PropertyGroup>
   
   <PropertyGroup>

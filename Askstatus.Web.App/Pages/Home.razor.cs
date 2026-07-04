@@ -277,9 +277,9 @@ public partial class Home : IAsyncDisposable
         sensor.LastUpdate = response.Content.LastUpdate;
     }
 
-    private string GetSensorToolTip(Sensor sensor)
+    private string GetSensorToolTip(Sensor sensor, string sensorDisplayName)
     {
-        return $"{sensor.SensorType} updated at {sensor.LastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}";
+        return $"{sensorDisplayName} updated at {sensor.LastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}";
     }
 }
 

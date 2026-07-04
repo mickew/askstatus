@@ -35,4 +35,10 @@
     <ProjectReference Include="..\Askstatus.Sdk\Askstatus.Sdk.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <Compile Remove="wwwroot\appsettings.Development.json" />
+    <Content Remove="wwwroot\appsettings.Development.json" />
+    <None Remove="wwwroot\appsettings.Development.json" />
+  </ItemGroup>
+  
 </Project>

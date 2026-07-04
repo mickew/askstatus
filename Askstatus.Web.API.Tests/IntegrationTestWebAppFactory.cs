@@ -155,7 +155,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                     root["MailSettings:Host"] = PapercutContainer.Hostname;
                     root["MailSettings:Port"] = PapercutContainer.GetMappedPublicPort(2525).ToString();
                     root["MailSettings:CredentialCacheFolder"] = TemporaryDirectory;
-                    root["AskstatusSettings:MQTTPort"] = MosquitoContainer.GetMappedPublicPort(1883).ToString(); ;
+                    root["AskstatusSettings:MQTTPort"] = MosquitoContainer.GetMappedPublicPort(1883).ToString();
+                    root["AskstatusSettings:MQTTServer"] = MosquitoContainer.Hostname;
                     root.Reload();
                 }
             }

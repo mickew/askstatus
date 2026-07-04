@@ -11,7 +11,7 @@
             @foreach (Askstatus.Common.Sensor.SensorType item in Enum.GetValues(typeof(Askstatus.Common.Sensor.SensorType)))
             {
                 <MudSelectItem T="Askstatus.Common.Sensor.SensorType" Value="@item">
-                    <MudIcon Icon="@AskstatusIcons.SensorTypeToIcon(item)"></MudIcon> @item.ToString()
+                    <MudIcon Icon="@AskstatusIcons.SensorTypeToIcon(item).Item1"></MudIcon> @item.ToString()
                 </MudSelectItem>
             }
         </MudSelect>
