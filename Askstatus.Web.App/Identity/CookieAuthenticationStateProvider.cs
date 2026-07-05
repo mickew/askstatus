@@ -87,7 +87,7 @@ public class CookieAuthenticationStateProvider : AuthenticationStateProvider, IA
             }
             else
             {
-                return new FormResult { Succeeded = false, ErrorList = new[] { res.Error.Message } };
+                return new FormResult { Succeeded = false, ErrorList = new[] { res.Error?.Message ?? "Login failed" } };
             }
         }
         catch (Exception ex)

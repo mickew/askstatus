@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.Users;
+using Askstatus.Common.Users;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
@@ -55,7 +55,7 @@ public partial class ConfirmEMail
         var response = await ApiService.UserAPI.ConfirmEmail(new ConfirmEmailRequest(UserId!, Token!));
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
             IsConfirmed = false;
         }
         else

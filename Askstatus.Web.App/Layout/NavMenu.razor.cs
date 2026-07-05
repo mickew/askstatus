@@ -47,8 +47,8 @@ public partial class NavMenu
                     var response = await ApiService.UserAPI.ChangePassword(changePassword);
                     if (!response.IsSuccessStatusCode)
                     {
-                        Logger.LogError(response.Error, response.Error.Content);
-                        message = response.Error.Message;
+                        Logger.LogError(response.Error, response.Error?.RequestContent);
+                        message = response.Error?.Message ?? "An error occurred";
                         severety = Severity.Error;
                     }
                 }

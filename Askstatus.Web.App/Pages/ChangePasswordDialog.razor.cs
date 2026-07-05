@@ -24,7 +24,7 @@ public partial class ChangePasswordDialog
 
     private async Task SavePassword()
     {
-        await Form!.Validate();
+        await Form!.ValidateAsync();
         if (Form!.IsValid)
         {
             MudDialog!.Close(DialogResult.Ok(ChangePassword));

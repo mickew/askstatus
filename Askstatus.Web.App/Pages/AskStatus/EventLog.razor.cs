@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.System;
+using Askstatus.Common.System;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -20,7 +20,7 @@ public partial class EventLog
     private string _searchString = string.Empty;
 
     private readonly int[] _pageSizeOptions = { 10, 25, 50 };
-    private async Task<GridData<SystemLogDto>> ServerReload(GridState<SystemLogDto> state)
+    private async Task<GridData<SystemLogDto>> ServerReload(GridState<SystemLogDto> state, CancellationToken cancellationToken)
     {
         var desc = true;
         string sortColumn = string.Empty;
@@ -34,8 +34,8 @@ public partial class EventLog
         var response = await ApiService.SystemAPI.GetSystemInfo(_searchString, sortColumn, state.Page + 1, state.PageSize, desc);
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
+            Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
             StateHasChanged();
             return new GridData<SystemLogDto>
             {

@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.Sensor;
+using Askstatus.Common.Sensor;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -31,8 +31,8 @@ public partial class Index
         var response = await ApiService.SensorAPI.GetSensors();
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
+            Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         Sensors = response.Content!.ToList();
@@ -55,8 +55,8 @@ public partial class Index
                 var res = await ApiService.SensorAPI.UpdateSensor(sensorRequest);
                 if (!res.IsSuccessStatusCode)
                 {
-                    Logger.LogError(res.Error, res.Error.Content);
-                    Snackbar.Add(res.Error.Content!, Severity.Error);
+                    Logger.LogError(res.Error, res.Error?.RequestContent);
+                    Snackbar.Add(res.Error?.RequestContent ?? "An error occurred", Severity.Error);
                     return;
                 }
                 sensor.Name = sensorCopy.Name;
@@ -69,7 +69,7 @@ public partial class Index
 
     private async Task DeleteSensor(SensorDto sensor)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Warning",
             $"Delete sensor {sensor.Name} {sensor.ValueName} ?",
             yesText: "Delete!", cancelText: "Cancel");
@@ -78,8 +78,8 @@ public partial class Index
             var response = await ApiService.SensorAPI.DeleteSensor(sensor.Id);
             if (!response.IsSuccessStatusCode)
             {
-                Logger.LogError(response.Error, response.Error.Content);
-                Snackbar.Add(response.Error.Content!, Severity.Error);
+                Logger.LogError(response.Error, response.Error?.RequestContent);
+                Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
                 return;
             }
             Sensors.Remove(sensor);
@@ -93,8 +93,8 @@ public partial class Index
         var response = await ApiService.SensorDiscoverAPI.NotAssigned();
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
+            Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         var flatenedSensors = FlatenSensorInfo(response.Content!);
@@ -116,8 +116,8 @@ public partial class Index
                 var res = await ApiService.SensorAPI.CreateSensor(sensorRequest);
                 if (!res.IsSuccessStatusCode)
                 {
-                    Logger.LogError(res.Error, res.Error.Content);
-                    Snackbar.Add(res.Error.Content!, Severity.Error);
+                    Logger.LogError(res.Error, res.Error?.RequestContent);
+                    Snackbar.Add(res.Error?.RequestContent ?? "An error occurred", Severity.Error);
                     return;
                 }
                 Sensors.Add(res.Content!);

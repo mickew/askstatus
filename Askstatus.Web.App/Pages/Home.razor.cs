@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Askstatus.Common.PowerDevice;
 using Askstatus.Common.Sensor;
 using Askstatus.Sdk;
@@ -53,8 +53,8 @@ public partial class Home : IAsyncDisposable
         var DeviceResponse = await ApiService.PowerDeviceAPI.GetPowerDevices();
         if (!DeviceResponse.IsSuccessStatusCode)
         {
-            Logger.LogError(DeviceResponse.Error, DeviceResponse.Error.Content);
-            Snackbar.Add(DeviceResponse.Error.Content!, Severity.Error);
+            Logger.LogError(DeviceResponse.Error, DeviceResponse.Error?.RequestContent);
+            Snackbar.Add(DeviceResponse.Error?.RequestContent ?? "An error occurred", Severity.Error);
         }
         Devices = DeviceResponse.Content!.Select(x => new Device
         {
@@ -68,8 +68,8 @@ public partial class Home : IAsyncDisposable
         var senorResponse = await ApiService.SensorAPI.GetSensors();
         if (!senorResponse.IsSuccessStatusCode)
         {
-            Logger.LogError(senorResponse.Error, senorResponse.Error.Content);
-            Snackbar.Add(senorResponse.Error.Content!, Severity.Error);
+            Logger.LogError(senorResponse.Error, senorResponse.Error?.RequestContent);
+            Snackbar.Add(senorResponse.Error?.RequestContent ?? "An error occurred", Severity.Error);
         }
         Sensors = senorResponse.Content!.Select(x => new Sensor
         {
@@ -204,8 +204,8 @@ public partial class Home : IAsyncDisposable
             if (!response.IsSuccessStatusCode)
             {
                 device.IsOnline = false;
-                Logger.LogError(response.Error, response.Error.Content);
-                Snackbar.Add(response.Error.Content!, Severity.Error);
+                Logger.LogError(response.Error, response.Error?.RequestContent);
+                Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
                 device.Prosessing = false;
                 StateHasChanged();
                 return;
@@ -217,8 +217,8 @@ public partial class Home : IAsyncDisposable
             if (!response.IsSuccessStatusCode)
             {
                 device.IsOnline = false;
-                Logger.LogError(response.Error, response.Error.Content);
-                Snackbar.Add(response.Error.Content!, Severity.Error);
+                Logger.LogError(response.Error, response.Error?.RequestContent);
+                Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
                 device.Prosessing = false;
                 StateHasChanged();
                 return;
@@ -228,8 +228,8 @@ public partial class Home : IAsyncDisposable
         //if (!response.IsSuccessStatusCode)
         //{
         //    device.IsOnline = false;
-        //    Logger.LogError(response.Error, response.Error.Content);
-        //    Snackbar.Add(response.Error.Content!, Severity.Error);
+        //    Logger.LogError(response.Error, response.Error.RequestContent);
+        //    Snackbar.Add(response.Error.RequestContent!, Severity.Error);
         //    device.Prosessing = false;
         //    StateHasChanged();
         //    return;
@@ -254,7 +254,7 @@ public partial class Home : IAsyncDisposable
     //    var response = await ApiService.PowerDeviceAPI.GetPowerDeviceStatus(device.Id);
     //    if (!response.IsSuccessStatusCode)
     //    {
-    //        Logger.LogError(response.Error, response.Error.Content);
+    //        Logger.LogError(response.Error, response.Error.RequestContent);
     //        Snackbar.Add($"{device.Name} is offline", Severity.Error);
     //        device.IsOnline = false;
     //        return;
@@ -268,7 +268,7 @@ public partial class Home : IAsyncDisposable
         var response = await ApiService.SensorAPI.GetSensorValue(sensor.Id);
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
             Snackbar.Add($"{sensor.Name} sensor(s) could not be retrieved", Severity.Error);
             sensor.Value = "N/A";
             return;

@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.Users;
+using Askstatus.Common.Users;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
@@ -63,7 +63,7 @@ public partial class ResetPassword
                     }
                     else
                     {
-                        Logger.LogError(response.Error, response.Error.Content);
+                        Logger.LogError(response.Error, response.Error?.RequestContent);
                         severety = Severity.Error;
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
@@ -71,7 +71,7 @@ public partial class ResetPassword
                         }
                         else
                         {
-                            message = response.Error.Message;
+                            message = response.Error?.Message ?? "An error occurred";
                         }
                     }
                 }

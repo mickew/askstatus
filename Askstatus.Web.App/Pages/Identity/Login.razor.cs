@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Askstatus.Common.Users;
 using Askstatus.Sdk;
 using Askstatus.Web.App.Identity;
@@ -57,7 +57,7 @@ public partial class Login
         {
             _loggingIn = false;
             var s = result.ErrorList[0];
-            await DialogService!.ShowMessageBox(
+            await DialogService!.ShowMessageBoxAsync(
                 "Warning",
                 s);
             StateHasChanged();
@@ -80,7 +80,7 @@ public partial class Login
                     var response = await ApiService.UserAPI.ForgotPassword(forgotPassword);
                     if (!response.IsSuccessStatusCode)
                     {
-                        Logger.LogError(response.Error, response.Error.Content);
+                        Logger.LogError(response.Error, response.Error?.RequestContent);
                         severety = Severity.Error;
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
@@ -88,7 +88,7 @@ public partial class Login
                         }
                         else
                         {
-                            message = response.Error.Message;
+                            message = response.Error?.Message ?? "An error occurred";
                         }
                     }
                 }

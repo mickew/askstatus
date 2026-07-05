@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.Authorization;
+using Askstatus.Common.Authorization;
 using Askstatus.Common.Users;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
@@ -30,8 +30,8 @@ public partial class Index
         var response = await ApiService.RoleAPI.GetRoles();
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
+            Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         Roles = response.Content!.ToList();
@@ -57,12 +57,12 @@ public partial class Index
                     {
                         role.Permissions = Permissions.None;
                         var response = await ApiService.RoleAPI.CreateRole(new RoleRequest(role.Id, role.Name, role.Permissions));
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            Logger.LogError(response.Error, response.Error.Content);
-                            message = response.Error.Message;
-                            severety = Severity.Error;
-                        }
+                            if (!response.IsSuccessStatusCode)
+                            {
+                                Logger.LogError(response.Error, response.Error?.RequestContent);
+                                message = response.Error?.Message ?? "An error occurred";
+                                severety = Severity.Error;
+                            }
                         if (severety == Severity.Success)
                         {
                             role = response.Content!;
@@ -86,12 +86,12 @@ public partial class Index
                     try
                     {
                         var response = await ApiService.RoleAPI.UpdateRole(new RoleRequest(role.Id, role.Name, role.Permissions));
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            Logger.LogError(response.Error, response.Error.Content);
-                            message = response.Error.Message;
-                            severety = Severity.Error;
-                        }
+                            if (!response.IsSuccessStatusCode)
+                            {
+                                Logger.LogError(response.Error, response.Error?.RequestContent);
+                                message = response.Error?.Message ?? "An error occurred";
+                                severety = Severity.Error;
+                            }
                     }
                     catch (ApiException ex)
                     {
@@ -108,7 +108,7 @@ public partial class Index
 
     private async Task DeleteRole(RoleDto role)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Warning",
             $"Delete role {role.Name} ?",
             yesText: "Delete!", cancelText: "Cancel");
@@ -121,8 +121,8 @@ public partial class Index
                 var response = await ApiService.RoleAPI.DeleteRole(role.Id);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Logger.LogError(response.Error, response.Error.Content);
-                    message = response.Error.Message;
+                    Logger.LogError(response.Error, response.Error?.RequestContent);
+                    message = response.Error?.Message ?? "An error occurred";
                     severety = Severity.Error;
                 }
             }

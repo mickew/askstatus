@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.System;
+using Askstatus.Common.System;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -24,13 +24,13 @@ public partial class SendEmail
 
     private async Task SendMail()
     {
-        await Form!.Validate();
+        await Form!.ValidateAsync();
         if (Form!.IsValid)
         {
             var result = await ApiService.SystemAPI.SendMail(SystemSendMailRequest);
             if (!result.IsSuccessStatusCode)
             {
-                Snackbar.Add($"Error sending email: {result.Error.Content}", Severity.Error);
+                Snackbar.Add($"Error sending email: {result.Error?.RequestContent}", Severity.Error);
                 return;
             }
             Snackbar.Add("Email sent successfully", Severity.Success);
@@ -43,7 +43,7 @@ public partial class SendEmail
         var usersResponse = await ApiService.UserAPI.GetUsers();
         if (!usersResponse.IsSuccessStatusCode)
         {
-            Snackbar.Add($"Error fetching users: {usersResponse.Error.Content}", Severity.Error);
+            Snackbar.Add($"Error fetching users: {usersResponse.Error?.RequestContent}", Severity.Error);
             return;
         }
         var users = usersResponse.Content!;
