@@ -277,6 +277,14 @@ public class UsersTests
         var result = await usersService.CreateUser(new UserRequest(string.Empty, "adminb", "adminb@localhost.local", "Adminb", "User", null!));
 
         // Assert
+        result.Value.Should().NotBeNull();
+        result.Value.UserName.Should().Be("adminb");
+        result.Value.Email.Should().Be("adminb@localhost.local");
+        result.Value.FirstName.Should().Be("Adminb");
+        result.Value.LastName.Should().Be("User");
+        result.Value.Roles.Should().BeEmpty();
+        result.Value.Link.Should().NotBeNull();
+        result.Value.Link.Should().StartWith("http://localhost/confirm-email?userId=");
         result.IsSuccess.Should().BeTrue();
     }
 
@@ -1017,6 +1025,9 @@ public class UsersTests
             {
                 Id = "1",
                 UserName = "Notadmin",
+                Email = "Notadmin@localhost.local",
+                FirstName = "Notadmin",
+                LastName = "User"
             });
         userManagerMock.Setup(userManager => userManager
             .GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUser>()))
@@ -1028,6 +1039,14 @@ public class UsersTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.UserName.Should().Be("Notadmin");
+        result.Value.Email.Should().Be("Notadmin@localhost.local");
+        result.Value.FirstName.Should().Be("Notadmin");
+        result.Value.LastName.Should().Be("User");
+        result.Value.Roles.Should().BeEmpty();
+        result.Value.Link.Should().NotBeNull();
+        result.Value.Link.Should().StartWith("http://localhost/reset-password?userId=");
 
     }
 
@@ -1175,7 +1194,7 @@ public class UsersTests
 
     private static IOptions<AskstatusApiSettings> ApiOptions()
     {
-        var apiSettings = new AskstatusApiSettings { BackendUrl = "http://localhost", FrontendUrl = "https://localhost" };
+        var apiSettings = new AskstatusApiSettings { BackendUrl = "http://localhost;http://www.localhost", FrontendUrl = "http://localhost;http://www.localhost" };
         IOptions<AskstatusApiSettings> options = Options.Create(apiSettings);
         return options;
     }

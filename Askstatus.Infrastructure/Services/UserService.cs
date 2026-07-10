@@ -123,7 +123,10 @@ public partial class UserService : IUserService
                 { "userId", user.Id },
                 { "token", token }
             };
-            var callback = QueryHelpers.AddQueryString($"{_apiOptons.Value.FrontendUrl}/confirm-email", param);
+            var frontendUrls = _apiOptons.Value.FrontendUrl!.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            var frontendUrl = frontendUrls.FirstOrDefault() ?? string.Empty;
+
+            var callback = QueryHelpers.AddQueryString($"{frontendUrl}/confirm-email", param);
             result = await _signInManager.UserManager.AddToRolesAsync(user, userRequest.Roles);
             if (!result.Succeeded)
             {
@@ -208,7 +211,10 @@ public partial class UserService : IUserService
                 { "userId", user.Id },
                 { "token", token }
             };
-            var callback = QueryHelpers.AddQueryString($"{_apiOptons.Value.FrontendUrl}/reset-password", param);
+            var frontendUrls = _apiOptons.Value.FrontendUrl!.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            var frontendUrl = frontendUrls.FirstOrDefault() ?? string.Empty;
+
+            var callback = QueryHelpers.AddQueryString($"{frontendUrl}/reset-password", param);
             _logger.LogInformation("Password reset token generated for user {User}", email);
             return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback));
         }
