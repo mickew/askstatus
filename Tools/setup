@@ -102,6 +102,12 @@ function update {
         fi
         chown www-data:www-data $install_dir/appsettings.Production.json
         chmod 644 $install_dir/appsettings.Production.json
+
+        # copy appsettings.Production.json
+        if [ -f $BASEDIR/appsettings.Production.json ]; then
+            cp $BASEDIR/appsettings.Production.json $install_dir_frontend/wwwroot/appsettings.Production.json
+        fi
+
         # create database folder
         mkdir -p /usr/share/$db_dir
         sudo chmod 777 /usr/share/$db_dir
