@@ -33,6 +33,10 @@ public partial class Login
 
     private bool _loggingIn = false;
 
+    private string _message = "";
+
+    private MudMessageBox? _mudMessageBox;
+
 
     public class RegisterAccountForm
     {
@@ -56,10 +60,8 @@ public partial class Login
         else
         {
             _loggingIn = false;
-            var s = result.ErrorList[0];
-            await DialogService!.ShowMessageBox(
-                "Warning",
-                s);
+            _message = result.ErrorList[0];
+            _ = await _mudMessageBox!.ShowAsync();
             StateHasChanged();
         }
     }
