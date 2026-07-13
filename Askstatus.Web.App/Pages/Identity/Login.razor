@@ -3,7 +3,16 @@
 
 <PageTitle>Login</PageTitle>
 
-<AuthorizeView >
+<MudMessageBox @ref="_mudMessageBox" Title="Warning">
+    <MessageContent>
+        @_message
+    </MessageContent>
+    <YesButton>
+        <MudButton>Ok</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+<AuthorizeView>
     <Authorized>
         <div style="height: 75vh">
             <MudGrid Justify="Justify.Center">
