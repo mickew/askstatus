@@ -18,8 +18,8 @@ public class UsersTests
         Mock<IUserService> mock = new Mock<IUserService>();
         var users = new List<UserVM>
         {
-            new UserVM("1", "testuser1","testuser1@local","testuser1","testuser1"),
-            new UserVM("2", "testuser2","testuser2@local","testuser2","testuser2"),
+            new UserVM("1", "testuser1","testuser1@local","testuser1","testuser1", false),
+            new UserVM("2", "testuser2","testuser2@local","testuser2","testuser2", false),
         };
         mock.Setup(x => x.GetUsers()).ReturnsAsync(Result.Ok<IEnumerable<UserVM>>(users));
         GetUsersQueryHandler getUsersQueryHandler = new GetUsersQueryHandler(mock.Object);
@@ -39,7 +39,7 @@ public class UsersTests
     {
         // Arrange
         Mock<IUserService> mock = new Mock<IUserService>();
-        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1", false);
         mock.Setup(x => x.GetUserById(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
         GetUserByIdQueryHandler getUserByIdQueryHandler = new GetUserByIdQueryHandler(mock.Object);
         var getUserByIdQuery = new GetUserByIdQuery("1");
@@ -131,7 +131,7 @@ public class UsersTests
         var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
-        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
+        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1", false);
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Ok(user));
         CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, evenBusMock.Object);
         var createUserCommand = new CreateUserCommand
@@ -187,7 +187,7 @@ public class UsersTests
         var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         var userRequest = new UserRequest("", "testuser1", "testuser1@local", "testuser1", "testuser1", null!);
-        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
+        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1", false);
         mock.Setup(x => x.CreateUser(It.IsAny<UserRequest>())).ReturnsAsync(Result.Ok(user));
         CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(mock.Object, logger.Object, evenBusMock.Object);
         var createUserCommand = new CreateUserCommand
@@ -545,7 +545,7 @@ public class UsersTests
         var unitOfWorkMock = new Mock<IUnitOfWork>();
         unitOfWorkMock.Setup(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()));
         unitOfWorkMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
-        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1", false);
         mock.Setup(x => x.GetUserById(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
         mock.Setup(x => x.ConfirmEmail(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(Result.Ok());
         ConfirmEmailCommandHandler confirmEmailCommandHandler = new ConfirmEmailCommandHandler(mock.Object, unitOfWorkMock.Object, logger.Object);
@@ -565,7 +565,7 @@ public class UsersTests
     public async Task ForgotPassword_Should_Return_Success()
     {
         // Arrange
-        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
+        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1", false);
         var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         mock.Setup(x => x.ForgotPassword(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
@@ -603,7 +603,7 @@ public class UsersTests
     public async Task ForgotPassword_ShouldPublishUserChangedEvent_WhenForgotPasswordSuccessfully()
     {
         // Arrange
-        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1");
+        var user = new UserVMWithLink("1", "testuser1", "testuser1@local", "testuser1", "testuser1", "/link?id=1", false);
         var evenBusMock = new Mock<IEventBus>();
         Mock<IUserService> mock = new Mock<IUserService>();
         mock.Setup(x => x.ForgotPassword(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
@@ -625,7 +625,7 @@ public class UsersTests
         var logger = new Mock<ILogger<ResetUserPasswordCommandHandler>>();
         Mock<IUserService> mock = new Mock<IUserService>();
         mock.Setup(x => x.ResetUserPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(Result.Ok());
-        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1");
+        var user = new UserVM("1", "testuser1", "testuser1@local", "testuser1", "testuser1", false);
         mock.Setup(x => x.GetUserById(It.IsAny<string>())).ReturnsAsync(Result.Ok(user));
         var unitOfWorkMock = new Mock<IUnitOfWork>();
         unitOfWorkMock.Setup(x => x.SystemLogRepository.AddAsync(It.IsAny<Askstatus.Domain.Entities.SystemLog>()));

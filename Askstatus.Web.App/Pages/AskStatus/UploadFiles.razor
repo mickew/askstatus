@@ -3,23 +3,29 @@
 
 <PageTitle>Askstatus - Upload files</PageTitle>
 <MudStack>
-    <MudFileUpload T="IBrowserFile" FilesChanged="UploadGoogleFile" Accept="gmail.com">
-        <ActivatorContent>
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.CloudUpload">
-                Upload Google Token Response File
-            </MudButton>
-        </ActivatorContent>
-    </MudFileUpload>
+    <MudFileUpload T="IBrowserFile" 
+                   FilesChanged="UploadGoogleFile" 
+                   Accept="gmail.com"
+                   id="googleFileInput"
+                   Hidden="true" />
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.CloudUpload"
+               HtmlTag="label"
+               for="googleFileInput">
+        Upload Google Token Response File
+    </MudButton>
 
-    <MudFileUpload T="IBrowserFile" FilesChanged="UploadAppSettingsFile" Accept="appsettings.Production.json">
-        <ActivatorContent>
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.CloudUpload">
-                Upload Production AppSettings File
-            </MudButton>
-        </ActivatorContent>
-    </MudFileUpload>
+    <MudFileUpload T="IBrowserFile" 
+                   FilesChanged="UploadAppSettingsFile" 
+                   Accept="appsettings.Production.json"
+                   id="appSettingsFileInput"
+                   Hidden="true" />
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.CloudUpload"
+               HtmlTag="label"
+               for="appSettingsFileInput">
+        Upload Production AppSettings File
+    </MudButton>
 </MudStack>

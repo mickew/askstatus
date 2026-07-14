@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using Askstatus.Common.Users;
 using Askstatus.Sdk;
 using Askstatus.Sdk.Users;
@@ -34,8 +34,8 @@ public partial class Index
         var response = await ApiService.UserAPI.GetUsers();
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
+            Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         Users = response.Content!.ToList();
@@ -51,8 +51,8 @@ public partial class Index
             var roleResponse = await ApiService.RoleAPI.GetRoles();
             if (!roleResponse.IsSuccessStatusCode)
             {
-                Logger.LogError(roleResponse.Error, roleResponse.Error.Content);
-                message = roleResponse.Error.Message;
+                Logger.LogError(roleResponse.Error, roleResponse.Error?.RequestContent);
+                message = roleResponse.Error?.Message ?? "An error occurred";
                 severety = Severity.Error;
             }
             if (severety == Severity.Success)
@@ -84,8 +84,8 @@ public partial class Index
                 var response = await ApiService.UserAPI.GetUserById(user.Id);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Logger.LogError(response.Error, response.Error.Content);
-                    message = response.Error.Message;
+                    Logger.LogError(response.Error, response.Error?.RequestContent);
+                    message = response.Error?.Message ?? "An error occurred";
                     severety = Severity.Error;
                 }
                 if (severety == Severity.Success)
@@ -126,8 +126,8 @@ public partial class Index
                         var response = await ApiService.UserAPI.CreateUser(new UserRequest(theUser.Id, theUser.UserName, theUser.Email, theUser.FirstName, theUser.LastName, theUser.Roles));
                         if (!response.IsSuccessStatusCode)
                         {
-                            Logger.LogError(response.Error, response.Error.Content);
-                            message = response.Error.Message;
+                            Logger.LogError(response.Error, response.Error?.RequestContent);
+                            message = response.Error?.Message ?? "An error occurred";
                             severety = Severity.Error;
                         }
                         if (severety == Severity.Success)
@@ -156,8 +156,8 @@ public partial class Index
                         var response = await ApiService.UserAPI.UpdateUser(new UserRequest(theUser.Id, theUser.UserName, theUser.Email, theUser.FirstName, theUser.LastName, theUser.Roles));
                         if (!response.IsSuccessStatusCode)
                         {
-                            Logger.LogError(response.Error, response.Error.Content);
-                            message = response.Error.Message;
+                            Logger.LogError(response.Error, response.Error?.RequestContent);
+                            message = response.Error?.Message ?? "An error occurred";
                             severety = Severity.Error;
                         }
                     }
@@ -184,7 +184,7 @@ public partial class Index
 
     private async Task DeleteUser(UserVM user)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Warning",
             $"Delete user {user.UserName} ?",
             yesText: "Delete!", cancelText: "Cancel");
@@ -197,8 +197,8 @@ public partial class Index
                 var response = await ApiService.UserAPI.DeleteUser(user.Id);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Logger.LogError(response.Error, response.Error.Content);
-                    message = response.Error.Message;
+                    Logger.LogError(response.Error, response.Error?.RequestContent);
+                    message = response.Error?.Message ?? "An error occurred";
                     severety = Severity.Error;
                 }
             }
@@ -220,7 +220,7 @@ public partial class Index
 
     private async Task ResetPassword(UserVM user)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Warning",
             $"Reset password for user {user.UserName} ?",
             yesText: "Reset!", cancelText: "Cancel");
@@ -233,9 +233,13 @@ public partial class Index
                 var response = await ApiService.UserAPI.ResetPassword(user.Id);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Logger.LogError(response.Error, response.Error.Content);
-                    message = response.Error.Message;
+                    Logger.LogError(response.Error, response.Error?.RequestContent);
+                    message = response.Error?.Message ?? "An error occurred";
                     severety = Severity.Error;
+                }
+                else
+                {
+                    user.IsLockedOut = false;
                 }
             }
             catch (ApiException ex)
@@ -245,6 +249,7 @@ public partial class Index
                 message = ex.Message;
                 severety = Severity.Error;
             }
+            StateHasChanged();
             Snackbar.Add(message, severety);
         }
     }

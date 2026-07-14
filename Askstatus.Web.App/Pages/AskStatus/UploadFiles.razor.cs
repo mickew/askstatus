@@ -1,4 +1,4 @@
-﻿using Askstatus.Sdk;
+using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
@@ -28,8 +28,8 @@ public partial class UploadFiles
         var result = await ApiService.SystemAPI.UploadGoogleTokenResponseFile(new StreamPart(file.OpenReadStream(), file.Name, file.ContentType, "file"));
         if (!result.IsSuccessStatusCode)
         {
-            Logger.LogError(result.Error, result.Error.Content);
-            Snackbar.Add(result.Error.Content!, Severity.Error);
+            Logger.LogError(result.Error, result.Error?.RequestContent);
+            Snackbar.Add(result.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         Snackbar.Add("File uploaded successfully", Severity.Success);
@@ -46,8 +46,8 @@ public partial class UploadFiles
         var result = await ApiService.SystemAPI.UploadProductionAppSettingsFile(new StreamPart(file.OpenReadStream(), file.Name, file.ContentType, "file"));
         if (!result.IsSuccessStatusCode)
         {
-            Logger.LogError(result.Error, result.Error.Content);
-            Snackbar.Add(result.Error.Content!, Severity.Error);
+            Logger.LogError(result.Error, result.Error?.RequestContent);
+            Snackbar.Add(result.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         Snackbar.Add("File uploaded successfully", Severity.Success);

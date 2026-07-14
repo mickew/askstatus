@@ -23,7 +23,7 @@ public partial class ForgotPasswordDialog
 
     private async Task Ok()
     {
-        await Form!.Validate();
+        await Form!.ValidateAsync();
         if (Form!.IsValid)
         {
             MudDialog!.Close(DialogResult.Ok(ForgotPasswordRquest));

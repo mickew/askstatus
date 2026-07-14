@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.Models;
+using Askstatus.Common.Models;
 using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
@@ -32,16 +32,16 @@ public partial class Index
         var res = await ApiService.PowerDeviceAPI.Refresh();
         if (!res.IsSuccessStatusCode)
         {
-            Logger.LogError(res.Error, res.Error.Content);
-            Snackbar.Add(res.Error.Content!, Severity.Error);
+            Logger.LogError(res.Error, res.Error?.RequestContent);
+            Snackbar.Add(res.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
 
         var response = await ApiService.PowerDeviceAPI.GetPowerDevices();
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
+            Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         PowerDevices = response.Content!.ToList();
@@ -64,8 +64,8 @@ public partial class Index
                 var res = await ApiService.PowerDeviceAPI.UpdatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {
-                    Logger.LogError(res.Error, res.Error.Content);
-                    Snackbar.Add(res.Error.Content!, Severity.Error);
+                    Logger.LogError(res.Error, res.Error?.RequestContent);
+                    Snackbar.Add(res.Error?.RequestContent ?? "An error occurred", Severity.Error);
                     return;
                 }
                 device.Name = deviceCopy.Name;
@@ -78,7 +78,7 @@ public partial class Index
 
     private async Task DeleteDevice(PowerDeviceDto device)
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Warning",
             $"Delete device {device.Name} ?",
             yesText: "Delete!", cancelText: "Cancel");
@@ -87,8 +87,8 @@ public partial class Index
             var response = await ApiService.PowerDeviceAPI.DeletePowerDevice(device.Id);
             if (!response.IsSuccessStatusCode)
             {
-                Logger.LogError(response.Error, response.Error.Content);
-                Snackbar.Add(response.Error.Content!, Severity.Error);
+                Logger.LogError(response.Error, response.Error?.RequestContent);
+                Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
                 return;
             }
             PowerDevices.Remove(device);
@@ -112,8 +112,8 @@ public partial class Index
                 var res = await ApiService.PowerDeviceAPI.CreatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {
-                    Logger.LogError(res.Error, res.Error.Content);
-                    Snackbar.Add(res.Error.Content!, Severity.Error);
+                    Logger.LogError(res.Error, res.Error?.RequestContent);
+                    Snackbar.Add(res.Error?.RequestContent ?? "An error occurred", Severity.Error);
                     return;
                 }
                 PowerDevices.Add(res.Content!);
@@ -127,8 +127,8 @@ public partial class Index
         var response = await ApiService.DeviceDiscoverAPI.DiscoverAll();
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
+            Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         await HandleDiscoverDevicesDialog(response.Content!);
@@ -139,8 +139,8 @@ public partial class Index
         var response = await ApiService.DeviceDiscoverAPI.NotAssigned();
         if (!response.IsSuccessStatusCode)
         {
-            Logger.LogError(response.Error, response.Error.Content);
-            Snackbar.Add(response.Error.Content!, Severity.Error);
+            Logger.LogError(response.Error, response.Error?.RequestContent);
+            Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
             return;
         }
         await HandleDiscoverDevicesDialog(response.Content!);
@@ -174,8 +174,8 @@ public partial class Index
                 var res = await ApiService.PowerDeviceAPI.CreatePowerDevice(powerDeviceRequest);
                 if (!res.IsSuccessStatusCode)
                 {
-                    Logger.LogError(res.Error, res.Error.Content);
-                    Snackbar.Add(res.Error.Content!, Severity.Error);
+                    Logger.LogError(res.Error, res.Error?.RequestContent);
+                    Snackbar.Add(res.Error?.RequestContent ?? "An error occurred", Severity.Error);
                     return;
                 }
                 PowerDevices.Add(res.Content!);

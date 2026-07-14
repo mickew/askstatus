@@ -25,7 +25,7 @@ public partial class AddEditUserDialog
 
     private async Task SaveUser()
     {
-        await form!.Validate();
+        await form!.ValidateAsync();
         if (form!.IsValid)
         {
             MudDialog!.Close(DialogResult.Ok(User));

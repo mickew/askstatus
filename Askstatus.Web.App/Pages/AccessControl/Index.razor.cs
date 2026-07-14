@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.Authorization;
+using Askstatus.Common.Authorization;
 using Askstatus.Common.Users;
 using Askstatus.Sdk;
 using Askstatus.Sdk.Users;
@@ -44,8 +44,8 @@ public partial class Index
             var response = await ApiService.RoleAPI.UpdatePermissions(new RoleRequest(role.Id, role.Name, role.Permissions));
             if (!response.IsSuccessStatusCode)
             {
-                Logger.LogError(response.Error, response.Error.Content);
-                message = response.Error.Message;
+                Logger.LogError(response.Error, response.Error?.RequestContent);
+                message = response.Error?.Message ?? "An error occurred";
                 severety = Severity.Error;
             }
         }

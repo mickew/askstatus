@@ -1,4 +1,4 @@
-﻿using Askstatus.Common.PowerDevice;
+using Askstatus.Common.PowerDevice;
 using Askstatus.Sdk;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -48,8 +48,8 @@ public partial class DiscoverDeviceDialog
             var response = await ApiService.DeviceDiscoverAPI.Discover(host);
             if (!response.IsSuccessStatusCode)
             {
-                Logger.LogError(response.Error, response.Error.Content);
-                Snackbar.Add(response.Error.Content!, Severity.Error);
+                Logger.LogError(response.Error, response.Error?.RequestContent);
+                Snackbar.Add(response.Error?.RequestContent ?? "An error occurred", Severity.Error);
                 return;
             }
             Device.Name = response.Content!.DeviceName;
