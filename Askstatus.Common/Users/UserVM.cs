@@ -3,15 +3,16 @@
 namespace Askstatus.Common.Users;
 public class UserVM
 {
-    public UserVM() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty) { }
+    public UserVM() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, false) { }
 
-    public UserVM(string id, string userName, string email, string firstName, string lastName)
+    public UserVM(string id, string userName, string email, string firstName, string lastName, bool isLockedOut)
     {
         Id = id;
         UserName = userName;
         Email = email;
         FirstName = firstName;
         LastName = lastName;
+        IsLockedOut = isLockedOut;
     }
 
     public string Id { get; set; }
@@ -25,6 +26,8 @@ public class UserVM
     public string LastName { get; set; }
 
     public List<string> Roles { get; set; } = new();
+
+    public bool IsLockedOut { get; set; }
 }
 
 public class UserVMFluentValidator : AbstractValidator<UserVM>

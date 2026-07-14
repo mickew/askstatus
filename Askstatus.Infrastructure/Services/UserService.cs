@@ -137,7 +137,7 @@ public partial class UserService : IUserService
                 }
                 return Result.Fail<UserVMWithLink>(new IdentityBadRequestError("Could not add roles to user", result.Errors));
             }
-            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback));
+            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback, false));
         }
         _logger.LogWarning("Could not create user {User}", userRequest.UserName);
         foreach (var error in result.Errors)
@@ -216,7 +216,7 @@ public partial class UserService : IUserService
 
             var callback = QueryHelpers.AddQueryString($"{frontendUrl}/reset-password", param);
             _logger.LogInformation("Password reset token generated for user {User}", email);
-            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback));
+            return Result.Ok(new UserVMWithLink(user.Id, user.UserName!, user.Email!, user.FirstName!, user.LastName!, callback, false));
         }
         _logger.LogWarning("User with email {Email} not found", email);
         return Result.Fail<UserVMWithLink>(new IdentityNotFoundError("User not found"));
@@ -248,7 +248,7 @@ public partial class UserService : IUserService
             _logger.LogWarning("User with Id {Id} not found", Id);
             return Result.Fail<UserVM>(new IdentityNotFoundError("User not found"));
         }
-        UserVM user = new(result.Id, result.UserName!, result.Email!, result.FirstName!, result.LastName!);
+        UserVM user = new(result.Id, result.UserName!, result.Email!, result.FirstName!, result.LastName!, await _signInManager.UserManager.IsLockedOutAsync(result));
         var roles = await _signInManager.UserManager.GetRolesAsync(result);
         if (roles is null)
         {
@@ -261,9 +261,18 @@ public partial class UserService : IUserService
 
     public async Task<Result<IEnumerable<UserVM>>> GetUsers()
     {
-        var result = await _signInManager.UserManager.Users.OrderBy(r => r.UserName)
-                                       .Select(u => new UserVM(u.Id, u.UserName!, u.Email!, u.FirstName!, u.LastName!))
-                                       .ToListAsync();
+        var users = await _signInManager.UserManager.Users.OrderBy(r => r.UserName).ToListAsync();
+
+        var userVmTasks = users.Select(async u => new UserVM(
+            u.Id, 
+            u.UserName!, 
+            u.Email!, 
+            u.FirstName!, 
+            u.LastName!, 
+            await _signInManager.UserManager.IsLockedOutAsync(u)));
+
+        var result = await Task.WhenAll(userVmTasks);
+
         return Result.Ok(result.AsEnumerable());
     }
 
@@ -281,6 +290,7 @@ public partial class UserService : IUserService
             return Result.Fail(new IdentityBadRequestError("Cannot reset password for admin user"));
         }
 
+        _ = await _signInManager.UserManager.SetLockoutEndDateAsync(result, null);
         var token = await _signInManager.UserManager.GeneratePasswordResetTokenAsync(result);
         var resetResult = await _signInManager.UserManager.ResetPasswordAsync(result, token, $"!1{char.ToUpper(result.UserName![0])}{result.UserName.Substring(1)}1!");
         if (resetResult.Succeeded)

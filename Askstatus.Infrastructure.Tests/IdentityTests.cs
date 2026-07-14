@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Security.Principal;
 using Askstatus.Application.Interfaces;
 using Askstatus.Common.Identity;
 using Askstatus.Domain.Constants;
@@ -180,7 +181,14 @@ public class IdentityTests
 
         public override Task<ApplicationUser?> FindByEmailAsync(string email)
         {
-            return base.FindByEmailAsync(email);
+            if (email != "admin@nomail.com")
+                return Task.FromResult<ApplicationUser?>(null);
+            ApplicationUser user = new ApplicationUser
+            {
+                UserName = "admin",
+                Email = email
+            };
+            return Task.FromResult<ApplicationUser?>(user);
         }
 
         public override Task<ApplicationUser?> GetUserAsync(ClaimsPrincipal principal)

@@ -52,14 +52,21 @@ public sealed class IdentityService : IIdentityService
 
     public async Task<Result> Login(LoginRequest loginRequest)
     {
+        var user = await _signInManager.UserManager.FindByEmailAsync(loginRequest.UserName).ConfigureAwait(false);
+        var userName = user?.UserName ?? loginRequest.UserName;
         _signInManager.AuthenticationScheme = IdentityConstants.ApplicationScheme;
-        var result = await _signInManager.PasswordSignInAsync(loginRequest.UserName, loginRequest.Password, true, lockoutOnFailure: true).ConfigureAwait(false);
+        var result = await _signInManager.PasswordSignInAsync(userName, loginRequest.Password, true, lockoutOnFailure: true).ConfigureAwait(false);
         if (result.Succeeded)
         {
-            _logger.LogDebug("User {User} logged in", loginRequest.UserName);
+            _logger.LogDebug("User {User} logged in", userName);
             return Result.Ok();
         }
-        _logger.LogWarning("Login failed for user {User}", loginRequest.UserName);
+        if (result.IsLockedOut)
+        {
+            _logger.LogWarning("User {User} is locked out", userName);
+            return Result.Fail(new IdentityUnauthorizedError("User is locked out"));
+        }
+        _logger.LogWarning("Login failed for user {User}", userName);
         return Result.Fail(new IdentityUnauthorizedError("Login failed"));
     }
 

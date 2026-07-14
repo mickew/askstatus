@@ -237,6 +237,10 @@ public partial class Index
                     message = response.Error?.Message ?? "An error occurred";
                     severety = Severity.Error;
                 }
+                else
+                {
+                    user.IsLockedOut = false;
+                }
             }
             catch (ApiException ex)
             {
@@ -245,6 +249,7 @@ public partial class Index
                 message = ex.Message;
                 severety = Severity.Error;
             }
+            StateHasChanged();
             Snackbar.Add(message, severety);
         }
     }
