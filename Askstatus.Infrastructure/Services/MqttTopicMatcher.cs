@@ -25,4 +25,7 @@ public static partial class MqttTopicMatcher
 
     [GeneratedRegex(@"^nutups\/(.+)\/status\/(.+)$")]
     public static partial Regex NutUpsSensorTopicRegex();
+
+    [GeneratedRegex(@"^telldus\/(.+)\/status\/(.+)$")]
+    public static partial Regex TelldusSensorTopicRegex();
 }

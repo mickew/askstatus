@@ -198,4 +198,32 @@ public class MqttTopicMatcherTests
             match.Groups[2].Value.Should().Be(expectedGroup2);
         }
     }
+
+    [Theory]
+    [InlineData("telldus/telldusmqttclient/status/battery", true, "telldusmqttclient", "battery")]
+    [InlineData("telldus/my-telldus-device/status/voltage", true, "my-telldus-device", "voltage")]
+    [InlineData("telldus/device/status/charge", true, "device", "charge")]
+    [InlineData("telldus/dev/name/status/load", true, "dev/name", "load")]
+    [InlineData("telldus/telldusmqttclient-1/status/input:0", true, "telldusmqttclient-1", "input:0")]
+    [InlineData("nottelldus/telldusmqttclient/status/battery", false, null, null)]
+    [InlineData("telldus/device/other/battery", false, null, null)]
+    [InlineData("telldus/device/status/", false, null, null)]
+    [InlineData("telldus//status/", false, null, null)]
+    [InlineData("", false, null, null)]
+    public void TelldusSensorTopicRegex_ShouldMatchCorrectTopics(string topic, bool shouldMatch, string? expectedGroup1, string? expectedGroup2)
+    {
+        // Arrange
+        var regex = MqttTopicMatcher.TelldusSensorTopicRegex();
+
+        // Act
+        var match = regex.Match(topic);
+
+        // Assert
+        match.Success.Should().Be(shouldMatch);
+        if (shouldMatch)
+        {
+            match.Groups[1].Value.Should().Be(expectedGroup1);
+            match.Groups[2].Value.Should().Be(expectedGroup2);
+        }
+    }
 }
