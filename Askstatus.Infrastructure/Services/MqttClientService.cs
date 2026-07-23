@@ -177,12 +177,16 @@ internal class MqttClientService : IMqttClientService
         await _mqttClient.SubscribeAsync("nutups/+/online");
         await _mqttClient.SubscribeAsync("nutups/+/status/#");
 
+        await _mqttClient.SubscribeAsync("telldus/announce");
+        await _mqttClient.SubscribeAsync("telldus/+/online");
+        await _mqttClient.SubscribeAsync("telldus/+/status/#");
+
         await PublishAsync();
     }
 
     private async Task ParseTopic(string topic, string payload)
     {
-        if (topic == "shellies/announce" || topic == "pitemps/announce" || topic == "nutups/announce")
+        if (topic == "shellies/announce" || topic == "pitemps/announce" || topic == "nutups/announce" || topic == "telldus/announce")
         {
             await ProcessAnnounce(payload);
             return;
@@ -253,6 +257,14 @@ internal class MqttClientService : IMqttClientService
         }
         // Regex(@"^nutups\/(.+)\/status\/(.+)$");
         rg = MqttTopicMatcher.NutUpsSensorTopicRegex();
+        match = rg.Match(topic);
+        if (match.Success)
+        {
+            await ProcessSensor(match.Groups[1].Value, match.Groups[2].Value, payload);
+            return;
+        }
+        // Regex(@"^telldus\/(.+)\/status\/(.+)$");
+        rg = MqttTopicMatcher.TelldusSensorTopicRegex();
         match = rg.Match(topic);
         if (match.Success)
         {
@@ -342,6 +354,12 @@ internal class MqttClientService : IMqttClientService
             var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
             _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
+        if (shellieAnnounce != null && SuportedTelldusSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
+        {
+            _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
+            var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
+            _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
+        }
         await Task.CompletedTask;
     }
 
@@ -357,6 +375,10 @@ internal class MqttClientService : IMqttClientService
             .Build());
         await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic("nutups/command")
+            .WithPayload("announce")
+            .Build());
+        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic("telldus/command")
             .WithPayload("announce")
             .Build());
 
@@ -384,6 +406,10 @@ internal class MqttClientService : IMqttClientService
             .Build());
         await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
             .WithTopic("nutups/command")
+            .WithPayload("announce")
+            .Build());
+        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic("telldus/command")
             .WithPayload("announce")
             .Build());
     }

@@ -22,6 +22,10 @@ public static class ParseSensor
         {
             return TryParsePINutSensorType(value, sensor.SensorModel, out result);
         }
+        else if (SuportedTelldusSensorTypes.Sensors.Contains(sensor.SensorModel))
+        {
+            return TryParseTelldusSensorType(value, sensor.SensorModel, out result);
+        }
         else
         {
             result = default;
@@ -94,6 +98,32 @@ public static class ParseSensor
             switch (model)
             {
                 case PINutSensorType.PINUT:
+                    isDouble = double.TryParse(value, CultureInfo.InvariantCulture, out valueDouble);
+                    break;
+                default:
+                    isDouble = false;
+                    break;
+            }
+            result = valueDouble;
+            return isDouble;
+        }
+        catch (Exception)
+        {
+            result = valueDouble;
+            return false;
+        }
+    }
+
+    public static bool TryParseTelldusSensorType(string value, String sensorModel, out double result)
+    {
+        double valueDouble = default;
+        try
+        {
+            bool isDouble;
+            var model = EnumExtensions.GetEnumFromString<TelldusSensorType>(sensorModel);
+            switch (model)
+            {
+                case TelldusSensorType.TELLDUS:
                     isDouble = double.TryParse(value, CultureInfo.InvariantCulture, out valueDouble);
                     break;
                 default:

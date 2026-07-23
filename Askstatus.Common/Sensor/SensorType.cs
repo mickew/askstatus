@@ -25,4 +25,12 @@ public enum SensorType
     Runtime,
     [Display(Name = "Battery Usage")]
     BatteryUsage,
+    [Display(Name = "Wind Speed Average")]
+    WindSpeedAverage,
+    [Display(Name = "Wind Speed Gust")]
+    WindSpeedGust,
+    [Display(Name = "Wind Direction")]
+    WindDirection,
+    [Display(Name = "Rain Rate")]
+    RainRate,
 }
