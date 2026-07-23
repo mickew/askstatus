@@ -365,22 +365,12 @@ internal class MqttClientService : IMqttClientService
 
     private async Task PublishAsync()
     {
-        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic("shellies/command")
-            .WithPayload("announce")
-            .Build());
-        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic("pitemps/command")
-            .WithPayload("announce")
-            .Build());
-        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic("nutups/command")
-            .WithPayload("announce")
-            .Build());
-        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic("telldus/command")
-            .WithPayload("announce")
-            .Build());
+        await PublishAnnounceCommand(
+            "shellies/command",
+            "pitemps/command",
+            "nutups/command",
+            "telldus/command"
+        );
 
         await PublishStatusUpdateAsync();
     }
@@ -396,22 +386,24 @@ internal class MqttClientService : IMqttClientService
     private async Task PublishAnnounceWithDelayAsync()
     {
         await Task.Delay(200);
-        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic("shellies/command")
-            .WithPayload("announce")
-            .Build());
-        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic("pitemps/command")
-            .WithPayload("announce")
-            .Build());
-        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic("nutups/command")
-            .WithPayload("announce")
-            .Build());
-        await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
-            .WithTopic("telldus/command")
-            .WithPayload("announce")
-            .Build());
+        await PublishAnnounceCommand(
+            "shellies/command",
+            "pitemps/command",
+            "nutups/command",
+            "telldus/command"
+        );
+    }
+
+    // Helper method to reduce duplication
+    private async Task PublishAnnounceCommand(params string[] topics)
+    {
+        foreach (var topic in topics)
+        {
+            await _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+                .WithTopic(topic)
+                .WithPayload("announce")
+                .Build());
+        }
     }
 
     private record Eth(

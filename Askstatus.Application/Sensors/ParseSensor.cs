@@ -114,7 +114,7 @@ public static class ParseSensor
         }
     }
 
-    public static bool TryParseTelldusSensorType(string value, String sensorModel, out double result)
+    public static bool TryParseTelldusSensorType(string value, string sensorModel, out double result)
     {
         double valueDouble = default;
         try
