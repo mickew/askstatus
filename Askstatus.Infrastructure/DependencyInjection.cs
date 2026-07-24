@@ -66,6 +66,7 @@ public static class DependencyInjection
         });
 
         // Add identity and opt-in to endpoints
+        services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromDays(7));
         services.AddIdentityCore<ApplicationUser>(opt =>
             {
                 //opt.Tokens.EmailConfirmationTokenProvider = "Email";
@@ -79,6 +80,7 @@ public static class DependencyInjection
                 opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 opt.Lockout.MaxFailedAccessAttempts = 5;
             })
+            .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultEmailProvider)
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
