@@ -1,6 +1,7 @@
 ﻿using Askstatus.Application.Errors;
 using Askstatus.Application.Events;
 using Askstatus.Application.Interfaces;
+using Askstatus.Common.Models;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,25 @@ public sealed class PowerDeviceWebhookQueryHandler : IRequestHandler<PowerDevice
         {
             _logger.LogWarning("PowerDevice with mac {Mac} not found", request.Mac);
             return Result.Fail(new NotFoundError($"PowerDevice not found"));
+        }
+        else
+        {
+            try
+            {
+                await _unitOfWork.SystemLogRepository.AddAsync(new Askstatus.Domain.Entities.SystemLog
+                {
+                    EventTime = DateTime.UtcNow,
+                    EventType = SystemLogEventType.SetDeviceState,
+                    User = "System",
+                    Message = $"PowerDevice {powerDevice.Name} switched to {request.state}"
+                });
+                await _unitOfWork.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving SystemLog");
+            }
         }
 
         await _eventBus.PublishAsync(new DeviceStateChangedIntegrationEvent(Guid.NewGuid(), powerDevice.Id, request.state), cancellationToken);
