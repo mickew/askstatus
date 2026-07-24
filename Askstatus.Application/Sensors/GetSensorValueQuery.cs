@@ -47,11 +47,18 @@ public sealed class GetSensorValueQueryHandler : IRequestHandler<GetSensorValueQ
             {
                 if (ParseSensor.TryParseValue(sensorValue.Value, sensor, out var result))
                 {
-                    formatedValue = string.Format(CultureInfo.InvariantCulture, sensor.FormatString, result);
+                    if (ParseSensor.TryFormatValue(result, sensor.FormatString, out var formattedResult))
+                    {
+                        formatedValue = formattedResult;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Failed to format sensor value {Value} for sensor {SensorName} and value name {ValueName} using format string {FormatString}.", sensorValue.Value, sensor.SensorName, sensor.ValueName, sensor.FormatString);
+                    }
                 }
                 else
                 {
-                    _logger.LogWarning("Failed to parse sensor value {NewValue} for sensor {SensorName} and value name {ValueName}.", sensorValue.Value, sensor.SensorName, sensor.ValueName);
+                    _logger.LogWarning("Failed to parse sensor value {Value} for sensor {SensorName} and value name {ValueName}.", sensorValue.Value, sensor.SensorName, sensor.ValueName);
                 }
 
             }
