@@ -34,8 +34,14 @@ public class UpdateSensorValueCommandHandler : IRequestHandler<UpdateSensorValue
         {
             if (ParseSensor.TryParseValue(request.NewValue, sensor, out var result))
             {
-                formatedValue = string.Format(sensor.FormatString, result);
-                // maybe log the value in the future
+                if (ParseSensor.TryFormatValue(result, sensor.FormatString, out var formattedResult))
+                {
+                    formatedValue = formattedResult;
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to format sensor value {NewValue} for sensor {SensorName} and value name {ValueName} using format string {FormatString}.", request.NewValue, request.SensorName, request.ValueName, sensor.FormatString);
+                }
             }
             else
             {

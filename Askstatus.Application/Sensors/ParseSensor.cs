@@ -33,7 +33,26 @@ public static class ParseSensor
         }
     }
 
-    public static bool TryParseShellySensorType(string value, String sensorModel, out double result)
+    public static bool TryFormatValue(double value, string formatString, out string result)
+    {
+
+        if (!string.IsNullOrEmpty(formatString))
+        {
+            if (formatString.StartsWith(FormatTypes.WindSpeed))
+            {
+                var dir = WindDirectionConverter.DegreesToDirection(value);
+                result = string.Format(CultureInfo.InvariantCulture, formatString.Replace(FormatTypes.WindSpeed, "{0}"), dir);
+                return true;
+            }
+        
+            result = string.Format(CultureInfo.InvariantCulture,formatString, value);
+            return true;
+        }
+        result = string.Empty;
+        return false;
+    }
+
+    private static bool TryParseShellySensorType(string value, String sensorModel, out double result)
     {
         double valueDouble = default;
         try
@@ -62,7 +81,7 @@ public static class ParseSensor
         }
     }
 
-    public static bool TryParsePITempSensorType(string value, String sensorModel, out double result)
+    private static bool TryParsePITempSensorType(string value, String sensorModel, out double result)
     {
         double valueDouble = default;
         try
@@ -88,7 +107,7 @@ public static class ParseSensor
         }
     }
 
-    public static bool TryParsePINutSensorType(string value, String sensorModel, out double result)
+    private static bool TryParsePINutSensorType(string value, String sensorModel, out double result)
     {
         double valueDouble = default;
         try
@@ -114,7 +133,7 @@ public static class ParseSensor
         }
     }
 
-    public static bool TryParseTelldusSensorType(string value, string sensorModel, out double result)
+    private static bool TryParseTelldusSensorType(string value, string sensorModel, out double result)
     {
         double valueDouble = default;
         try
