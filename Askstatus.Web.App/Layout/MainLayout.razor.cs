@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
 using MudBlazor;
 using Toolbelt.Blazor.HotKeys2;
 
@@ -15,7 +17,13 @@ public partial class MainLayout : LayoutBase, IAsyncDisposable
     HotKeys _hotKeys { get; set; } = null!;
 
     [Inject]
-    NavigationManager _navigationManager { get; set; } = null!;
+    private NavigationManager _navigationManager { get; set; } = null!;
+
+    [Inject]
+    private IJSRuntime _jsRuntime { get; set; } = null!;
+
+    [Inject]
+    private IOptions<AskstatusSettings> _settings { get; set; } = null!;
 
     private bool _isDarkMode;
 
@@ -45,6 +53,19 @@ public partial class MainLayout : LayoutBase, IAsyncDisposable
             _ => false
         };
         await StoreLocalData();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var path = new Uri(_navigationManager.Uri).AbsolutePath.TrimEnd('/').ToLowerInvariant();
+        if (path == "/health")
+        {
+            var baseUri = new Uri(_settings.Value.AskstatusUrl!, UriKind.Absolute);
+            var healthUri = new Uri(baseUri, "api/health");
+            _navigationManager.NavigateTo(healthUri.ToString(), forceLoad: true);
+            return;
+        }
+        await base.OnInitializedAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
