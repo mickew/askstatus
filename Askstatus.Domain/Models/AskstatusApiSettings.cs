@@ -22,5 +22,8 @@ public class AskstatusApiSettings
 
     [Required]
     public string? MQTTClientId { get; set; }
+
+    [Required]
+    public string? DataProtectionKeyPath { get; set; }
 }
 
