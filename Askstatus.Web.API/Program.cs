@@ -125,7 +125,7 @@ public class Program
 
         builder.Services.AddHealthChecks()
             .AddApplicationStatus()
-            .AddSignalRHub($"{askstatusApiSettings!.BackendUrl!}/statushub")
+            .AddSignalRHub($"{GetCorsUrls(askstatusApiSettings!)[0]}/statushub")
             .AddSqlite(builder.Configuration.GetConnectionString("DefaultConnection")!, tags: ["database"]);
 
         builder.Services.AddInfrastructureServices(builder.Environment, builder.Configuration.GetConnectionString("DefaultConnection")!);
@@ -255,6 +255,6 @@ public class Program
         var backendUrls = askstatusApiSettings.BackendUrl!.Split(';').ToArray();
         var frontendUrls = askstatusApiSettings.FrontendUrl!.Split(';').ToArray();
 
-        return frontendUrls!.Concat(backendUrls!).ToArray();
+        return backendUrls!.Concat(frontendUrls!).ToArray();
     }
 }
