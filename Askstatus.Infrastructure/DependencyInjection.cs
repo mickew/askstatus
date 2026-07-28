@@ -69,7 +69,6 @@ public static class DependencyInjection
         services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromDays(7));
         services.AddIdentityCore<ApplicationUser>(opt =>
             {
-                //opt.Tokens.EmailConfirmationTokenProvider = "Email";
                 opt.SignIn.RequireConfirmedEmail = true;
                 opt.User.RequireUniqueEmail = true;
                 opt.Password.RequireDigit = true;

@@ -8,6 +8,9 @@ using Askstatus.Infrastructure.Data;
 using Askstatus.Infrastructure.Hubs;
 using HealthChecks.ApplicationStatus.DependencyInjection;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Data.Sqlite;
@@ -122,7 +125,7 @@ public class Program
 
         builder.Services.AddHealthChecks()
             .AddApplicationStatus()
-            .AddSignalRHub($"{askstatusApiSettings!.BackendUrl!}/statushub")
+            .AddSignalRHub($"{GetCorsUrls(askstatusApiSettings!)[0]}/statushub")
             .AddSqlite(builder.Configuration.GetConnectionString("DefaultConnection")!, tags: ["database"]);
 
         builder.Services.AddInfrastructureServices(builder.Environment, builder.Configuration.GetConnectionString("DefaultConnection")!);
@@ -131,9 +134,16 @@ public class Program
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
 
-        //builder.Services.AddDataProtection()
-        //    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)), "DataProtectionKeys")))
-        //    .SetApplicationName("Askstatus");
+        builder.Services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo(askstatusApiSettings!.DataProtectionKeyPath!))
+            .SetApplicationName("Askstatus")
+            .UseCryptographicAlgorithms(
+                new AuthenticatedEncryptorConfiguration
+                {
+                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+                    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256,
+                }
+            );
 
         // Add a CORS policy for the client
         builder.Services.AddCors(
@@ -245,6 +255,6 @@ public class Program
         var backendUrls = askstatusApiSettings.BackendUrl!.Split(';').ToArray();
         var frontendUrls = askstatusApiSettings.FrontendUrl!.Split(';').ToArray();
 
-        return frontendUrls!.Concat(backendUrls!).ToArray();
+        return backendUrls!.Concat(frontendUrls!).ToArray();
     }
 }
