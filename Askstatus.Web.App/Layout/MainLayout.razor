@@ -1,10 +1,12 @@
 ﻿@inherits LayoutBase
 @using Askstatus.Web.App.Themes
+@using Toolbelt.Blazor.PWA.Updater
 <MudThemeProvider @ref="@_mudThemeProvider" IsDarkMode="@_isDarkMode" Theme="AskStatusThemes.Flatlytheme" />
 
 <MudPopoverProvider />
 <MudDialogProvider BackdropClick="false" CloseOnEscapeKey="true"/>
 <MudSnackbarProvider />
+<PWAUpdater />
 
 <MudLayout>
     <MudAppBar Style="margin-left: 0px; width: 100%">

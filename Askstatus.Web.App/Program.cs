@@ -61,6 +61,7 @@ public class Program
         //// Supply HttpClient instances that include access tokens when making requests to the server project
         //builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Askstatus.Web.API"));
 
+        builder.Services.AddPWAUpdater();
 
         await builder.Build().RunAsync();
     }
