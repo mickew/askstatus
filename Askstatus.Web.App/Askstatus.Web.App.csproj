@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
     <PackageReference Include="MudBlazor" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" />
+    <PackageReference Include="Toolbelt.Blazor.PWA.Updater" />
   </ItemGroup>
 
   <ItemGroup>
