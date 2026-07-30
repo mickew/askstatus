@@ -6,7 +6,11 @@
 <MudPopoverProvider />
 <MudDialogProvider BackdropClick="false" CloseOnEscapeKey="true"/>
 <MudSnackbarProvider />
-<PWAUpdater />
+<PWAUpdater Text="New version of Askstatus web app available!">
+    <div style="margin-left: 26px; flex: 1">
+        <img src="img/favicon-32x32.png" style="height: 30px; padding-top: 11px;" />
+    </div>
+</PWAUpdater>
 
 <MudLayout>
     <MudAppBar Style="margin-left: 0px; width: 100%">
