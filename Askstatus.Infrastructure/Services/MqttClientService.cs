@@ -181,12 +181,16 @@ internal class MqttClientService : IMqttClientService
         await _mqttClient.SubscribeAsync("telldus/+/online");
         await _mqttClient.SubscribeAsync("telldus/+/status/#");
 
+        await _mqttClient.SubscribeAsync("speedtest/announce");
+        await _mqttClient.SubscribeAsync("speedtest/+/online");
+        await _mqttClient.SubscribeAsync("speedtest/+/status/#");
+
         await PublishAsync();
     }
 
     private async Task ParseTopic(string topic, string payload)
     {
-        if (topic == "shellies/announce" || topic == "pitemps/announce" || topic == "nutups/announce" || topic == "telldus/announce")
+        if (topic == "shellies/announce" || topic == "pitemps/announce" || topic == "nutups/announce" || topic == "telldus/announce" || topic == "speedtest/announce")
         {
             await ProcessAnnounce(payload);
             return;
@@ -271,6 +275,14 @@ internal class MqttClientService : IMqttClientService
             await ProcessSensor(match.Groups[1].Value, match.Groups[2].Value, payload);
             return;
         }
+        // Regex(@"^speedtest\/(.+)\/status\/(.+)$");
+        rg = MqttTopicMatcher.SpeedtestSensorTopicRegex();
+        match = rg.Match(topic);
+        if (match.Success)
+        {
+            await ProcessSensor(match.Groups[1].Value, match.Groups[2].Value, payload);
+            return;
+        }
         await Task.CompletedTask;
     }
 
@@ -330,31 +342,38 @@ internal class MqttClientService : IMqttClientService
     private async Task ProcessAnnounce(string payload)
     {
         var shellieAnnounce = JsonSerializer.Deserialize<ShellieAnnounce>(payload);
-        if (shellieAnnounce != null && SuportedShellyPowerDevices.Devices.Contains(shellieAnnounce.Model) && !_devices.Any(x => x.Key == shellieAnnounce.Id))
+        if (shellieAnnounce != null && SuportedShellyPowerDevices.Devices.Contains(shellieAnnounce.Model) && !_devices.ContainsKey(shellieAnnounce.Id))
         {
             shellieAnnounce = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce with { Name = shellieAnnounce.Id } : shellieAnnounce;
             _logger.LogInformation("Adding power device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
             _devices.TryAdd(shellieAnnounce.Id, shellieAnnounce);
         }
-        if (shellieAnnounce != null && SuportedShellySensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
+        if (shellieAnnounce != null && SuportedShellySensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.ContainsKey(shellieAnnounce.Id))
         {
             _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
             var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
             _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
-        if (shellieAnnounce != null && SuportedPITempSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
+        if (shellieAnnounce != null && SuportedPITempSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.ContainsKey(shellieAnnounce.Id))
         {
             _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
             var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
             _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
-        if (shellieAnnounce != null && SuportedPINutSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
+        if (shellieAnnounce != null && SuportedPINutSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.ContainsKey(shellieAnnounce.Id))
         {
             _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
             var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
             _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
         }
-        if (shellieAnnounce != null && SuportedTelldusSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.Any(x => x.Key == shellieAnnounce.Id))
+        if (shellieAnnounce != null && SuportedTelldusSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.ContainsKey(shellieAnnounce.Id))
+        {
+            _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
+            var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
+            _sensors.TryAdd(shellieAnnounce.Id, new DeviceSensor(shellieAnnounce.Id, name, shellieAnnounce.Model, new List<DeviceSensorValue>()));
+        }
+
+        if (shellieAnnounce != null && SupportedSpeedTestSensorTypes.Sensors.Contains(shellieAnnounce.Model) && !_sensors.ContainsKey(shellieAnnounce.Id))
         {
             _logger.LogInformation("Adding sensor device {id} {model}", shellieAnnounce.Id, shellieAnnounce.Model);
             var name = string.IsNullOrWhiteSpace(shellieAnnounce.Name) ? shellieAnnounce.Id : shellieAnnounce.Name;
@@ -369,7 +388,8 @@ internal class MqttClientService : IMqttClientService
             "shellies/command",
             "pitemps/command",
             "nutups/command",
-            "telldus/command"
+            "telldus/command",
+            "speedtest/command"
         );
 
         await PublishStatusUpdateAsync();
@@ -390,7 +410,8 @@ internal class MqttClientService : IMqttClientService
             "shellies/command",
             "pitemps/command",
             "nutups/command",
-            "telldus/command"
+            "telldus/command",
+            "speedtest/command"
         );
     }
 

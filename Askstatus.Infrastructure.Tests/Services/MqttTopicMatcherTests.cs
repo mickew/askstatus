@@ -226,4 +226,32 @@ public class MqttTopicMatcherTests
             match.Groups[2].Value.Should().Be(expectedGroup2);
         }
     }
+
+    [Theory]
+    [InlineData("speedtest/speedtestmqttclient/status/battery", true, "speedtestmqttclient", "battery")]
+    [InlineData("speedtest/my-speedtest-device/status/voltage", true, "my-speedtest-device", "voltage")]
+    [InlineData("speedtest/device/status/charge", true, "device", "charge")]
+    [InlineData("speedtest/dev/name/status/load", true, "dev/name", "load")]
+    [InlineData("speedtest/speedtestmqttclient-1/status/input:0", true, "speedtestmqttclient-1", "input:0")]
+    [InlineData("notspeedtest/speedtestmqttclient/status/battery", false, null, null)]
+    [InlineData("speedtest/device/other/battery", false, null, null)]
+    [InlineData("speedtest/device/status/", false, null, null)]
+    [InlineData("speedtest//status/", false, null, null)]
+    [InlineData("", false, null, null)]
+    public void SpeedtestSensorTopicRegex_ShouldMatchCorrectTopics(string topic, bool shouldMatch, string? expectedGroup1, string? expectedGroup2)
+    {
+        // Arrange
+        var regex = MqttTopicMatcher.SpeedtestSensorTopicRegex();
+
+        // Act
+        var match = regex.Match(topic);
+
+        // Assert
+        match.Success.Should().Be(shouldMatch);
+        if (shouldMatch)
+        {
+            match.Groups[1].Value.Should().Be(expectedGroup1);
+            match.Groups[2].Value.Should().Be(expectedGroup2);
+        }
+    }
 }
