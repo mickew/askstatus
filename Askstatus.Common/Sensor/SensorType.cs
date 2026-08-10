@@ -33,4 +33,14 @@ public enum SensorType
     WindDirection,
     [Display(Name = "Rain Rate")]
     RainRate,
+    [Display(Name = "Ping Latency")]
+    PingLatency,
+    [Display(Name = "Download Speed")]
+    DownloadSpeed,
+    [Display(Name = "Upload Speed")]
+    UploadSpeed,
+    [Display(Name = "ISP")]
+    Isp,
+    [Display(Name = "Server")]
+    Server,
 }

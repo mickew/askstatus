@@ -26,6 +26,10 @@ public static class ParseSensor
         {
             return TryParseTelldusSensorType(value, sensor.SensorModel, out result);
         }
+        else if (SupportedSpeedTestSensorTypes.Sensors.Contains(sensor.SensorModel))
+        {
+            return TryParseSpeedtestSensorType(value, sensor.SensorModel, out result);
+        }
         else
         {
             result = default;
@@ -143,6 +147,32 @@ public static class ParseSensor
             switch (model)
             {
                 case TelldusSensorType.TELLDUS:
+                    isDouble = double.TryParse(value, CultureInfo.InvariantCulture, out valueDouble);
+                    break;
+                default:
+                    isDouble = false;
+                    break;
+            }
+            result = valueDouble;
+            return isDouble;
+        }
+        catch (Exception)
+        {
+            result = valueDouble;
+            return false;
+        }
+    }
+
+    private static bool TryParseSpeedtestSensorType(string value, string sensorModel, out double result)
+    {
+        double valueDouble = default;
+        try
+        {
+            bool isDouble;
+            var model = EnumExtensions.GetEnumFromString<SpeedTestSensorType>(sensorModel);
+            switch (model)
+            {
+                case SpeedTestSensorType.SPEEDTEST:
                     isDouble = double.TryParse(value, CultureInfo.InvariantCulture, out valueDouble);
                     break;
                 default:
