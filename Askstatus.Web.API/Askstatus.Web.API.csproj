@@ -12,6 +12,7 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
     <PackageReference Include="FluentResults.Extensions.AspNetCore" />
     <PackageReference Include="KubernetesClient" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Connections.Client" VersionOverride="10.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
