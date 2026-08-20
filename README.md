@@ -5,6 +5,7 @@
 [![](https://img.shields.io/github/issues/mickew/askstatus)](https://github.com/mickew/askstatus/issues)
 [![](https://img.shields.io/github/issues-closed/mickew/askstatus)](https://github.com/mickew/askstatus/issues?q=is%3Aissue+is%3Aclosed)
 [![](https://img.shields.io/github/milestones/progress-percent/mickew/askstatus/3)](https://github.com/mickew/askstatus/milestone/3)
+![coverage badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/mickew/cdc4aa1ab92257ffc13f5ae206804c51/raw/0bd26911579ea9a00c306033bb3864834712c427/coverage.json)
 ## Overview
 Askholmen Status System is a Blazor WebAssembly application for monitoring and managing system status, designed to run on .NET 10. It includes a backend API and supports deployment on Linux and Raspberry Pi.
 
