@@ -48,13 +48,11 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public IntegrationTestWebAppFactory()
     {
         TemporaryDirectory = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
-#pragma warning disable CS0618 // Type or member is obsolete
         PapercutContainer = new PapercutBuilder("changemakerstudiosus/papercut-smtp:7.0").Build();
-        MosquitoContainer = new ContainerBuilder("eclipse-mosquitto:latest")
-            .WithImage("eclipse-mosquitto:latest")
+        MosquitoContainer = new ContainerBuilder("eclipse-mosquitto:2.0")
+            .WithImage("eclipse-mosquitto:2.0")
             .WithPortBinding(1883, true).WithResourceMapping("mosquitto.conf", "/mosquitto/config/")
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(1883)).Build();
-#pragma warning restore CS0618 // Type or member is obsolete
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
         using var command = _connection.CreateCommand();
