@@ -86,9 +86,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public Task SetUsersPermission(Permissions permission)
     {
-        using var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(_connection)
-            .Options);
+        using var scope = Services.CreateScope();
+        var ctx = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         ctx.Roles.First(r => r.Name == UserRole).Permissions = permission;
         ctx.SaveChanges();
         return Task.CompletedTask;
@@ -159,9 +158,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public void ReSeedData()
     {
-        using var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(_connection)
-            .Options);
+        using var scope = Services.CreateScope();
+        var ctx = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         UnSeedData(ctx);
         SeedData(ctx);
     }
