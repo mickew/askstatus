@@ -34,7 +34,6 @@ jobs:
     - name: Test
       run: >
         dotnet test --no-build
-        --filter-not-class "Askstatus.Web.App*"
         --ignore-exit-code 8
         --report-trx
         --coverage --coverage-output-format cobertura
@@ -57,6 +56,7 @@ jobs:
         targetdir: "CoverageReport"
         reporttypes: "MarkdownSummaryGithub;JsonSummary"
         title: 'Code Coverage Report'
+        assemblyfilters: "-[Askstatus.Web.App]*"
 
     - name: Get Coverage Percentage
       id: extract_coverage
