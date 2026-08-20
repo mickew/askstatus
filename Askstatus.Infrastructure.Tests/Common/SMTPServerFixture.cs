@@ -12,13 +12,13 @@ public class SMTPServerFixture : IAsyncLifetime
 #pragma warning restore CS0618 // Type or member is obsolete
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await PapercutContainer.StartAsync();
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        await PapercutContainer.DisposeAsync().AsTask();
+        await PapercutContainer.DisposeAsync();
     }
 }

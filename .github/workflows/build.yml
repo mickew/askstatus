@@ -33,22 +33,20 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: >
-        dotnet test --no-build --verbosity normal
-        --filter "FullyQualifiedName!~Askstatus.Web.API.Tests"
-        --logger "junit;LogFileName=../TestResults/{assembly}.results.xml"
-        --collect:"XPlat Code Coverage"
+        dotnet test --no-build
+        --filter-not-class "Askstatus.Web.API.Tests*"
+        --ignore-exit-code 8
+        --report-trx --report-trx-filename test-results.trx
+        --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
         --results-directory TestResults
-        -maxCpuCount:1
-        --
-        DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
     - name: Test Report
       uses: dorny/test-reporter@v3
       if: ${{ always() }}
       with:
         name: test-results
-        path: "TestResults/*.results.xml"
-        reporter: java-junit
+        path: "TestResults/**/*.trx"
+        reporter: dotnet-trx
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Generate Coverage Report

@@ -61,7 +61,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         command.CommandText = "PRAGMA journal_mode=WAL;";
         command.ExecuteNonQuery();
     }
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         if (Directory.Exists(TemporaryDirectory!))
         {
@@ -73,15 +73,16 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         await PapercutContainer.StartAsync();
     }
 
-    public new async Task DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (Directory.Exists(TemporaryDirectory!))
         {
             Directory.Delete(TemporaryDirectory!, true);
         }
         _connection.Close();
-        await PapercutContainer.DisposeAsync().AsTask();
-        await MosquitoContainer.DisposeAsync().AsTask();
+        await PapercutContainer.DisposeAsync();
+        await MosquitoContainer.DisposeAsync();
+        await base.DisposeAsync();
     }
 
     public Task SetUsersPermission(Permissions permission)

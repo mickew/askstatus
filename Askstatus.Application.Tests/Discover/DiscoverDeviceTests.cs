@@ -22,7 +22,7 @@ public class DiscoverDeviceTests
         var handler = new ShellyDiscoverDeviceQueryHandler(logger.Object, discoverDeviceService.Object);
 
         // Act
-        var result = await handler.Handle(shellyDiscoverDeviceQuery, default);
+        var result = await handler.Handle(shellyDiscoverDeviceQuery, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
