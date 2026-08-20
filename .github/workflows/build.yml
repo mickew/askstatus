@@ -36,8 +36,8 @@ jobs:
         dotnet test --no-build
         --filter-not-class "Askstatus.Web.API.Tests*"
         --ignore-exit-code 8
-        --report-trx --report-trx-filename test-results.trx
-        --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
+        --report-trx
+        --coverage --coverage-output-format cobertura
         --results-directory TestResults
 
     - name: Test Report
@@ -52,7 +52,7 @@ jobs:
     - name: Generate Coverage Report
       uses: danielpalme/ReportGenerator-GitHub-Action@5
       with:
-        reports: "TestResults/**/coverage.cobertura.xml"
+        reports: "TestResults/*.cobertura.xml"
         targetdir: "CoverageReport"
         reporttypes: "MarkdownSummaryGithub;JsonSummary"
 
