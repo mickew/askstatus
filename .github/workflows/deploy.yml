@@ -34,8 +34,16 @@ jobs:
       run: dotnet publish ./Askstatus.Web.API/Askstatus.Web.API.csproj -c Release -o ./dotnet-app/backend --runtime linux-arm64 --self-contained true
     - name: Run Publish Frontend
       run: dotnet publish ./Askstatus.Web.App/Askstatus.Web.App.csproj -c Release -o ./dotnet-app/frontend --runtime browser-wasm --self-contained true
-    - name: Upload Artifacts
+    - name: Upload Artifacts (GitHub)
+      if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v7
+      with:
+        name: application-artifacts
+        path: dotnet-app/
+
+    - name: Upload Artifacts (act)
+      if: ${{ env.ACT }}
+      uses: actions/upload-artifact@v4
       with:
         name: application-artifacts
         path: dotnet-app/
@@ -45,16 +53,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-project
     steps:
-    - name: Download content
+    - name: Download content (GitHub)
+      if: ${{ !env.ACT }}
       uses: actions/download-artifact@v8
       with:
         name: application-artifacts
-    - name: Archive site content
-      uses: thedoctor0/zip-release@0.7.6
+    - name: Download content (act)
+      if: ${{ env.ACT }}
+      uses: actions/download-artifact@v4
       with:
-        type: 'zip'
-        filename: release.zip
+        name: application-artifacts
+    - name: Archive site content
+      run: zip -r release.zip . -x '.git/*'
     - name: Upload Release
+      if: ${{ !env.ACT }}
       uses: ncipollo/release-action@v1.21.0
       with:
         artifacts: "release.zip"

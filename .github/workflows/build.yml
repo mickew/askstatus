@@ -16,6 +16,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
 
     steps:
     - uses: actions/checkout@v6
@@ -28,12 +32,50 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal --filter FullyQualifiedName\!~Askstatus.Web.API.Tests --logger "junit;LogFileName=../../TestResults/{assembly}.results.xml" -maxCpuCount:1
-      
+      run: >
+        dotnet test --no-build --verbosity normal
+        --filter "FullyQualifiedName!~Askstatus.Web.API.Tests"
+        --logger "junit;LogFileName=../TestResults/{assembly}.results.xml"
+        --collect:"XPlat Code Coverage"
+        --results-directory TestResults
+        -maxCpuCount:1
+        --
+        DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+
     - name: Test Report
       uses: dorny/test-reporter@v3
-      if: always()
+      if: ${{ always() }}
       with:
         name: test-results
-        path: "TestResults/*.xml"
+        path: "TestResults/*.results.xml"
         reporter: java-junit
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Generate Coverage Report
+      uses: danielpalme/ReportGenerator-GitHub-Action@5
+      with:
+        reports: "TestResults/**/coverage.cobertura.xml"
+        targetdir: "CoverageReport"
+        reporttypes: "MarkdownSummaryGithub;JsonSummary"
+
+    - name: Get Coverage Percentage
+      id: extract_coverage
+      run: |
+        COVERAGE=$(jq '.summary.linecoverage' CoverageReport/Summary.json)
+        echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
+
+    - name: Update Dynamic Badge Gist
+      uses: schneegans/dynamic-badges-action@v1.9.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: cdc4aa1ab92257ffc13f5ae206804c51
+        filename: coverage.json
+        label: code coverage
+        message: ${{ steps.extract_coverage.outputs.percentage }}%
+        valColorRange: ${{ steps.extract_coverage.outputs.percentage }}
+        maxColorRange: 100
+        minColorRange: 0
+
+    - name: Publish coverage in build summary # Only applicable if 'MarkdownSummaryGithub' or one of the other Markdown report types is generated
+      run: cat CoverageReport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY # Adjust path and filename if necessary
+      shell: bash
