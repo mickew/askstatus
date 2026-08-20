@@ -16,6 +16,7 @@ using MQTTnet;
 using Testcontainers.Papercut;
 
 namespace Askstatus.Web.API.Tests;
+
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public PapercutContainer PapercutContainer { get; private set; }
@@ -85,19 +86,11 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     public Task SetUsersPermission(Permissions permission)
     {
-        var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
+        using var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlite(_connection)
             .Options);
         ctx.Roles.First(r => r.Name == UserRole).Permissions = permission;
         ctx.SaveChanges();
-        //using var scope = Services.CreateScope();
-        //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        //var role = context.Roles.FirstOrDefault(r => r.Name == UserRole);
-        //if (role != null)
-        //{
-        //    role.Permissions = permission;
-        //    context.SaveChanges();
-        //}
         return Task.CompletedTask;
     }
 
@@ -164,19 +157,13 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     }
 
-
     public void ReSeedData()
     {
-        var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
+        using var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlite(_connection)
             .Options);
         UnSeedData(ctx);
         SeedData(ctx);
-
-        //using var scope = Services.CreateScope();
-        //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        //UnSeedData(context);
-        //SeedData(context);
     }
 
     private void UnSeedData(ApplicationDbContext context)
