@@ -34,7 +34,6 @@ jobs:
     - name: Test
       run: >
         dotnet test --no-build
-        --filter-not-class "Askstatus.Web.API.Tests*"
         --ignore-exit-code 8
         --report-trx
         --coverage --coverage-output-format cobertura
@@ -45,6 +44,7 @@ jobs:
       if: ${{ always() }}
       with:
         name: test-results
+        report-title: "Test Results"
         path: "TestResults/**/*.trx"
         reporter: dotnet-trx
         token: ${{ secrets.GITHUB_TOKEN }}
