@@ -28,7 +28,15 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public const string DefaultUserUserName = "user";
 
     public const string DefaultPassword = "!PassW0rd!";
-    private readonly SqliteConnection _connection;
+
+    // A shared-cache in-memory database. Every DbContext opens its OWN SqliteConnection
+    // to this name, while _keepAliveConnection keeps the database alive for the fixture
+    // lifetime. Sharing a single open connection instead makes EF re-register its SQLite
+    // user-functions on a connection that may have active statements, which fails with
+    // "unable to delete/modify user-function due to active statements".
+    private readonly string _connectionString =
+        $"DataSource=file:askstatus-{Guid.NewGuid():N}?mode=memory&cache=shared";
+    private readonly SqliteConnection _keepAliveConnection;
 
     public string? AdminId { get; private set; }
 
@@ -54,11 +62,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             .WithImage("eclipse-mosquitto:2.0")
             .WithPortBinding(1883, true).WithResourceMapping("mosquitto.conf", "/mosquitto/config/")
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(1883)).Build();
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
-        using var command = _connection.CreateCommand();
-        command.CommandText = "PRAGMA journal_mode=WAL;";
-        command.ExecuteNonQuery();
+        _keepAliveConnection = new SqliteConnection(_connectionString);
+        _keepAliveConnection.Open();
     }
     public async ValueTask InitializeAsync()
     {
@@ -78,7 +83,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         {
             Directory.Delete(TemporaryDirectory!, true);
         }
-        _connection.Close();
+        _keepAliveConnection.Close();
         await PapercutContainer.DisposeAsync();
         await MosquitoContainer.DisposeAsync();
         await base.DisposeAsync();
@@ -119,18 +124,11 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             // Remove the existing service registration for the DbContext
             RemoveAllDbContextsFromServices(services);
 
-            // Create a new service provider.
-            var serviceProvider = new ServiceCollection()
-                .AddEntityFrameworkSqlite()
-                .BuildServiceProvider();
-
             // Add a database context using an in-memory database for testing.
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlite(_connection);
-                options.UseInternalServiceProvider(serviceProvider);
+                options.UseSqlite(_connectionString);
                 options.EnableThreadSafetyChecks(true);
-                //options.UseInMemoryDatabase("TestDb");
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
             });
