@@ -56,7 +56,7 @@ jobs:
         targetdir: "CoverageReport"
         reporttypes: "MarkdownSummaryGithub;JsonSummary"
         title: 'Code Coverage Report'
-        assemblyfilters: "-[Askstatus.Web.App]*"
+        assemblyfilters: "-Askstatus.Web.App*"
 
     - name: Get Coverage Percentage
       id: extract_coverage
