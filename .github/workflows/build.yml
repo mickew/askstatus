@@ -55,7 +55,7 @@ jobs:
         reports: "TestResults/*.cobertura.xml"
         targetdir: "CoverageReport"
         reporttypes: "MarkdownSummaryGithub;JsonSummary"
-        report-title: "Code coverage summary"
+        title: 'Code Coverage Report'
 
     - name: Get Coverage Percentage
       id: extract_coverage
