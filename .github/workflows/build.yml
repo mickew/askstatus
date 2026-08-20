@@ -65,6 +65,7 @@ jobs:
         echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
 
     - name: Update Dynamic Badge Gist
+      if: github.ref == 'refs/heads/main'
       uses: schneegans/dynamic-badges-action@v1.9.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
