@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 ####### Variables
+TAGG="latest"
+VERBOSE="false"
 BASEDIR=${PWD}
 application_name="Askstatus"
 app_dir="backend"
@@ -13,21 +15,19 @@ app="Askstatus.Web.API"
 service="askstatusbackend.service"
 serviceurl="https://raw.githubusercontent.com/mickew/askstatus/main/Tools/$service"
 
-latesturl="https://github.com/mickew/askstatus/releases/latest"
+latesturl="https://github.com/mickew/askstatus/releases"
 rooturl="https://github.com/mickew/askstatus/releases/download"
 filename="release.zip"
 out="latest"
 
 #Check parameters
-if [ $# -gt 0 ]; then
-    if [[ $1 == -v ]]; then
-        VERBOSE=1
-    else
-        VERBOSE=0
-    fi
-else
-    VERBOSE=0
-fi
+while getopts "t:v" flagga; do
+  case "$flagga" in
+    t) TAGG="$OPTARG" ;;   # Sparar värdet efter -t i variabeln TAGG
+    v) VERBOSE="true" ;;   # Aktiverar verbose-läget
+    *) echo "❌ Användning: $0 [-t tagg] [-v]"; exit 1 ;;
+  esac
+done
 
 #Check if script is being run as root
 if [ "$(id -u)" != "0" ]; then
@@ -81,14 +81,21 @@ function update {
     if checkifinstalled; then
         whiptail --title "$application_name" --msgbox "$application_name is not installed, select install instead." 8 78
     else
-        location=$(curl -s -I $latesturl | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
+
+        if [ "$TAGG" == "latest" ]; then
+            DOWNLOAD_URL="${latesturl}/latest"
+        else
+            DOWNLOAD_URL="${latesturl}/tag/${TAGG}"
+        fi
+
+        location=$(curl -s -I $DOWNLOAD_URL | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
         ver="${location##*/}"
         ver=$(echo "$ver" | sed 's/.\{1\}$//')
         cd $install_dir
         oldver=$($install_dir/$app --version)
         cd ${BASEDIR}
         oldver=$(echo "v$oldver")
-        if [ "$oldver" = "$ver" ] || [ "$oldver" \> "$ver" ]; then
+        if [ "$TAGG" = "latest" ] || [ "$oldver" = "$ver" ] || [ "$oldver" \> "$ver" ]; then
             log "Version is up to date, $ver => $oldver ."
             whiptail --title "$application_name" --msgbox "Version is up to date, $ver => $oldver ." 8 78
             exit
@@ -141,7 +148,14 @@ function getlatest {
     log "Getting latest..."
     rm -f $filename
     rm -f -r $out
-    location=$(curl -s -I $latesturl | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
+
+    if [ "$TAGG" == "latest" ]; then
+        DOWNLOAD_URL="${latesturl}/latest"
+    else
+        DOWNLOAD_URL="${latesturl}/tag/${TAGG}"
+    fi
+
+    location=$(curl -s -I $DOWNLOAD_URL | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
     version="${location##*/}"
     ver=$(echo "$version" | sed 's/.\{1\}$//')
     url="${rooturl}/${ver}/${filename}"
@@ -179,7 +193,7 @@ function checkifinstalled {
 }
 
 function log {
-    if [ $VERBOSE -eq 1 ]; then
+    if [ "$VERBOSE" == "true" ]; then
         echo $1
     fi
 }
