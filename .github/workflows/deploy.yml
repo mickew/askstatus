@@ -91,7 +91,7 @@ jobs:
         name: application-artifacts
     - name: Download content (act)
       if: ${{ env.ACT }}
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: application-artifacts
     - name: Archive site content
