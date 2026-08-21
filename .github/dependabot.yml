@@ -20,8 +20,6 @@ updates:
       interval: "weekly"
     ignore:
       - dependency-name: "actions/download-artifact"
-        versions:
-          - "v4"
+        versions: ["4.x"]      
       - dependency-name: "actions/upload-artifact"
-        versions:
-          - "v4"      
+        versions: ["4.x"]      
