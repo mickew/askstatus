@@ -84,11 +84,12 @@ function update {
 
         if [ "$TAGG" == "latest" ]; then
             DOWNLOAD_URL="${latesturl}/latest"
+            location=$(curl -s -I $DOWNLOAD_URL | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
         else
             DOWNLOAD_URL="${latesturl}/tag/${TAGG}"
+            location="${TAGG}"
         fi
 
-        location=$(curl -s -I $DOWNLOAD_URL | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
         ver="${location##*/}"
         ver=$(echo "$ver" | sed 's/.\{1\}$//')
         cd $install_dir
@@ -151,11 +152,12 @@ function getlatest {
 
     if [ "$TAGG" == "latest" ]; then
         DOWNLOAD_URL="${latesturl}/latest"
+        location=$(curl -s -I $DOWNLOAD_URL | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
     else
         DOWNLOAD_URL="${latesturl}/tag/${TAGG}"
+        location="${TAGG}"
     fi
 
-    location=$(curl -s -I $DOWNLOAD_URL | grep -i ^Location: | cut -d: -f2- | sed 's/^ *\(.*\).*/\1/')
     version="${location##*/}"
     ver=$(echo "$version" | sed 's/.\{1\}$//')
     url="${rooturl}/${ver}/${filename}"
