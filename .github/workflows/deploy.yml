@@ -13,14 +13,45 @@ on:
         required: true
         default: 'v0.0.0'
 
+env:
+  ACT: ''
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-project:
     name: Build Project
     runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.version_step.outputs.tag_name }}
 
     steps:
     - uses: actions/checkout@v6
+
+    - name: Get Version Tag
+      id: version_step
+      run: |
+          set -euo pipefail
+
+          read -r MAJOR MINOR PATCH < <(python3 -c 'import xml.etree.ElementTree as ET; root = ET.parse("version.props").getroot(); values = {element.tag.rsplit("}", 1)[-1]: (element.text or "").strip() for element in root.iter()}; print(values["VersionMajor"], values["VersionMinor"], values["VersionPatch"])')
+          
+          FILE_VERSION="v$MAJOR.$MINOR.$PATCH"
+          [[ "$FILE_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          
+          INPUT_VERSION="${{ github.event.inputs.environment_tag }}"
+
+          if [ -z "$INPUT_VERSION" ] || [[ "$INPUT_VERSION" =~ ^v?0\.0\.0(-test)?$ ]]; then
+            FINAL_TAG="$FILE_VERSION"
+          else
+            FINAL_TAG="$INPUT_VERSION"
+          fi
+
+          if [ "$GITHUB_REF_NAME" != "main" ]; then
+            BRANCH_SUFFIX="${GITHUB_REF_NAME//\//-}"
+            FINAL_TAG="${FINAL_TAG}-${BRANCH_SUFFIX}-${GITHUB_RUN_NUMBER}"
+          fi
+
+          echo "tag_name=$FINAL_TAG" >> $GITHUB_OUTPUT
+
     - name: Checkout and Setup .NET
       uses: actions/setup-dotnet@v5
       with:
@@ -72,7 +103,9 @@ jobs:
         artifacts: "release.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
-        tag: "${{ github.event.inputs.environment_tag }}"
-        name: "Release of Askstatus ${{ github.event.inputs.environment_tag }}"
+        tag: "${{ needs.build-project.outputs.tag_name }}"
+        name: "Release of Askstatus ${{ needs.build-project.outputs.tag_name }}"
         generateReleaseNotes: true
-          
+        makeLatest: ${{ github.ref_name == 'main' }}
+    - name: Publish success summary 
+      run: echo "Release ${{ needs.build-project.outputs.tag_name }} published successfully!"
