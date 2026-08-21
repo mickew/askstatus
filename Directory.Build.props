@@ -10,6 +10,8 @@
     <Nullable>enable</Nullable>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <RestoreEnablePackagePruning Condition=" '$(VisualStudioVersion)' == '17.0' ">false</RestoreEnablePackagePruning>
+    <!-- xUnit v3 runs on Microsoft.Testing.Platform; opt in to the new 'dotnet test' experience -->
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
   
   <PropertyGroup>

@@ -9,7 +9,6 @@
     <PackageVersion Include="AspNetCore.HealthChecks.UI" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="FluentAssertions" Version="8.10.0" />
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1">
       <PrivateAssets>all</PrivateAssets>
@@ -19,7 +18,6 @@
     <PackageVersion Include="FluentResults.Extensions.AspNetCore" Version="0.2.0" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="Google.Apis.Auth" Version="1.75.0" />
-    <PackageVersion Include="JunitXml.TestLogger" Version="8.0.0" />
     <PackageVersion Include="KubernetesClient" Version="19.0.2" />
     <PackageVersion Include="MailKit" Version="4.17.0" />
     <PackageVersion Include="MediatR" Version="14.2.0" />
@@ -45,6 +43,8 @@
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.11" />
     <!--<PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="8.0.8" />-->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.10.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.3.3" />
     <PackageVersion Include="MimeKit" Version="4.17.0" />
     <PackageVersion Include="MockQueryable.Moq" Version="10.0.8" />
     <PackageVersion Include="Moq" Version="4.20.72" />
@@ -55,7 +55,7 @@
     <PackageVersion Include="Refit" Version="15.2.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageVersion Include="Serilog.Enrichers.ClientInfo" Version="2.9.0" />
-    <PackageVersion Include="SignalR.UnitTestingSupport.xUnit" Version="10.0.0" />
+    <PackageVersion Include="AspNetCore.SignalR.UnitTestingSupport.Common" Version="10.0.0" />
     <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
@@ -63,10 +63,10 @@
     <PackageVersion Include="System.Text.Encodings.Web" Version="9.0.9" />
     <PackageVersion Include="System.Text.Json" Version="10.0.2" />
     <PackageVersion Include="Testcontainers.Papercut" Version="4.14.0" />
-    <PackageVersion Include="Testcontainers.Xunit" Version="4.14.0" />
+    <PackageVersion Include="Testcontainers.XunitV3" Version="4.14.0" />
     <PackageVersion Include="Toolbelt.Blazor.HotKeys2" Version="6.2.1" />
     <PackageVersion Include="Toolbelt.Blazor.PWA.Updater" Version="3.2.0" />
-    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.v3" Version="4.0.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
   </ItemGroup>
 </Project>

@@ -263,7 +263,7 @@ public class MqttClientServiceTests
         await service.StartAsync(cts.Token);
 
         // Assert - allow background task to run briefly then cancel
-        await Task.Delay(100);
+        await Task.Delay(100, TestContext.Current.CancellationToken);
         await cts.CancelAsync();
 
         _loggerMock.Verify(

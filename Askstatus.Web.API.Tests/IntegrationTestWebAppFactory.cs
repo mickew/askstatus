@@ -16,6 +16,7 @@ using MQTTnet;
 using Testcontainers.Papercut;
 
 namespace Askstatus.Web.API.Tests;
+
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public PapercutContainer PapercutContainer { get; private set; }
@@ -27,7 +28,15 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public const string DefaultUserUserName = "user";
 
     public const string DefaultPassword = "!PassW0rd!";
-    private readonly SqliteConnection _connection;
+
+    // A shared-cache in-memory database. Every DbContext opens its OWN SqliteConnection
+    // to this name, while _keepAliveConnection keeps the database alive for the fixture
+    // lifetime. Sharing a single open connection instead makes EF re-register its SQLite
+    // user-functions on a connection that may have active statements, which fails with
+    // "unable to delete/modify user-function due to active statements".
+    private readonly string _connectionString =
+        $"DataSource=file:askstatus-{Guid.NewGuid():N}?mode=memory&cache=shared";
+    private readonly SqliteConnection _keepAliveConnection;
 
     public string? AdminId { get; private set; }
 
@@ -48,20 +57,15 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     public IntegrationTestWebAppFactory()
     {
         TemporaryDirectory = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
-#pragma warning disable CS0618 // Type or member is obsolete
         PapercutContainer = new PapercutBuilder("changemakerstudiosus/papercut-smtp:7.0").Build();
-        MosquitoContainer = new ContainerBuilder("eclipse-mosquitto:latest")
-            .WithImage("eclipse-mosquitto:latest")
+        MosquitoContainer = new ContainerBuilder("eclipse-mosquitto:2.0")
+            .WithImage("eclipse-mosquitto:2.0")
             .WithPortBinding(1883, true).WithResourceMapping("mosquitto.conf", "/mosquitto/config/")
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(1883)).Build();
-#pragma warning restore CS0618 // Type or member is obsolete
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
-        using var command = _connection.CreateCommand();
-        command.CommandText = "PRAGMA journal_mode=WAL;";
-        command.ExecuteNonQuery();
+        _keepAliveConnection = new SqliteConnection(_connectionString);
+        _keepAliveConnection.Open();
     }
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         if (Directory.Exists(TemporaryDirectory!))
         {
@@ -73,32 +77,24 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         await PapercutContainer.StartAsync();
     }
 
-    public new async Task DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (Directory.Exists(TemporaryDirectory!))
         {
             Directory.Delete(TemporaryDirectory!, true);
         }
-        _connection.Close();
-        await PapercutContainer.DisposeAsync().AsTask();
-        await MosquitoContainer.DisposeAsync().AsTask();
+        _keepAliveConnection.Close();
+        await PapercutContainer.DisposeAsync();
+        await MosquitoContainer.DisposeAsync();
+        await base.DisposeAsync();
     }
 
     public Task SetUsersPermission(Permissions permission)
     {
-        var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(_connection)
-            .Options);
+        using var scope = Services.CreateScope();
+        var ctx = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         ctx.Roles.First(r => r.Name == UserRole).Permissions = permission;
         ctx.SaveChanges();
-        //using var scope = Services.CreateScope();
-        //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        //var role = context.Roles.FirstOrDefault(r => r.Name == UserRole);
-        //if (role != null)
-        //{
-        //    role.Permissions = permission;
-        //    context.SaveChanges();
-        //}
         return Task.CompletedTask;
     }
 
@@ -128,18 +124,11 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             // Remove the existing service registration for the DbContext
             RemoveAllDbContextsFromServices(services);
 
-            // Create a new service provider.
-            var serviceProvider = new ServiceCollection()
-                .AddEntityFrameworkSqlite()
-                .BuildServiceProvider();
-
             // Add a database context using an in-memory database for testing.
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlite(_connection);
-                options.UseInternalServiceProvider(serviceProvider);
+                options.UseSqlite(_connectionString);
                 options.EnableThreadSafetyChecks(true);
-                //options.UseInMemoryDatabase("TestDb");
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
             });
@@ -165,19 +154,12 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     }
 
-
     public void ReSeedData()
     {
-        var ctx = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(_connection)
-            .Options);
+        using var scope = Services.CreateScope();
+        var ctx = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         UnSeedData(ctx);
         SeedData(ctx);
-
-        //using var scope = Services.CreateScope();
-        //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        //UnSeedData(context);
-        //SeedData(context);
     }
 
     private void UnSeedData(ApplicationDbContext context)

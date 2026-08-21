@@ -1,0 +1,35 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Askstatus.Application/Askstatus.Application.csproj" />
+    <Project Path="Askstatus.Common/Askstatus.Common.csproj" />
+    <Project Path="Askstatus.Domain/Askstatus.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Askstatus.Infrastructure/Askstatus.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="Askstatus.Web.API/Askstatus.Web.API.csproj" />
+    <Project Path="Askstatus.Web.App/Askstatus.Web.App.csproj" />
+  </Folder>
+  <Folder Name="/Sdk/">
+    <Project Path="Askstatus.Sdk/Askstatus.Sdk.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="build-suffix.props" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+    <File Path="Tools/RPISetup.md" />
+    <File Path="version.props" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Askstatus.Application.Tests/Askstatus.Application.Tests.csproj" />
+    <Project Path="Askstatus.Architecture.Tests/Askstatus.Architecture.Tests.csproj" />
+    <Project Path="Askstatus.Domain.Tests/Askstatus.Domain.Tests.csproj" />
+    <Project Path="Askstatus.Infrastructure.Tests/Askstatus.Infrastructure.Tests.csproj" />
+    <Project Path="Askstatus.Web.API.Tests/Askstatus.Web.API.Tests.csproj" />
+    <Project Path="EmailFormatTestApp/EmailFormatTestApp.csproj" />
+  </Folder>
+</Solution>

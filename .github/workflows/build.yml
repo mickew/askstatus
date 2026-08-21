@@ -33,30 +33,30 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: >
-        dotnet test --no-build --verbosity normal
-        --filter "FullyQualifiedName!~Askstatus.Web.API.Tests"
-        --logger "junit;LogFileName=../TestResults/{assembly}.results.xml"
-        --collect:"XPlat Code Coverage"
+        dotnet test --no-build
+        --ignore-exit-code 8
+        --report-trx
+        --coverage --coverage-output-format cobertura
         --results-directory TestResults
-        -maxCpuCount:1
-        --
-        DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
     - name: Test Report
       uses: dorny/test-reporter@v3
       if: ${{ always() }}
       with:
         name: test-results
-        path: "TestResults/*.results.xml"
-        reporter: java-junit
+        report-title: "Test Results"
+        path: "TestResults/**/*.trx"
+        reporter: dotnet-trx
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Generate Coverage Report
       uses: danielpalme/ReportGenerator-GitHub-Action@5
       with:
-        reports: "TestResults/**/coverage.cobertura.xml"
+        reports: "TestResults/*.cobertura.xml"
         targetdir: "CoverageReport"
         reporttypes: "MarkdownSummaryGithub;JsonSummary"
+        title: 'Code Coverage Report'
+        assemblyfilters: "-Askstatus.Web.App*"
 
     - name: Get Coverage Percentage
       id: extract_coverage
@@ -65,6 +65,7 @@ jobs:
         echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
 
     - name: Update Dynamic Badge Gist
+      if: github.ref == 'refs/heads/main'
       uses: schneegans/dynamic-badges-action@v1.9.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
