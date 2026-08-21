@@ -74,7 +74,7 @@ jobs:
 
     - name: Upload Artifacts (act)
       if: ${{ env.ACT }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: application-artifacts
         path: dotnet-app/
