@@ -18,4 +18,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      
+    ignore:
+      - dependency-name: "actions/download-artifact"
+        versions:
+          - "v4"
+      - dependency-name: "actions/upload-artifact"
+        versions:
+          - "v4"      
