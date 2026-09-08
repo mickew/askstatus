@@ -23,9 +23,9 @@ out="latest"
 #Check parameters
 while getopts "t:v" flagga; do
   case "$flagga" in
-    t) TAGG="$OPTARG" ;;   # Sparar värdet efter -t i variabeln TAGG
-    v) VERBOSE="true" ;;   # Aktiverar verbose-läget
-    *) echo "❌ Användning: $0 [-t tagg] [-v]"; exit 1 ;;
+    t) TAGG="$OPTARG" ;;   # Saves the value -t in variable TAGG
+    v) VERBOSE="true" ;;   # Activates verbose mode
+    *) echo "❌ Usage: $0 [-t tag] [-v]"; exit 1 ;;
   esac
 done
 
