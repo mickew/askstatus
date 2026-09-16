@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Askstatus.Application;
 using Askstatus.Application.Interfaces;
+using Askstatus.Common.System;
 using Askstatus.Domain;
 using Askstatus.Infrastructure;
 using Askstatus.Infrastructure.Data;
@@ -241,13 +243,8 @@ public class Program
 
     private static string GetVersion()
     {
-        Assembly currentAssembly = typeof(Program).Assembly;
-        if (currentAssembly == null)
-        {
-            currentAssembly = Assembly.GetCallingAssembly();
-        }
-        var version = $"{currentAssembly.GetName().Version!.Major}.{currentAssembly.GetName().Version!.Minor}.{currentAssembly.GetName().Version!.Build}";
-        return version ?? "?.?.?";
+        Assembly currentAssembly = typeof(Program).Assembly ?? Assembly.GetCallingAssembly();
+        return SystemHelper.GetVersion(currentAssembly);
     }
 
     private static string[] GetCorsUrls(AskstatusApiSettings askstatusApiSettings)
