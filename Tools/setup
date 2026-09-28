@@ -161,6 +161,7 @@ function getlatest {
     version="${location##*/}"
     ver=$(echo "$version" | sed 's/.\{1\}$//')
     url="${rooturl}/${ver}/${filename}"
+    log "Download from {$url}"
     echo "Downloading files..."
     curl -L -O $url
     echo "Unzipping downloaded files..."
