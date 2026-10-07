@@ -35,7 +35,7 @@ public class DeleteSensorCommandHandlerTests
         _loggerMock.Verify(l => l.Log(
             LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Sensor with id 1 not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Sensor with id 1 not found")),
             null,
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -56,7 +56,7 @@ public class DeleteSensorCommandHandlerTests
         _loggerMock.Verify(l => l.Log(
             LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error deleting Sensor")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error deleting Sensor")),
             null,
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -78,7 +78,7 @@ public class DeleteSensorCommandHandlerTests
         _loggerMock.Verify(l => l.Log(
             LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error saving changes")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error saving changes")),
             null,
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);

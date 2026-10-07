@@ -82,7 +82,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with id 1 not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("PowerDevice with id 1 not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -158,7 +158,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with id 1 not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("PowerDevice with id 1 not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -197,7 +197,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error updating PowerDevice with id 1")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error updating PowerDevice with id 1")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -272,7 +272,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error creating PowerDevice")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error creating PowerDevice")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -319,7 +319,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with id 1 not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("PowerDevice with id 1 not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -347,7 +347,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error deleting PowerDevice with id 1")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error deleting PowerDevice with id 1")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -406,7 +406,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with Id: 1 not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("PowerDevice with Id: 1 not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -466,7 +466,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with Id: 1 not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("PowerDevice with Id: 1 not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -522,7 +522,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with Id: 1 not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("PowerDevice with Id: 1 not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -593,7 +593,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with mac NOMAC not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("PowerDevice with mac NOMAC not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -652,7 +652,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("PowerDevice with mac NOMAC not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("PowerDevice with mac NOMAC not found")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -695,7 +695,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Failed to refresh devices")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Failed to refresh devices")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -738,7 +738,7 @@ public class PowerDeviceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Failed to refresh devices status")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Failed to refresh devices status")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);

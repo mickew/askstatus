@@ -39,7 +39,7 @@ namespace Askstatus.Application.Tests
             _loggerMock.Verify(l => l.Log(
                 LogLevel.Debug,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Sensor with id 1 not found")),
+                It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Sensor with id 1 not found")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()
             ), Times.Once);
@@ -76,7 +76,7 @@ namespace Askstatus.Application.Tests
             _loggerMock.Verify(l => l.Log(
                 LogLevel.Debug,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains($"Sensor value {sensorEntity.ValueName} for sensor {sensorEntity.SensorName} not found")),
+                It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains($"Sensor value {sensorEntity.ValueName} for sensor {sensorEntity.SensorName} not found")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()
             ), Times.Once);

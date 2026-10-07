@@ -72,7 +72,7 @@ public class GetSensoreByIdQueryHandlerTests
         _loggerMock.Verify(l => l.Log(
             LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Sensor with id 2 not found")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Sensor with id 2 not found")),
             null,
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);

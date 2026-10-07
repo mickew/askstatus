@@ -60,7 +60,7 @@ public class StatusHubTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains($"Client connected: {connectionId}")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains($"Client connected: {connectionId}")),
                 null,
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -82,7 +82,7 @@ public class StatusHubTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains($"Client disconnected: {connectionId}")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains($"Client disconnected: {connectionId}")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);

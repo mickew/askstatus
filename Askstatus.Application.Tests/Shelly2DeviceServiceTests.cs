@@ -84,7 +84,7 @@ public class Shelly2DeviceServiceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Argument 'id', value 1 not found!")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Argument 'id', value 1 not found!")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -129,7 +129,7 @@ public class Shelly2DeviceServiceTests
         logger.Verify(l =>
             l.Log(LogLevel.Information,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains($"Host 10.10.10.10 was switched {BooleanToOnOff(turnOn)}")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains($"Host 10.10.10.10 was switched {BooleanToOnOff(turnOn)}")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -174,7 +174,7 @@ public class Shelly2DeviceServiceTests
         logger.Verify(l =>
             l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains($"Host 10.10.10.10 was alreddy {BooleanToOnOff(turnOn)} when switching {BooleanToOnOff(turnOn)}")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains($"Host 10.10.10.10 was alreddy {BooleanToOnOff(turnOn)} when switching {BooleanToOnOff(turnOn)}")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -219,7 +219,7 @@ public class Shelly2DeviceServiceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Argument 'id', value 1 not found!")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Argument 'id', value 1 not found!")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -264,7 +264,7 @@ public class Shelly2DeviceServiceTests
         logger.Verify(l =>
             l.Log(LogLevel.Information,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains($"Host 10.10.10.10 was switched {BooleanToOnOff(turnOn)}")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains($"Host 10.10.10.10 was switched {BooleanToOnOff(turnOn)}")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -309,7 +309,7 @@ public class Shelly2DeviceServiceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Argument 'id', value 1 not found!")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Argument 'id', value 1 not found!")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -395,7 +395,7 @@ public class Shelly2DeviceServiceTests
         logger.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Argument 'id', value 1 not found!")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Argument 'id', value 1 not found!")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);

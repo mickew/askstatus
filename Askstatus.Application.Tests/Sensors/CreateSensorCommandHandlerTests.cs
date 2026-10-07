@@ -57,7 +57,7 @@ public class CreateSensorCommandHandlerTests
         _loggerMock.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error creating Sensor")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error creating Sensor")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -77,7 +77,7 @@ public class CreateSensorCommandHandlerTests
         _loggerMock.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error saving changes")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error saving changes")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
