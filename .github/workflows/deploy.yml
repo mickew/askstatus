@@ -11,7 +11,7 @@ on:
       environment_tag:
         description: 'Enter Tag'     
         required: true
-        default: 'v0.0.0'
+        default: 'latest'
 
 env:
   ACT: ''
@@ -39,17 +39,16 @@ jobs:
           
           INPUT_VERSION="${{ github.event.inputs.environment_tag }}"
 
-          # if [ -z "$INPUT_VERSION" ]; then
-          if [ -z "$INPUT_VERSION" ] || [[ "$INPUT_VERSION" =~ ^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$ ]]; then
+          if [[ "$INPUT_VERSION" == "latest" ]]; then
             FINAL_TAG="$FILE_VERSION"
           else
-            FINAL_TAG="$INPUT_VERSION"
+            FINAL_TAG="{$FILE_VERSION}-${INPUT_VERSION}.${GITHUB_RUN_NUMBER}"
           fi
 
-          if [ "$GITHUB_REF_NAME" != "main" ]; then
-            BRANCH_SUFFIX="${GITHUB_REF_NAME//\//-}"
-            FINAL_TAG="${FINAL_TAG}.${GITHUB_RUN_NUMBER}"
-          fi
+          # if [ "$GITHUB_REF_NAME" != "main" ]; then
+          #   BRANCH_SUFFIX="${GITHUB_REF_NAME//\//-}"
+          #   FINAL_TAG="${FINAL_TAG}.${GITHUB_RUN_NUMBER}"
+          # fi
 
           echo "tag_name=$FINAL_TAG" >> $GITHUB_OUTPUT
 
