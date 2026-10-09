@@ -11,7 +11,7 @@ on:
       environment_tag:
         description: 'Enter Tag'     
         required: true
-        default: 'v0.0.0'
+        default: 'latest'
 
 env:
   ACT: ''
@@ -39,18 +39,45 @@ jobs:
           
           INPUT_VERSION="${{ github.event.inputs.environment_tag }}"
 
-          if [ -z "$INPUT_VERSION" ] || [[ "$INPUT_VERSION" =~ ^v?0\.0\.0(-test)?$ ]]; then
+          if [[ "$INPUT_VERSION" == "latest" ]]; then
             FINAL_TAG="$FILE_VERSION"
           else
-            FINAL_TAG="$INPUT_VERSION"
+            FINAL_TAG="${FILE_VERSION}-${INPUT_VERSION}.${GITHUB_RUN_NUMBER}"
           fi
 
-          if [ "$GITHUB_REF_NAME" != "main" ]; then
-            BRANCH_SUFFIX="${GITHUB_REF_NAME//\//-}"
-            FINAL_TAG="${FINAL_TAG}-${BRANCH_SUFFIX}-${GITHUB_RUN_NUMBER}"
-          fi
+          # if [ "$GITHUB_REF_NAME" != "main" ]; then
+          #   BRANCH_SUFFIX="${GITHUB_REF_NAME//\//-}"
+          #   FINAL_TAG="${FINAL_TAG}.${GITHUB_RUN_NUMBER}"
+          # fi
 
           echo "tag_name=$FINAL_TAG" >> $GITHUB_OUTPUT
+
+    - name: Parse Input and Update build-suffix.props
+      shell: bash
+      run: |
+        INPUT_TAG="${{ steps.version_step.outputs.tag_name }}"
+        SUFFIX=".0"
+
+        # Check if the input contains a hyphen
+        if [[ "$INPUT_TAG" == *"-"* ]]; then
+          # Extract everything after the first hyphen
+          SUFFIX="-${INPUT_TAG#*-}"
+        fi
+
+        echo "Extracted suffix: $SUFFIX"
+
+        # Update or inject the VersionSuffix tag into Directory.Build.props
+        # This approach works even if <VersionSuffix> doesn't exist yet!
+        if grep -q "<VersionSuffix>" build-suffix.props; then
+          # If the tag exists, replace its contents
+          sed -i "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix>$SUFFIX</VersionSuffix>|g" build-suffix.props
+        else
+          # If the tag doesn't exist, insert it right after <PropertyGroup>
+          sed -i "s|<PropertyGroup>|<PropertyGroup>\n    <VersionSuffix>$SUFFIX</VersionSuffix>|g" build-suffix.props
+        fi
+
+        # Print the file contents to your 'act' log so you can verify it worked
+        cat build-suffix.props
 
     - name: Checkout and Setup .NET
       uses: actions/setup-dotnet@v6

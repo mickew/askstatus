@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.Versioning;
+using Askstatus.Common.System;
 using Microsoft.AspNetCore.Components;
 
 namespace Askstatus.Web.App.Layout;
@@ -21,7 +22,7 @@ public partial class LayoutBase : LayoutComponentBase
             currentAssembly = Assembly.GetCallingAssembly();
         }
         AspDotnetVersion = currentAssembly.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName!;
-        Version = $"{currentAssembly.GetName().Version!.Major}.{currentAssembly.GetName().Version!.Minor}.{currentAssembly.GetName().Version!.Build}";
+        Version = SystemHelper.GetVersion(currentAssembly);
         await base.OnInitializedAsync();
     }
 }

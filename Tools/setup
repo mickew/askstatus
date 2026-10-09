@@ -96,7 +96,7 @@ function update {
         oldver=$($install_dir/$app --version)
         cd ${BASEDIR}
         oldver=$(echo "v$oldver")
-        if [[ "$TAGG" == "latest" && ( "$oldver" == "$ver" || "$oldver" > "$ver" ) ]]; then
+        if [[ "$TAGG" == "latest" && "$oldver" != *-* && ( "$oldver" == "$ver" || "$oldver" > "$ver" ) ]]; then
             log "Version is up to date, $ver => $oldver ."
             whiptail --title "$application_name" --msgbox "Version is up to date, $ver => $oldver ." 8 78
             exit
@@ -158,12 +158,14 @@ function getlatest {
         location="${TAGG}"
     fi
 
+    semver_regex="^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)\.)*(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?$"
     version="${location##*/}"
     ver=$(echo "$version" | sed 's/.\{1\}$//')
     if [[ "$version" =~ $semver_regex ]]; then
         ver="$version"
     fi
     url="${rooturl}/${ver}/${filename}"
+    log "Download from {$url}"
     echo "Downloading files..."
     curl -L -O $url
     echo "Unzipping downloaded files..."
