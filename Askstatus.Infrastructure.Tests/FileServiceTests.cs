@@ -51,7 +51,7 @@ namespace Askstatus.Tests.Services
             _loggerMock.Verify(l =>
             l.Log(LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Failed to save file with file name ")),
+                It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Failed to save file with file name ")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()
             ), Times.Once);

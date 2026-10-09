@@ -237,7 +237,7 @@ public class MqttClientServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MqttClientService starting...")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("MqttClientService starting...")),
                 It.IsAny<Exception?>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -245,7 +245,7 @@ public class MqttClientServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MqttClientService started")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("MqttClientService started")),
                 It.IsAny<Exception?>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -270,7 +270,7 @@ public class MqttClientServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MqttClientService started")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("MqttClientService started")),
                 It.IsAny<Exception?>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -292,7 +292,7 @@ public class MqttClientServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MqttClientService stopping")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("MqttClientService stopping")),
                 It.IsAny<Exception?>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -300,7 +300,7 @@ public class MqttClientServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MqttClientService stopped")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("MqttClientService stopped")),
                 It.IsAny<Exception?>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -323,7 +323,7 @@ public class MqttClientServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MqttClientService stopping")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("MqttClientService stopping")),
                 It.IsAny<Exception?>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -331,7 +331,7 @@ public class MqttClientServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MqttClientService stopped")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("MqttClientService stopped")),
                 It.IsAny<Exception?>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);

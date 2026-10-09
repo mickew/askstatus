@@ -160,14 +160,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not update user adminb")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not update user adminb")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -209,14 +209,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not update user adminb")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not update user adminb")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -249,14 +249,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not update user adminb")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not update user adminb")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -312,14 +312,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not create user adminb")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not create user adminb")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -411,14 +411,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not delete user adminb")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not delete user adminb")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -497,14 +497,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not reset password for user adminb")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not reset password for user adminb")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -574,14 +574,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not change password for user adminb")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not change password for user adminb")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -671,14 +671,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not update role Admin")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not update role Admin")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -746,14 +746,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not create role Admin")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not create role Admin")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -807,14 +807,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not update role Admin")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not update role Admin")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -889,14 +889,14 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Could not delete role Admin")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Could not delete role Admin")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Error: Error | Code: Error")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Error: Error | Code: Error")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
@@ -1005,7 +1005,7 @@ public class UsersTests
         loggerMock.Verify(l =>
         l.Log(LogLevel.Warning,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Cannot confirm email for administrator admin user")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Cannot confirm email for administrator admin user")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);

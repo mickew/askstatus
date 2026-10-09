@@ -160,6 +160,9 @@ function getlatest {
 
     version="${location##*/}"
     ver=$(echo "$version" | sed 's/.\{1\}$//')
+    if [[ "$version" =~ $semver_regex ]]; then
+        ver="$version"
+    fi
     url="${rooturl}/${ver}/${filename}"
     echo "Downloading files..."
     curl -L -O $url

@@ -55,7 +55,7 @@ public class UploadProductionAppSettingsFileCommandHandlerTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Failed to save file with file name appsettings.Production.json")),
+                It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("Failed to save file with file name appsettings.Production.json")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);

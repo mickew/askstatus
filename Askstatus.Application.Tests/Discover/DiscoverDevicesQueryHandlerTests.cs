@@ -97,7 +97,7 @@ public class DiscoverDevicesQueryHandlerTests
         _loggerMock.Verify(l =>
         l.Log(LogLevel.Error,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Failed to get devices")),
+            It.Is<It.IsAnyType>((v, _) => v!.ToString()!.Contains("Failed to get devices")),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()
         ), Times.Once);
