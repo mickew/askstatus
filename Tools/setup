@@ -164,6 +164,7 @@ function getlatest {
         ver="$version"
     fi
     url="${rooturl}/${ver}/${filename}"
+    log "Download from {$url}"
     echo "Downloading files..."
     curl -L -O $url
     echo "Unzipping downloaded files..."
