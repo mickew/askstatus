@@ -42,7 +42,7 @@ jobs:
           if [[ "$INPUT_VERSION" == "latest" ]]; then
             FINAL_TAG="$FILE_VERSION"
           else
-            FINAL_TAG="{$FILE_VERSION}-${INPUT_VERSION}.${GITHUB_RUN_NUMBER}"
+            FINAL_TAG="${FILE_VERSION}-${INPUT_VERSION}.${GITHUB_RUN_NUMBER}"
           fi
 
           # if [ "$GITHUB_REF_NAME" != "main" ]; then
