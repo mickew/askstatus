@@ -56,7 +56,7 @@ jobs:
     - name: Parse Input and Update build-suffix.props
       shell: bash
       run: |
-        INPUT_TAG="${{ github.event.inputs.environment_tag }}"
+        INPUT_TAG="${{ steps.version_step.outputs.tag_name }}"
         SUFFIX=".0"
 
         # Check if the input contains a hyphen
