@@ -45,7 +45,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.1" />
-    <PackageVersion Include="MimeKit" Version="4.18.1" />
+    <PackageVersion Include="MimeKit" Version="4.18.2" />
     <PackageVersion Include="MockQueryable.Moq" Version="10.0.13" />
     <PackageVersion Include="Moq" Version="4.21.0" />
     <PackageVersion Include="MQTTnet" Version="5.2.0.1603" />
@@ -60,6 +60,7 @@
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.3.1" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageVersion Include="System.Drawing.Common" Version="10.0.13" />
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     <PackageVersion Include="System.Text.Encodings.Web" Version="9.0.9" />
     <PackageVersion Include="System.Text.Json" Version="10.0.2" />
     <PackageVersion Include="Testcontainers.Papercut" Version="4.16.0" />
