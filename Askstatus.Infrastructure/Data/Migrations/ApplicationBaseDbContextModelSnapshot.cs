@@ -15,7 +15,7 @@ namespace Askstatus.Infrastructure.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.13");
 
             modelBuilder.Entity("Askstatus.Domain.Entities.PowerDevice", b =>
                 {
@@ -79,6 +79,11 @@ namespace Askstatus.Infrastructure.Data.Migrations
                     b.Property<string>("FormatString")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("MQTTEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
