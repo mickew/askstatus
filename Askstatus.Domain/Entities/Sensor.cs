@@ -12,4 +12,6 @@ public class Sensor
     public string SensorName { get; set; } = null!;
     public string SensorModel { get; set; } = null!;
     public string ValueName { get; set; } = null!;
+
+    public bool MQTTEnabled { get; set; } = false;
 }
