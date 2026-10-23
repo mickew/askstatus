@@ -52,6 +52,7 @@
     <PackageVersion Include="MudBlazor" Version="9.11.0" />
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="Quartz.Extensions.Hosting" Version="4.6.0" />
     <PackageVersion Include="Refit" Version="16.4.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageVersion Include="Serilog.Enrichers.ClientInfo" Version="2.9.0" />

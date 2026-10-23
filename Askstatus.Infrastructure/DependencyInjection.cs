@@ -16,6 +16,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
 
 namespace Askstatus.Infrastructure;
 public static class DependencyInjection
@@ -117,6 +118,12 @@ public static class DependencyInjection
         services.AddSingleton<IHostedService>(serviceProvider =>
         {
             return serviceProvider.GetService<IMqttClientService>()!;
+        });
+
+        services.AddQuartz();
+        services.AddQuartzHostedService(options =>
+        {
+            options.WaitForJobsToComplete = true;
         });
 
         return services;
