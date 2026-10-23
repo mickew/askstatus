@@ -12,4 +12,5 @@ public interface IMqttClientService : IHostedService
     Task<IEnumerable<DeviceSensor>> GetSensorsAsync();
     Task<bool> ToggleDeviceAsync(string deviceId, int switchId);
     Task<bool> SwitchDeviceAsync(string deviceId, int switchId, bool state);
+    Task PublishSelectedSensors(string topic, string payload);
 }

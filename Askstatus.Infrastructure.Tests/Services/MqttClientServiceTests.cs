@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 
-namespace Askstatus.Infrastructure.Tests;
+namespace Askstatus.Infrastructure.Tests.Services;
 
 public class MqttClientServiceTests
 {
@@ -346,6 +346,48 @@ public class MqttClientServiceTests
 
         // Act
         Func<Task> act = async () => await service.RefreshShellieDevicesAsync();
+
+        // Assert
+        await act.Should().ThrowAsync<Exception>();
+    }
+
+    [Fact]
+    public async Task PublishSelectedSensors_WhenClientNotConnected_ShouldThrow()
+    {
+        // Arrange
+        var apiOptions = CreateApiOptions();
+        var service = new MqttClientService(_loggerMock.Object, apiOptions, _serviceProviderMock.Object);
+
+        // Act
+        Func<Task> act = async () => await service.PublishSelectedSensors("sensors/selected", "payload");
+
+        // Assert
+        await act.Should().ThrowAsync<Exception>();
+    }
+
+    [Fact]
+    public async Task PublishSelectedSensors_WithEmptyTopic_ShouldThrowProtocolViolation()
+    {
+        // Arrange
+        var apiOptions = CreateApiOptions();
+        var service = new MqttClientService(_loggerMock.Object, apiOptions, _serviceProviderMock.Object);
+
+        // Act
+        Func<Task> act = async () => await service.PublishSelectedSensors(string.Empty, "payload");
+
+        // Assert
+        await act.Should().ThrowAsync<MQTTnet.Exceptions.MqttProtocolViolationException>();
+    }
+
+    [Fact]
+    public async Task PublishSelectedSensors_WithEmptyPayload_WhenClientNotConnected_ShouldThrow()
+    {
+        // Arrange
+        var apiOptions = CreateApiOptions();
+        var service = new MqttClientService(_loggerMock.Object, apiOptions, _serviceProviderMock.Object);
+
+        // Act
+        Func<Task> act = async () => await service.PublishSelectedSensors("sensors/selected", string.Empty);
 
         // Assert
         await act.Should().ThrowAsync<Exception>();

@@ -88,6 +88,8 @@ public class Program
             WebApplicationBuilder builder = CreateBuilder(args);
             WebApplication app = CreateWebApp(builder);
 
+            await MapQuartsJobs.MapJobs(app.Services);
+
             using var scope = app.Services.CreateScope();
 
             var services = scope.ServiceProvider;
@@ -171,6 +173,7 @@ public class Program
     private static WebApplication CreateWebApp(WebApplicationBuilder builder)
     {
         var app = builder.Build();
+
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())

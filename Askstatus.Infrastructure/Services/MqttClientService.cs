@@ -40,6 +40,14 @@ internal class MqttClientService : IMqttClientService
         ConfigureMqttClient();
     }
 
+    public Task PublishSelectedSensors(string topic, string payload)
+    {
+        return _mqttClient.PublishAsync(new MqttApplicationMessageBuilder()
+            .WithTopic(topic)
+            .WithPayload(payload)
+            .Build());
+    }
+
     public async Task<bool> SwitchDeviceAsync(string deviceId, int switchId, bool state)
     {
         var payload = $"{{\"method\": \"Switch.Set\", \"params\": {{\"id\": {switchId}, \"on\": {state.ToString().ToLower()} }}}}";
