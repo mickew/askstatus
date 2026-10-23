@@ -51,7 +51,7 @@ public partial class Index
             if (result.Data is SensorDto)
             {
                 sensorCopy = ((SensorDto)result.Data);
-                SensorRequest sensorRequest = new(sensorCopy.Id, sensorCopy.Name, sensorCopy.SensorType, sensorCopy.FormatString, sensorCopy.SensorName, sensorCopy.SensorModel, sensorCopy.ValueName);
+                SensorRequest sensorRequest = new(sensorCopy.Id, sensorCopy.Name, sensorCopy.SensorType, sensorCopy.FormatString, sensorCopy.SensorName, sensorCopy.SensorModel, sensorCopy.ValueName, sensorCopy.MQTTEnabled);
                 var res = await ApiService.SensorAPI.UpdateSensor(sensorRequest);
                 if (!res.IsSuccessStatusCode)
                 {
@@ -62,6 +62,7 @@ public partial class Index
                 sensor.Name = sensorCopy.Name;
                 sensor.FormatString = sensorCopy.FormatString;
                 sensor.SensorType = sensorCopy.SensorType;
+                sensor.MQTTEnabled = sensorCopy.MQTTEnabled;
                 Snackbar.Add($"Sensor {sensor.Name} updated", Severity.Success);
             }
         }
@@ -112,7 +113,7 @@ public partial class Index
             {
                 var selectedDevice = (SensorInfoFlat)result.Data;
 
-                var sensorRequest = new SensorRequest(0, sensorInfo.Name, SensorType.Unknown, string.Empty, sensorInfo.Id, sensorInfo.SensorModel, sensorInfo.ValueName);
+                var sensorRequest = new SensorRequest(0, sensorInfo.Name, SensorType.Unknown, string.Empty, sensorInfo.Id, sensorInfo.SensorModel, sensorInfo.ValueName, false);
                 var res = await ApiService.SensorAPI.CreateSensor(sensorRequest);
                 if (!res.IsSuccessStatusCode)
                 {

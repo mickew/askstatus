@@ -36,7 +36,8 @@ public class GetSensoreByIdQueryHandlerTests
             FormatString = "°C",
             SensorName = "TempSensor",
             SensorModel = "ModelX",
-            ValueName = "Value1"
+            ValueName = "Value1",
+            MQTTEnabled = true
         };
         _sensorRepositoryMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(sensor);
         var query = new GetSensorByIdQuery(1);
@@ -54,6 +55,7 @@ public class GetSensoreByIdQueryHandlerTests
         result.Value.SensorName.Should().Be(sensor.SensorName);
         result.Value.SensorModel.Should().Be(sensor.SensorModel);
         result.Value.ValueName.Should().Be(sensor.ValueName);
+        result.Value.MQTTEnabled.Should().Be(sensor.MQTTEnabled);
     }
 
     [Fact]
