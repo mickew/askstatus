@@ -14,6 +14,7 @@ public sealed record CreateSensorCommand() : IRequest<Result<SensorDto>>
     public string SensorName { get; init; } = null!;
     public string SensorModel { get; init; } = null!;
     public string ValueName { get; init; } = null!;
+    public bool MQTTEnabled { get; init; } = false;
 }
 
 public sealed class CreateSensorCommandHandler : IRequestHandler<CreateSensorCommand, Result<SensorDto>>
@@ -36,7 +37,8 @@ public sealed class CreateSensorCommandHandler : IRequestHandler<CreateSensorCom
             FormatString = request.FormatString,
             SensorName = request.SensorName,
             SensorModel = request.SensorModel,
-            ValueName = request.ValueName
+            ValueName = request.ValueName,
+            MQTTEnabled = request.MQTTEnabled
         };
 
         var result = await _unitOfWork.SensorRepository.AddAsync(sensor);
@@ -52,6 +54,6 @@ public sealed class CreateSensorCommandHandler : IRequestHandler<CreateSensorCom
             return Result.Fail<SensorDto>(new BadRequestError("Error saving changes"));
         }
 
-        return Result.Ok(new SensorDto(result.Id, result.Name, result.SensorType, result.FormatString, result.SensorName, result.SensorModel, result.ValueName));
+        return Result.Ok(new SensorDto(result.Id, result.Name, result.SensorType, result.FormatString, result.SensorName, result.SensorModel, result.ValueName, result.MQTTEnabled));
     }
 }

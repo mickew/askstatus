@@ -16,6 +16,7 @@
             }
         </MudSelect>
         <MudTextField @bind-Value="@sensor.FormatString" Label="Format String" />
+        <MudCheckBox T="bool" @bind-Value="@sensor.MQTTEnabled" Label="MQTT Enabled" LabelPlacement="Placement.Start" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>

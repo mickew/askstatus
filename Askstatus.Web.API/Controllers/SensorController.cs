@@ -54,7 +54,8 @@ public class SensorController : ControllerBase
             FormatString = request.FormatString,
             SensorName = request.SensorName,
             SensorModel = request.SensorModel,
-            ValueName = request.ValueName
+            ValueName = request.ValueName,
+            MQTTEnabled = request.MQTTEnabled
         });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }
@@ -75,7 +76,8 @@ public class SensorController : ControllerBase
             FormatString = request.FormatString,
             SensorName = request.SensorName,
             SensorModel = request.SensorModel,
-            ValueName = request.ValueName
+            ValueName = request.ValueName,
+            MQTTEnabled = request.MQTTEnabled
         });
         return result.ToActionResult(new AskstatusAspNetCoreResultEndpointProfile());
     }

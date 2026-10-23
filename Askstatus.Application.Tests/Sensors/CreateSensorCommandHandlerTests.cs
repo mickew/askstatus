@@ -41,7 +41,7 @@ public class CreateSensorCommandHandlerTests
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(new SensorDto(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.SensorName, sensor.SensorModel, sensor.ValueName));
+        result.Value.Should().BeEquivalentTo(new SensorDto(sensor.Id, sensor.Name, sensor.SensorType, sensor.FormatString, sensor.SensorName, sensor.SensorModel, sensor.ValueName, sensor.MQTTEnabled));
     }
 
     [Fact]

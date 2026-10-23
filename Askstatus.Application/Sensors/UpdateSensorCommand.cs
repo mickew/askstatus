@@ -15,6 +15,7 @@ public sealed record UpdateSensorCommand() : IRequest<Result>
     public string? SensorName { get; init; }
     public string? SensorModel { get; init; }
     public string? ValueName { get; init; }
+    public bool MQTTEnabled { get; init; }
 }
 
 public sealed class UpdateSensorCommandHandler : IRequestHandler<UpdateSensorCommand, Result>
@@ -40,6 +41,7 @@ public sealed class UpdateSensorCommandHandler : IRequestHandler<UpdateSensorCom
         sensor.FormatString = request.FormatString!;
         sensor.SensorModel = request.SensorModel!;
         sensor.ValueName = request.ValueName!;
+        sensor.MQTTEnabled = request.MQTTEnabled;
         var result = await _unitOfWork.SensorRepository.UpdateAsync(sensor);
         if (!result)
         {
