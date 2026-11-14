@@ -13,6 +13,21 @@ updates:
       all-dependencies:
         patterns:
           - "*"
+    # The solution targets a fixed .NET version. Major bumps of the framework
+    # packages pull in assemblies from the next .NET band (e.g. 11.0.x into a
+    # net10.0 app), which breaks at runtime. Major upgrades must be done
+    # together with a deliberate TargetFramework upgrade.
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.NET.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "System.*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

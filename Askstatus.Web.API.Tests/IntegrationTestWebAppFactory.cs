@@ -75,6 +75,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         Program.IsIntegrationTestRun = true;
         await MosquitoContainer.StartAsync();
         await PapercutContainer.StartAsync();
+        // Containers must be running before the host is built, since ConfigureWebHost
+        // reads their mapped ports. Starting the server here is required because
+        // CreateClient() no longer initializes the server implicitly.
+        StartServer();
     }
 
     public override async ValueTask DisposeAsync()

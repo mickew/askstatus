@@ -23,6 +23,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
+    - name: Install ICU for local Actions
+      if: ${{ env.ACT }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends libicu-dev
     - name: Setup .NET
       uses: actions/setup-dotnet@v6
       with:

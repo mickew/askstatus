@@ -24,6 +24,13 @@ Askholmen Status System is a Blazor WebAssembly application for monitoring and m
 - Linux or Raspberry Pi (for deployment)
 - SQLite (default database)
 
+### Running workflows locally
+
+When running with GitHub Local Actions (`act`), the Build and Deploy workflows install ICU
+in the Ubuntu runner container before setting up .NET. Minimal runner images may
+not include ICU, which .NET requires for globalization. This step requires access
+to the Ubuntu package repositories and does not run on GitHub-hosted runners.
+
 ### Install, update and uninstall Askholmen Status System
 
 ```bash
