@@ -79,6 +79,12 @@ jobs:
         # Print the file contents to your 'act' log so you can verify it worked
         cat build-suffix.props
 
+    - name: Install ICU for local Actions
+      if: ${{ env.ACT }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends libicu-dev
+
     - name: Checkout and Setup .NET
       uses: actions/setup-dotnet@v6
       with:

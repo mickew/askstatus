@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Connections.Client" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="Testcontainers.Papercut" />
     <PackageReference Include="Testcontainers.XunitV3" />

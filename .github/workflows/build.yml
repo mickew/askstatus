@@ -23,6 +23,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
+    - name: Install ICU for local Actions
+      if: ${{ env.ACT }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends libicu-dev
     - name: Setup .NET
       uses: actions/setup-dotnet@v6
       with:
@@ -50,7 +55,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Generate Coverage Report
-      uses: danielpalme/ReportGenerator-GitHub-Action@5
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.6.0
       with:
         reports: "TestResults/*.cobertura.xml"
         targetdir: "CoverageReport"

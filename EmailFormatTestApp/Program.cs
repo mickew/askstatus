@@ -1,5 +1,6 @@
 ﻿using Askstatus.Common.Models;
 using Askstatus.Domain.Constants;
+using MailKit;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Utils;
@@ -22,10 +23,10 @@ internal class Program
             client.Connect("localhost", 1025, false);
 
             var message = await CreateMessageAsync(mailMessageRegistrationConfirm);
-            await client.SendAsync(message);
+            await client.SendAsync(new SendRequest(message));
 
             message = await CreateMessageAsync(mailMessagePasswordReset);
-            await client.SendAsync(message);
+            await client.SendAsync(new SendRequest(message));
 
             client.Disconnect(true);
         }
