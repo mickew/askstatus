@@ -5,6 +5,7 @@ using Askstatus.Domain;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Util.Store;
+using MailKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
@@ -98,7 +99,7 @@ public sealed class MailKitSmtpClient : IAskStatusSmtpClient
 
             try
             {
-                var result = await client.SendAsync(message);
+                var result = await client.SendAsync(new SendRequest(message));
             }
             catch (SmtpCommandException ex)
             {
